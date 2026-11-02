@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-012
 - **Title**: Routing Policy for Direct Front-of-House Service Items Bypassing Kitchen Display Systems
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
+- **Status**: `CONFIRMED` (Business Requirements Approved; Routing Engine Mechanics: `PROPOSED`)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -28,3 +28,7 @@ Packaged cold drinks (canned beer, bottled water, soft drinks) or pre-packaged g
 ## 3. Consequences
 - **Positive**: De-clutters Bar KDS screens; significantly speeds up beverage service during rush hours.
 - **Negative**: Requires servers to be disciplined in fetching items promptly without relying on KDS ready notifications.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decision OD-08 (REV-08), direct front-of-house pickup for canned/bottled beverages bypassing Bar KDS while maintaining full billing and inventory deduction is **CONFIRMED**.
+> - **Technical Proposal**: The specific routing enumeration schema, floor printer spooler integration, and station dispatch interfaces are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.

@@ -36,6 +36,7 @@
 | **Move Table** | **Chuyển bàn** | Thao tác chuyển toàn bộ khách và món sang bàn mới. | *Dời bàn, Đổi bàn* (Chuyển bàn là từ chuẩn F&B). |
 | **Merge Tables** | **Gộp bàn** | Thao tác ghép 2 hay nhiều bàn thành một đơn duy nhất cho đoàn đông. | *Nhập bàn, Nối bàn* (Gộp bàn là từ phổ thông nhất). |
 | **Split Table** | **Tách bàn** | Chia một nhóm khách hoặc một số món ra bàn riêng độc lập. | *Phân bàn, Chia bàn* (Tách bàn là chuẩn nghiệp vụ). |
+| **Unmerge Tables** | **Hủy gộp bàn** | Thao tác hủy liên kết nhóm bàn đã gộp, đưa các bàn thành viên về trạng thái độc lập và phân bổ lại món/hóa đơn tương ứng (theo PDR-010). | *Tách bàn gộp, Xóa gộp bàn* (Cần phân biệt rõ với Tách bàn - Split Table). |
 
 ---
 
@@ -87,3 +88,27 @@
 | **Split Bill Equally** | **Chia đều hóa đơn (1/N)**| Lấy tổng tiền chia đều cho $N$ người trong bàn. | *Campuchia, Chia đầu người* (Chia đều là chuẩn mực). |
 | **Cash Float** | **Tiền mặt đầu ca** | Tiền lẻ chuẩn bị sẵn trong ngăn kéo khi mở ca để thối tiền. | *Tiền trôi nổi, Tiền phao, Cash float* (Dịch "float" thành phao là thô kệch). |
 | **Z-Report** | **Báo cáo chốt ca (Z-Report)**| Biên bản tổng kết doanh thu và thu chi khi đóng ca. | *Báo cáo đóng ca, Báo cáo Z* (Báo cáo chốt ca quen thuộc nhất). |
+| **Payment Transaction** | **Giao dịch thanh toán**| Bản ghi thanh toán thành phần theo từng phương thức (Tiền mặt, Thẻ, VietQR). | *Giao dịch tiền, Payment* (Giao dịch thanh toán chuẩn kế toán). |
+
+---
+
+## 6. Financial Partitioning & Shift Concepts (Thời Gian Tài Chính & Ca Kíp)
+
+| Term (EN) | Tên Hiển Thị Chuẩn | Ý Nghĩa Nghiệp Vụ | Thuật Ngữ Cần Tránh (Lý do) |
+| :--- | :--- | :--- | :--- |
+| **Business Date** | **Ngày kinh doanh** | Trục ngày tài chính dùng để hạch toán doanh thu và ca đêm theo mốc Cutoff. | *Ngày làm việc, Ngày hệ thống* (Mơ hồ giữa ngày lịch và ca đêm). |
+| **Cutoff Time** | **Giờ chuyển ngày** | Mốc thời gian phân định ngày kinh doanh (mặc định 06:00 sáng). | *Giờ đóng cửa, Giờ giới nghiêm* (Không phản ánh bản chất tài chính). |
+| **Shift Session** | **Ca làm việc** | Khoảng thời gian thu ngân nhận két tiền, mở ca, bán hàng và chốt ca bàn giao. | *Kỳ làm việc, Ca trực* (Ca làm việc chuẩn mực nhất). |
+
+---
+
+## 7. Inventory & Loss Concepts (Tồn Kho & Hao Hụt Thất Thoát)
+
+| Term (EN) | Tên Hiển Thị Chuẩn | Ý Nghĩa Nghiệp Vụ | Thuật Ngữ Cần Tránh (Lý do) |
+| :--- | :--- | :--- | :--- |
+| **Physical Stock** | **Tồn kho thực tế** | Số lượng hàng hóa thực tế đang nằm trong kho/tủ lạnh chưa xuất kho vật lý. | *Tồn trên sổ, Tồn trong tay* (Dịch thô On-hand). |
+| **Reserved Stock** | **Tồn kho tạm giữ** | Số lượng hàng hóa đã giữ chỗ cho các món khách vừa gọi (phiếu bếp đang chờ/nấu). | *Tồn bảo lưu, Khóa kho* (Tồn tạm giữ chuẩn nghiệp vụ). |
+| **Available Stock** | **Tồn kho khả dụng** | Số lượng thực tế còn được phép bán: $\text{Khả dụng} = \text{Thực tế} - \text{Tạm giữ}$. | *Hàng rảnh rỗi, Tồn được bán* (Tồn khả dụng chuẩn ERP/F&B). |
+| **Consumed Stock** | **Tiêu hao thực tế** | Lượng hàng hóa đã chính thức xuất kho phục vụ món ăn hoàn thành. | *Xuất kho tiêu dùng, Trừ kho* (Tiêu hao thực tế chuẩn kế toán). |
+| **Waste / Spoilage**| **Hao hụt / Hủy bỏ** | Món ăn hoặc nguyên liệu bị hỏng, đổ vỡ, cháy khét cần ghi vào Sổ Hủy Hỏng. | *Phế phẩm, Đồ thừa* (Hao hụt/hủy món lịch sự và chuẩn quản trị). |
+| **Remake Dish** | **Làm lại món** | Nấu lại món ăn mới do lỗi nhà bếp mà không tính thêm tiền cho khách hàng. | *Đổi món, Nấu lại* (Làm lại món do lỗi bếp chuẩn quy trình KDS). |

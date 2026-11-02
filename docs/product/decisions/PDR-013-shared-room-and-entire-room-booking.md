@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-013
 - **Title**: Lifecycle Management for Shared Multi-Table Dining Rooms and Entire Room Bookings
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
+- **Status**: `CONFIRMED` (Business Requirements Approved; Room Container Architecture: `PROPOSED`)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -30,3 +30,7 @@ Large banquet rooms or dining halls often contain multiple discrete tables. The 
 ## 3. Consequences
 - **Positive**: Accurately mirrors hospitality room management; maximizes revenue by supporting both shared banquet seating and exclusive private rentals.
 - **Negative**: Floor plan visual designer and POS must render both room boundaries and individual table statuses clearly.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decision OD-09 (REV-09), independent table operations within shared rooms, whole-room exclusive reservation locks, and standard release validation are **CONFIRMED**.
+> - **Technical Proposal**: The specific room boundary grouping data structures, canvas event propagation, and room reservation state machine are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.

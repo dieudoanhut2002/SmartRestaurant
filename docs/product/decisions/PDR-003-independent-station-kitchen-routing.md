@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-003
 - **Title**: Dynamic Kitchen Station Routing with Master Expediter Synchronization
-- **Status**: `PROPOSED` (Pending User Approval)
+- **Status**: PROPOSED
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -37,6 +37,10 @@ Restaurants operate specialized kitchen departments: Hot Kitchen (grill, sauté,
 
 ## 3. Recommendation & Decision
 **Adopt Option C (Configurable Station Routing with Master Expediter)**.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decisions REV-08 (Direct Front-of-House service items bypassing Bar KDS) and REV-11 (Remake dish business behavior and waste logging), the core operational requirements for kitchen ticket routing and preparation tracking are **CONFIRMED**.
+> - **Technical Proposal**: The specific decomposition engine, Master Expediter screen mechanics, and data schema are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.
 
 ---
 

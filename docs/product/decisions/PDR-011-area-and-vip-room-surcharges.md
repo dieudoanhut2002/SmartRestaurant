@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-011
 - **Title**: Configuration and Application Rules for Dining Area and VIP Room Surcharges
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
+- **Status**: `CONFIRMED` (Business Requirements Approved; Calculation Engine Architecture: `PROPOSED`)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -33,3 +33,7 @@ Private VIP dining rooms, rooftop terraces, or scenic garden zones in Vietnamese
 ## 3. Consequences
 - **Positive**: Complies with restaurant business models in Vietnam; clear guest transparency prevents billing disputes.
 - **Negative**: Cashier billing calculation engine must incorporate room/area surcharge rules alongside VAT and service charge.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decision OD-07 (REV-06), percentage and fixed fee surcharges for VIP rooms/areas, surcharge snapshotting, and non-retroactive transfer policy are **CONFIRMED**.
+> - **Technical Proposal**: The specific billing engine calculation pipeline, entity surcharge snapshot schema, and tax-on-surcharge configuration switches are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.

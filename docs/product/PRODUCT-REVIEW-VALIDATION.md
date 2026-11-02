@@ -116,9 +116,9 @@ flowchart TD
 - **Scenario**: Waiter Alex adds a round of beers to Table 04 on their tablet while Cashier Thảo opens Table 04 to process payment at the checkout counter.
 - **Validated Resolution**:
   - The moment Cashier Thảo clicks "In phiếu tạm tính" or opens the checkout modal, Table 04 enters `Đang thanh toán` (BillingRequested) state.
-  - The Order Engine immediately locks Table 04 from new order fires on waiter tablets.
-  - Waiter Alex receives a gentle Vietnamese alert: *"Bàn 04 đang được thu ngân tính tiền. Vui lòng liên hệ thu ngân nếu khách muốn gọi thêm món."*
-  - This eliminates bill drift and uncollected balances.
+  - In accordance with Owner Decision OD-13 and PDR-009, Table 04 is **NOT locked** from waiter ordering. The open unpaid bill remains editable.
+  - Newly ordered items fired by Waiter Alex default to being appended to the existing unpaid bill (recalculating totals dynamically with audit logging), or Alex can explicitly route them into a new sub-bill.
+  - Cashier Thảo's terminal updates dynamically with the amended total, or prompts the cashier to acknowledge newly added items before completing settlement. Paid bills remain strictly immutable.
 
 ### 4.2. Edge Case B: Local Restaurant Wi-Fi Dropout
 - **Scenario**: The router reboots during dinner rush; tablets and KDS screens lose SignalR connection for 90 seconds.

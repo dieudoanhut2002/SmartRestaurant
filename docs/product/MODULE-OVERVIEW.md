@@ -106,10 +106,10 @@ flowchart TD
   - Required and optional modifier groups (single-choice, multi-choice, min/max limits).
   - Special preparation preferences (sugar, ice, spicy levels).
   - Temporary dish unavailability (86-ing).
-  - Recipe formulation: Mapping dishes and variants to exact raw ingredient BOM quantities.
-- **Main Entities / Business Concepts**: `Category`, `MenuItem`, `ItemVariant`, `ModifierGroup`, `ModifierOption`, `RecipeBOM`, `Ingredient`.
+  - Recipe formulation (v1.1): Mapping dishes and variants to exact raw ingredient BOM quantities.
+- **Main Entities / Business Concepts**: `Category`, `MenuItem`, `ItemVariant`, `ModifierGroup`, `ModifierOption`, `SaleableInventoryItem` (MVP); `RecipeBOM`, `Ingredient` (v1.1).
 - **Dependencies**: Module 01, Module 08 (`Kitchen Routing`).
-- **Release Target**: **v1.0 MVP**.
+- **Release Target**: **v1.0 MVP** (Menu Catalog & Modifiers; Recipe BOM deferred to **v1.1**).
 
 ### Module 06: Reservation & Guest Management
 - **Main Responsibilities**: Advance table bookings, guest headcount, deposit management, and walk-in waitlisting.
@@ -183,16 +183,16 @@ flowchart TD
 - **Release Target**: **v1.0 MVP**.
 
 ### Module 12: Inventory & Waste Management
-- **Main Responsibilities**: Raw ingredient stock tracking, unit conversions, automatic recipe BOM consumption, and kitchen waste auditing.
+- **Main Responsibilities**: Direct finished portion stock tracking (portions, bottles, cans) with Two-Phase Lock in MVP; raw ingredient stock tracking, unit conversions, and automatic recipe BOM consumption in v1.1.
 - **Key Business Capabilities**:
-  - Raw material catalog with purchase units and consumption units (e.g., kg $\leftrightarrow$ grams).
-  - Inward inventory receipts and supplier management.
-  - Automatic inventory deduction triggered when kitchen marks dishes `ReadyToServe`.
-  - Waste and spoilage logging with mandatory root-cause categories (Burnt, Spilled, Expired, Customer Cancelled Post-Fire).
-  - Low-stock threshold alerts.
-- **Main Entities / Business Concepts**: `Ingredient`, `UnitConversion`, `StockLevel`, `PurchaseOrder`, `WasteLog`.
-- **Dependencies**: Module 05 (`Recipe BOM`), Module 09 (`KDS Readiness`).
-- **Release Target**: **v1.0 MVP**.
+  - Direct saleable item stock management with Two-Phase Inventory Lock (`Available = Physical - Reserved`).
+  - Waste and spoilage logging with mandatory root-cause categories (Burnt, Spilled, Expired, Customer Cancelled Post-Fire, Remake).
+  - Low-stock threshold alerts and automatic 86-ing when available stock reaches zero.
+  - Inward inventory receipts and supplier management for direct items.
+  - Sub-gram raw ingredient inventory, unit conversions, and BOM recipe deduction (v1.1+).
+- **Main Entities / Business Concepts**: `StockLevel`, `ReservedStock`, `WasteLog`, `PurchaseOrder` (MVP); `Ingredient`, `UnitConversion`, `BOMDeductionRule` (v1.1).
+- **Dependencies**: Module 05, Module 09 (`KDS Readiness`).
+- **Release Target**: **v1.0 MVP** (Direct Saleable Item Inventory & Waste Logging; Raw Material BOM deferred to **v1.1**).
 
 ### Module 13: Reporting & Business Analytics
 - **Main Responsibilities**: Real-time sales dashboards, historical performance reports, staff sales attribution, and inventory variance.

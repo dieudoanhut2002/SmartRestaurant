@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-015
 - **Title**: Remake Dish Workflow and Waste Logging Policy for Kitchen and Service Errors
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
+- **Status**: `CONFIRMED` (Business Requirements Approved; KDS UI Presentation: `PROPOSED`)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -36,3 +36,7 @@ When a prepared dish is rejected at the table due to kitchen error (e.g., burned
 ## 3. Consequences
 - **Positive**: Transparent kitchen operations; protects customer bill accuracy; provides data for kitchen quality control.
 - **Negative**: POS UI must provide a secure, governed action for remake entry with mandatory reason selection.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decision OD-12 (REV-11), zero extra customer charge, high-priority remake ticket dispatch, scrap loss logging (`ScrapLoss`) with manager authorization, and audit distinction from add-on orders are **CONFIRMED**.
+> - **Proposed UI Specification**: The specific visual theme (e.g., purple ticket card styling, flashing border, alert chime sound frequency) is an **AI UI proposal** subject to Stage 2 UI/UX design.

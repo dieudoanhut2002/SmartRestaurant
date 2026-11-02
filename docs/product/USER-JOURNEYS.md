@@ -126,6 +126,11 @@ sequenceDiagram
 3. **Review & Fire**: Server reviews draft items with the guest and taps **"Báo bếp"**.
 4. **Decomposition & Dispatch**: The backend atomicity commits the order and splits items into specialized kitchen tickets via SignalR.
 
+> [!NOTE] Kitchen Routing vs. Direct Front-of-House Service (DirectFOHPick)
+> Per PDR-012, drinks and ready-to-serve items are configured with distinct fulfillment routes:
+> - **Bar Station Routing**: Complex mixed beverages, draft beers requiring tapping, or specialty cocktails route directly to the Bar KDS display.
+> - **Direct FOH Service (DirectFOHPick)**: Pre-packaged beverages (e.g. bottled water, canned sodas, or grab-and-go beers stored in dining floor coolers) can be flagged as `DirectFOHPick`. These items are billed immediately to the table session but bypass kitchen/bar KDS routing entirely, allowing waitstaff to serve them directly without creating redundant tickets on kitchen screens.
+
 ---
 
 ## Journey 05: Kitchen Preparation & Multi-Station Coordination
@@ -213,6 +218,12 @@ sequenceDiagram
 3. **Atomic Session Transfer**: The active dining session, all unbilled items, and KDS tickets transfer to Table 15. Table 04 resets to `Trống` (or `Cần dọn dẹp`).
 4. **Incremental Ordering**: Server adds 2x Tiger Beers (Đợt 2) to Table 15 and taps **"Báo bếp"** directly to the bar.
 
+### Operational Scenario: Table Unmerge (Hủy gộp bàn)
+In accordance with PDR-010, when a previously merged group of tables (e.g., Table 04 and Table 05 merged for a large party) needs to be separated:
+1. Floor Captain or Cashier selects the merged table group and initiates **"Hủy gộp bàn" (Unmerge Tables)**.
+2. The system prompts staff to allocate existing active order items and unpaid sub-bills between the constituent tables (Table 04 and Table 05).
+3. Upon confirmation, Table 05 is restored to its independent session (or `Trống` if vacated), while kitchen tickets and bill audit logs retain complete operational traceability without data loss.
+
 ---
 
 ## Journey 08: Pre-Bill, Bill Splitting & Multi-Channel Payment
@@ -243,13 +254,33 @@ sequenceDiagram
     Term-->>Waiter: Bàn 15 đổi màu Cam ("Cần dọn dẹp")
 ```
 
-1. **Pre-bill Generation**: Server triggers **"In phiếu tạm tính"**. Table 15 status shifts to Purple (`Đang thanh toán`).
+1. **Pre-bill Generation & Unpaid Bill Editability**: Server triggers **"In phiếu tạm tính"**. Table 15 status shifts to Purple (`Đang thanh toán`). In accordance with PDR-009, the unpaid bill remains fully editable; if guests order additional drinks or desserts while the pre-bill is out, waitstaff can append items directly to the open bill (default behavior) or explicitly open a new sub-bill, preserving complete audit trails without freezing the table.
 2. **Split Check Request**: Guests approach the cashier counter requesting an equal 50/50 split of the 1,200,000 ₫ total.
 3. **System Splitting**: Cashier taps **"Chia đều (1/N)" $\div$ 2**, creating Phần 1 (600.000 ₫) and Phần 2 (600.000 ₫) with taxes and service charges apportioned accurately.
 4. **Payment Processing**:
    - Guest A pays 600,000 ₫ in Cash. Cashier inputs cash received; drawer pops open.
    - Guest B scans the dynamic on-screen VietQR code for 600,000 ₫ using their banking app.
 5. **Reconciliation & Table Release**: Once payment confirms, the final VAT invoice prints, and Table 15 switches to Orange (`Cần dọn dẹp`).
+
+### Operational Scenario: Additional Ordering with Split Bills / Multiple Unpaid Bills
+In accordance with PDR-009, BR-RULE-06, and Owner Decision OD-13:
+1. Table 15 has an active dining session with multiple sub-bills (e.g., Sub-Bill 1 for Guest A, Sub-Bill 2 for Guest B).
+2. Guest A settles Sub-Bill 1 (600,000 ₫) in Cash. Sub-Bill 1 transitions to `Paid` and prints an individual receipt. In accordance with strict financial immutability rules, **Sub-Bill 1 is permanently locked against direct editing**.
+3. While Sub-Bill 2 remains open and unpaid, guests decide to order an additional round of drinks (2x Bia Tiger Bạc).
+4. Waiter Alex opens Table 15 on their tablet. The table is **NOT locked**. By default, newly fired items are automatically appended to the open, unpaid Sub-Bill 2, recalculating its subtotal and taxes dynamically.
+5. Alternatively, Alex may explicitly choose to open a new **Sub-Bill 3** if guests request separate billing for the new round.
+6. Table 15 remains in `Occupied` / `BillingRequested` status and is **blocked from table release** until all sub-bills (Sub-Bill 2 and any newly created Sub-Bill 3) are completely paid and all drinks are marked `Served`.
+7. All actions preserve an immutable audit trail linking items, timestamps, waitstaff ID, and sub-bill allocations.
+
+### Operational Scenario: Delayed VietQR Payment & Suspense Queue Reconciliation
+In accordance with PDR-008 and Owner Decision OD-04:
+1. Guest B attempts to settle their 600,000 ₫ bill via dynamic VietQR.
+2. Due to banking switch latency (Napas 24/7) or mobile network congestion, the webhook confirmation does not arrive within the configured timeout threshold (e.g., 2 minutes).
+3. In accordance with PDR-008, the cashier is permitted to switch the tender to **Cash Fallback**. Cashier accepts 600,000 ₫ in cash, marks the bill `Paid`, prints the invoice, and releases the guest. The pending VietQR payment request transitions to `CancelledByCashier / CashFallback`.
+4. Three minutes later, the delayed bank webhook arrives, signaling a successful transfer of 600,000 ₫ for the cancelled QR transaction.
+5. **Anti-Duplicate & Suspense Routing**: The system detects that the invoice has already been settled via Cash. The incoming 600,000 ₫ is strictly prevented from double-crediting the invoice. Instead, it is routed to the **"Giao dịch treo đối soát" (Suspense Reconciliation Queue)**.
+6. **Immediate Audio-Visual Alert**: Cashier and Manager screens receive a high-priority alert notifying them of the delayed transfer.
+7. **Governed Reconciliation (No Automatic Refund)**: In accordance with confirmed security policies, the system **NEVER initiates an automatic unverified refund**. The transaction remains held in the Suspense Ledger. The Restaurant Manager manually investigates the transaction against bank reference IDs and executes an authorized manual resolution workflow with mandatory reason documentation.
 
 ---
 
@@ -281,6 +312,14 @@ sequenceDiagram
 3. **Manager Intervention**: Manager arrives, verifies the situation, inputs their secure 4-digit PIN, and selects mandatory reason "Khách đổi ý sau khi báo bếp".
 4. **Kitchen Alert**: The Bếp Nóng KDS flashes red with an alert chime. Cook removes the pan from the stove.
 5. **Loss Accounting**: Item is removed from the guest's payable total, but raw ingredients are registered to the restaurant's daily `WasteLog` (Sổ theo dõi hủy/hỏng).
+
+### Operational Scenario: Dish Remake Workflow (Làm lại món do lỗi bếp)
+In accordance with PDR-015 and Owner Decision OD-12:
+1. When a prepared dish is rejected at the kitchen pass or returned by a customer due to kitchen preparation error (e.g., incorrect doneness, incorrect broth spice, or cold food), floor staff or manager initiates **"Làm lại món" (Remake Dish)**.
+2. The system dispatches an expedited remake ticket to the target kitchen station KDS with highest preparation priority.
+3. The customer bill is protected—no double-charge or additional fee is added to the table session.
+4. The rejected item is registered to `ScrapLoss` (Hao hụt hủy hỏng nội bộ) with mandatory root-cause tracking and manager PIN approval.
+5. *UI Note*: The visual appearance (e.g. purple card styling or special banner indicator on KDS screens) is an AI UI proposal and will be refined during frontend design; the core business rules and financial protection remain authoritative.
 
 ---
 

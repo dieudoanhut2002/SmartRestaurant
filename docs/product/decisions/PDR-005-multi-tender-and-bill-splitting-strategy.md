@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-005
 - **Title**: Multi-Tender Settlement and Two-Tier Bill Splitting Engine
-- **Status**: `PROPOSED` (Pending User Approval)
+- **Status**: PROPOSED
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -37,6 +37,10 @@ Group dining checkout is one of the highest-friction moments in restaurant opera
 
 ## 3. Recommendation & Decision
 **Adopt Option B (Split by Items + Split Evenly + Multi-Tender)** for MVP. Defer Option C to future releases if a compelling business use-case emerges.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decisions REV-07 (Delayed VietQR settlement & suspense reconciliation), REV-10 (Multi-bill table session & independent sub-bill settlement), and the BillingRequested Final Decision (unpaid bills remain editable, new orders append to existing bill or create new sub-bill, paid bills are immutable), the business rules for checkout and bill splitting are **CONFIRMED**.
+> - **Technical Proposal**: The specific mathematical rounding algorithm (absorbing residual fractional Dong into the final sub-bill), UI workflows, and transaction boundaries are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.
 
 ---
 

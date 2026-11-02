@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-010
 - **Title**: Policy for Unmerging Previously Merged Tables with Item Reallocation
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
+- **Status**: `CONFIRMED` (Business Requirements Approved; Technical Implementation Mechanics: `PROPOSED`)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -32,3 +32,7 @@ When two or more tables have been merged into a single master dining session (e.
 ## 3. Consequences
 - **Positive**: High operational flexibility for banquet and group dining; prevents manual workarounds that corrupt sales statistics.
 - **Negative**: Requires cashier interface for intuitive drag-and-drop or checklist reallocation of line items between unmerged tables.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decision OD-06 (REV-05), unmerging joined tables at any stage of service, preserving existing item preparation states, zero duplicate kitchen ticket generation, and independent table session restoration are **CONFIRMED**.
+> - **Technical Proposal**: The specific entity reallocation schema and UI drag-and-drop mechanics are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.

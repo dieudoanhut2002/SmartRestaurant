@@ -2,7 +2,7 @@
 
 - **Decision ID**: PDR-002
 - **Title**: Hierarchical Area, Room, and Table Spatial Model
-- **Status**: `PROPOSED` (Pending User Approval)
+- **Status**: PROPOSED
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
@@ -33,6 +33,10 @@ Restaurants feature diverse spatial layouts. Some venues have open dining areas,
 
 ## 3. Recommendation & Decision
 **Adopt Option B (Hierarchical Area $\rightarrow$ Room $\rightarrow$ Table Model)**.
+
+> [!NOTE] Scope Classification & Confirmation Boundaries
+> - **Confirmed Business Requirements**: Per Owner decisions REV-06 (Area/VIP Room surcharges) and REV-09 (Independent table lifecycle within shared rooms and whole-room booking concept), the business requirements for multi-area hierarchy, room grouping, and VIP room operations are **CONFIRMED**.
+> - **Technical Proposal**: The specific entity hierarchy (`Branch` $\rightarrow$ `DiningArea` $\rightarrow$ `Room` $\rightarrow$ `Table`), relational keys, and visual canvas coordinate system are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.
 
 ---
 

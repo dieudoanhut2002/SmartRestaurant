@@ -61,6 +61,16 @@ To maintain high development velocity while safeguarding architectural integrity
 
 ---
 
+### OQ-09: Policy for Corrections, Voids, and Refunds on Paid Bills
+- **Context**: In accordance with Owner Decision OD-13 and PDR-009, paid bills (`PaidInvoices`) are strictly immutable and cannot be directly edited by waitstaff or cashiers.
+- **The Question**: When an operational error occurs post-settlement (e.g., incorrect billing amount detected, duplicate payment, guest dispute after checkout, or returned dish post-payment), what is the authorized correction, void, or refund workflow?
+  - Option A: Hard Immutability without In-App Mutation (Recommended for MVP). The settled invoice remains permanently locked in POS. Any cash return or dispute adjustment is handled off-system via manager paper receipt and recorded as a variance during blind shift closing.
+  - Option B: Formal In-App Invoice Void & Credit Note Workflow. Requires Restaurant Manager PIN to void the invoice, generates an audited negative offsetting ledger entry, and restores/reallocates the dining session items.
+- **Recommended Default**: **Option A for MVP**. Maintain strict database immutability for settled bills; defer in-app void/refund state machines until formal Owner approval.
+- **Status**: `OPEN QUESTION` (OD-14 — Awaiting Project Owner Confirmation)
+
+---
+
 ## 3. Tier 2: Non-Blocking / Post-MVP Inquiries
 
 ### OQ-04: Multi-Branch Centralized Warehouse Supply Chain
@@ -92,3 +102,13 @@ To maintain high development velocity while safeguarding architectural integrity
   - `IsServiceChargeTaxable: false` $\rightarrow \text{VAT} = \text{Subtotal} \times \text{VAT Rate}$.
   Default to `true` (standard Vietnamese hospitality practice).
 - **Status**: `OPEN QUESTION` (Awaiting Owner Confirmation)
+
+---
+
+### OQ-10: Multi-Branch Entity Ownership & Data Partitioning Boundaries
+- **Context**: Per Owner Decision OD-01, the MVP business scope is strictly one independent restaurant at one physical business location. Existing technical foundations (such as `OrganizationId` and `BranchId` keys) are retained where technically reasonable to prevent rework.
+- **The Question**: How should the Solution Architect partition entity ownership across the database schema during Stage 2?
+  - Catalog entities (`Category`, `MenuItem`, `RecipeBOM`) vs. runtime operational entities (`DiningArea`, `RestaurantTable`, `TableSession`, `Order`, `Invoice`, `ShiftSession`).
+  - Which entities require both `OrganizationId` and `BranchId`, and which require only `BranchId`?
+- **Recommended Default**: Delegate to Stage 2 Solution Architecture review. Ensure no redundant dual-key overhead is forced onto entities where a single boundary is sufficient, while safeguarding data isolation.
+- **Status**: `OPEN QUESTION` (Delegated to Stage 2 Solution Architecture)

@@ -24,8 +24,9 @@ stateDiagram-v2
     Occupied --> Occupied: Tables Merged / Moved
     Occupied --> BillingRequested: Server Prints Pre-Bill
 
-    BillingRequested --> Occupied: Server Adds Items / Unlocks Bill
-    BillingRequested --> CleaningNeeded: Cashier Confirms Full Payment
+    BillingRequested --> BillingRequested: Server Appends Items / Modifies Unpaid Bill (PDR-009)
+    BillingRequested --> Occupied: Session Re-opened / Split Cancelled
+    BillingRequested --> CleaningNeeded: Cashier Confirms Full Payment (All Bills Settled)
 
     CleaningNeeded --> Available: Busser Sanitizes Table & Clears
 
@@ -40,7 +41,7 @@ stateDiagram-v2
 | **Available** | Green / Neutral | Unoccupied table; ready for immediate walk-in or reservation assignment. | Host, Waiter, Manager |
 | **Reserved** | Blue | Table locked for upcoming guest party; shows guest name and arrival countdown. | Host, Manager |
 | **Occupied** | Amber / Yellow | Guests seated; active `DiningSession` bound; touch ordering unlocked. | Waiter, Host, Cashier |
-| **BillingRequested**| Purple | Pre-bill printed; checkout underway; ordering locked to prevent bill drift. | Cashier, Waiter |
+| **BillingRequested**| Purple | Pre-bill printed; checkout underway; unpaid bills remain editable (PDR-009 / BR-RULE-06); new orders default to open bill or new sub-bill. | Cashier, Waiter |
 | **CleaningNeeded** | Orange | Invoice fully settled; guests departed; busser notification triggered. | Busser, Waiter, Cashier |
 | **OutOfService** | Gray | Physical defect or closed dining section; ordering disabled. | Manager |
 

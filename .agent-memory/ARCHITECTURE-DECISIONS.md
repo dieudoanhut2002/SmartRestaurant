@@ -50,25 +50,21 @@ This file tracks the formal architectural and technical decisions made for **Sma
 ---
 
 ### ADR-005: Recipe BOM Inventory Deduction Timing
-- **Status**: `PROPOSED`
+- **Status**: `SUPERSEDED` (Superseded by ADR-009 / PDR-004 in Task 02.6)
 - **Date**: 2026-11-02
 - **Context**: Deducting raw ingredients when an order is placed can cause stock inaccuracies if an order is cancelled before cooking begins.
-- **Decision**: Trigger automatic raw ingredient deduction at the moment the kitchen station acknowledges the dish as `ReadyToServe` (or `Cooking`). If an order is cancelled after `Cooking` has started, it must be logged as kitchen waste rather than regular deduction.
-- **Consequences**:
-  - Prevents artificial phantom stock depletion.
-  - Accurately captures waste vs standard consumption.
-  - Requires sign-off from the user before finalizing.
+- **Decision**: Superseded by Two-Phase Inventory Lock (ADR-009).
 
 ---
 
 ### ADR-006: Dynamic VietQR (Napas 24/7) Payment Integration
-- **Status**: `PROPOSED`
+- **Status**: `CONFIRMED` (Formally approved in Task 02.6 via PDR-008 & ADR-010)
 - **Date**: 2026-11-02
 - **Context**: Fast, contactless, error-free mobile banking payment is essential in modern Vietnamese dining establishments.
-- **Decision**: Implement dynamic VietQR code generation per bill containing the exact subtotal and an encrypted order reference code, paired with webhook/polling payment confirmation.
+- **Decision**: Implement dynamic VietQR code generation per bill containing exact payable amounts and unique payment reference codes, paired with asynchronous webhook processing and Suspense Ledger reconciliation.
 - **Consequences**:
   - Eliminates cashier manual amount entry errors.
-  - Instant automatic checkout reconciliation.
+  - Asynchronous webhook handling with anti-duplicate guards.
 
 ---
 
@@ -88,7 +84,7 @@ This file tracks the formal architectural and technical decisions made for **Sma
 - **Status**: `CONFIRMED`
 - **Date**: 2026-11-02
 - **Context**: Hospitality operations frequently cross midnight (00:00). Grouping sales by calendar date splits overnight shifts and causes accounting discrepancies.
-- **Decision**: Introduce `BusinessDate` (Ngày Kinh Doanh) as an invariant property across `ShiftSession`, `DiningSession`, `Order`, and `Invoice`. All orders in a shift inherit the shift's `BusinessDate` until the shift is formally closed.
+- **Decision**: Introduce `BusinessDate` (Ngày Kinh Doanh) with configurable branch cutoff times (default 06:00 AM) as an invariant property across `ShiftSession`, `DiningSession`, `Order`, and `Invoice`. All orders in a shift inherit the shift's `BusinessDate` statically at creation.
 - **Consequences**:
   - Financial consistency and exact cash reconciliation for overnight operations.
   - Requires database queries for daily revenue to filter by `BusinessDate` rather than simple UTC date.
@@ -99,7 +95,7 @@ This file tracks the formal architectural and technical decisions made for **Sma
 - **Status**: `CONFIRMED`
 - **Date**: 2026-11-02
 - **Context**: Deducting inventory only when a dish is ready causes overselling of limited dishes during cooking. Furthermore, complex gram/ml BOM setup risks delaying the MVP launch.
-- **Decision**: In MVP v1.0, manage inventory directly at the portion/item level. Implement a Two-Phase Inventory Lock: Reserve stock (`Tạm giữ`) when the order is fired, and permanently deduct (`Xuất kho`) when marked `ReadyToServe`. Defer sub-gram raw material BOM to v1.1.
+- **Decision**: In MVP v1.0, manage inventory directly at the portion/item level. Implement a Two-Phase Inventory Lock: Reserve stock (`Tạm giữ`) when the order is fired, and permanently deduct (`Xuất kho`) when marked `ReadyToServe`. Formula: `Available = Physical - Reserved`. Defer sub-gram raw material BOM to v1.1.
 - **Consequences**:
   - Eliminates overselling during peak hours.
   - Reduces MVP setup complexity while maintaining operational inventory control.
@@ -110,6 +106,66 @@ This file tracks the formal architectural and technical decisions made for **Sma
 - **Status**: `CONFIRMED`
 - **Date**: 2026-11-02
 - **Context**: Delayed bank webhooks arriving after a customer pays cash create duplicate payment accounting conflicts.
-- **Decision**: Invalidate the dynamic QR reference when an invoice is settled via Cash. Route late-arriving bank webhook funds into an `UnallocatedCustomerDeposit` account and trigger an immediate audio-visual alert on the cashier screen to issue a cash refund.
+- **Decision**: Invalidate the dynamic QR reference when an invoice is settled via Cash. Route late-arriving bank webhook funds into a Suspense Ledger (`Giao dịch treo đối soát`) and trigger an immediate audio-visual alert on the cashier screen for governed manual review.
 - **Consequences**:
   - Prevents untracked revenue discrepancies and preserves cashier drawer auditability.
+
+---
+
+### ADR-011: Multi-Bill Table Sessions for Flexible Split Billing
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Tables undergoing split checks must not freeze active table dining operations.
+- **Decision**: Model table sessions as 1-to-N relationships with sub-bills (`TableSession` hosts multiple `SubBills`). Servers can continue adding new dishes to unpaid sub-bills with explicit target assignment. Physical table releases only when 100% of sub-bills are paid and all items served.
+- **Consequences**:
+  - Uninterrupted service during group dining checkouts.
+
+---
+
+### ADR-012: Table Unmerge and Line Item Reallocation
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Joined tables may need to be unmerged when dining parties depart separately.
+- **Decision**: Support table unmerging with line item reallocation without re-generating kitchen tickets or disrupting existing dish preparation states.
+- **Consequences**:
+  - High operational flexibility for banquet service.
+
+---
+
+### ADR-013: Area and VIP Room Surcharges Snapshot Policy
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Premium dining spaces carry service premiums or room fees.
+- **Decision**: Support percentage (%) and flat fee surcharges configured per area or room. Surcharges are snapshotted onto orders at creation; moving tables does not recalculate existing items retroactively.
+- **Consequences**:
+  - Billing transparency on provisional checks and invoices.
+
+---
+
+### ADR-014: Direct Front-of-House Beverage Routing
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Packaged cold drinks fetched directly from floor chillers should not clutter Bar KDS queues.
+- **Decision**: Add routing property `ServiceRouting = DirectFOHPick` allowing packaged grab items to bypass Bar KDS while remaining strictly bound to billing and inventory reservation.
+- **Consequences**:
+  - Improves bar prep efficiency and speeds up beverage service.
+
+---
+
+### ADR-015: Non-Blocking Concurrent Table Ordering Business Rules
+- **Status**: `CONFIRMED` (Technical Architecture delegated to Stage 2)
+- **Date**: 2026-11-02
+- **Context**: Multiple servers drafting orders on the same large table must not overwrite items or lock out terminals.
+- **Decision**: Approve non-blocking shared ordering business rules with conflict detection and anti-duplicate idempotency. Technical mechanism (e.g. event sourcing delta append, atomic SQL procedures) is assigned to Stage 2 Solution Architecture.
+- **Consequences**:
+  - Fluid waiter user experience during rush hours.
+
+---
+
+### ADR-016: Remake Dish Workflow for Culinary Errors
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Prepared dishes rejected due to kitchen mistakes must not double-charge customers.
+- **Decision**: Implement a dedicated Remake Dish action with Manager PIN and mandatory error categorization. Triggers a high-priority purple KDS card without increasing customer bill total; logs scrap to the kitchen Waste Register.
+- **Consequences**:
+  - Customer bill accuracy and transparent kitchen error auditing.
