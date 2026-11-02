@@ -87,7 +87,7 @@ sequenceDiagram
      - Sets Table 15 $\rightarrow$ `Occupied`.
   5. SignalR broadcasts `TableMovedEvent(From: T04, To: T15)` to all POS terminals and KDS screens.
 
-### 3.2. Operation B: Table Merge (Gộp Bàn)
+### 3.2. Operation B: Table Merge & Unmerge (Gộp & Hủy Gộp Bàn)
 - **Business Context**: Two separate parties (or a large walk-in group) sit across Table 08 and Table 09 and wish to dine together under a single check.
 - **Workflow**:
   1. Waiter taps Table 08 $\rightarrow$ selects **"Merge Tables"**.
@@ -100,12 +100,25 @@ sequenceDiagram
      - Table 09 cannot be separately billed or assigned to walk-in guests until unmerged.
   5. Master bill settlement on Table 08 automatically releases both Table 08 and Table 09 to `CleaningNeeded`.
 
-### 3.3. Operation C: Whole Room / Area Booking (Bao Trọn Phòng/Khu Vực)
-- **Business Context**: A VIP customer books "VIP Suite 1" (which contains Table V1, Table V2, Table V3) for a private banquet.
-- **Workflow**:
-  1. Manager opens the Floor Plan or Reservation screen $\rightarrow$ selects "VIP Suite 1" $\rightarrow$ **"Book Entire Room"**.
-  2. System locks all 3 child tables simultaneously (`Reserved` or `Occupied`).
-  3. Servers can fire a single banquet order under "VIP Suite 1" without needing to individualize tables.
+#### 3.2.1. Table Unmerge Workflow (Hủy Gộp Bàn - PDR-010):
+- **Trigger**: Party at Table 09 decides to depart early or staff made an accidental merge.
+- **Rules & Execution**:
+  1. Cashier or Manager selects Table 08 $\rightarrow$ taps **"Hủy gộp bàn" (Unmerge)** $\rightarrow$ selects Table 09 to detach.
+  2. If orders have already been placed under the merged session:
+     - UI presents line item selector: Manager checks dishes belonging to Table 09.
+     - System migrates selected items into a new, independent `TableSession` for Table 09.
+     - **Preserve Kitchen History**: Unmerging NEVER re-fires tickets or duplicates KDS orders. All item preparation states (`Cooking`, `ReadyToServe`, `Served`) are strictly preserved.
+  3. If no dishes had been ordered: Table 09 detaches immediately back to `Available`.
+  4. Table 09 can now be independently billed, settled, and released without affecting Table 08.
+
+### 3.3. Operation C: Whole Room / Area Booking & Shared Room Lifecycle (PDR-013)
+- **Business Context**: A VIP customer books "VIP Suite 1" (which contains Table V1, Table V2, Table V3) for a private banquet, or multiple unrelated parties share tables in the same dining hall.
+- **Workflow & Rules**:
+  1. **Default State**: Tables inside a shared room function completely independently by default with their own guest sessions.
+  2. **Entire Room Booking ("Bao Trọn Phòng")**: Manager selects "VIP Suite 1" $\rightarrow$ **"Book Entire Room"**.
+     - System locks all child tables simultaneously (`Reserved` or `Occupied`) under the master booking.
+     - External walk-in seating is strictly blocked for all tables in that room.
+  3. **Release Lifecycle**: When the banquet concludes, individual tables within the room must have 100% of their bills settled and all ordered items served before being synchronously released to `CleaningNeeded` and subsequently `Available`.
 
 ---
 

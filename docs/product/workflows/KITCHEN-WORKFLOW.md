@@ -100,6 +100,22 @@ stateDiagram-v2
 
 ---
 
+### 3.5. Scenario 5: Remake Dish for Culinary Errors (PDR-015)
+- **Problem**: Dish rejected at table due to kitchen mistake (burnt, too salty, wrong allergy preparation).
+- **Workflow**:
+  1. Server submits Remake action with Manager PIN and reason code.
+  2. A dedicated high-priority **Purple Remake Card** surfaces at the head of the prep queue on the responsible KDS station.
+  3. Header displays: **"LÀM LẠI DO LỖI BẾP"** with prominent error detail (e.g., "Cháy khét - Đổi đĩa mới").
+  4. Dish is remade without customer surcharge; scrap is automatically recorded to the kitchen Waste Register.
+
+---
+
+### 3.6. Scenario 6: Direct FOH Service Bypass (PDR-012)
+- Canned beer, bottled soft drinks, and packaged items bypass the Bar KDS preparation queue completely.
+- FOH staff dispense directly from dining area chillers, preventing Bar KDS station clutter.
+
+---
+
 ## 4. Hardware Fallback: ESC/POS Thermal Kitchen Printing
 
 While SmartRestaurant prioritizes 100% digital, paperless KDS screens, physical restaurant reality requires resilient fallbacks:

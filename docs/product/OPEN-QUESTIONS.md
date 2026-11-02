@@ -36,14 +36,28 @@ To maintain high development velocity while safeguarding architectural integrity
 
 ---
 
-### OQ-03: Waste Attribution on Post-Fire Dish Cancellations
-- **Context**: If a customer cancels a dish after it has already entered `Cooking` or `ReadyToServe` status in the kitchen, the item is removed from the customer's payable bill.
-- **The Question**: How should the system account for the already consumed raw materials? Should the system:
-  - Option A: Automatically log the dish's recipe BOM into a `WasteRegister` as kitchen loss with a mandatory reason code?
-  - Option B: Prompt the manager whether the dish can be repurposed (e.g. sold to another table, eaten by staff) or must be written off as scrap?
-- **Why It Matters**: Directly impacts inventory variance and COGS (Cost of Goods Sold) accounting accuracy.
-- **Recommended Default**: **Option B (Prompt with Smart Default)**. Default to logging as Kitchen Scrap/Waste, with an optional checkbox: "Item can be repurposed / Re-allocated to other table".
-- **Status**: `OPEN QUESTION` (Awaiting Owner Confirmation)
+### OQ-03: Waste Attribution on Post-Fire Dish Cancellations & Remakes
+- **Context**: If a customer cancels a dish after entering `Cooking` status or if a dish is remade due to kitchen error.
+- **Resolution**: **RESOLVED in Task 02.6 (PDR-004 & PDR-015)**. Post-fire cancellations and remakes convert reserved stock to `WasteStock` in the `WasteLog` table with mandatory reason code and manager authorization. Customer bill is protected.
+- **Status**: `CONFIRMED`
+
+---
+
+### OQ-07: Handling Extreme Long-Duration Sessions (> 24 Hours Spanning Multiple Cutoffs)
+- **Context**: In rare cases (e.g., 24/7 airport branches, karaoke-restaurant hybrid, or staff forgetting to close an abandoned table session), a table session may remain open for more than 24 hours, spanning multiple consecutive `BusinessDate` cutoff boundaries.
+- **The Question**: When an order stays open across 2 or more cutoff triggers, should the system automatically alert managers to force-close or partition the bill, or should it silently retain the original `BusinessDate` until manual checkout?
+- **Recommended Default**: System retains original `BusinessDate` for accounting consistency, but flags the table with a high-visibility "Phiên bàn kéo dài > 24h" warning banner on the Manager dashboard to prompt operational audit.
+- **Status**: `OPEN QUESTION` (Under Operational Evaluation)
+
+---
+
+### OQ-08: Concurrency Strategy Selection for Shared Table Ordering
+- **Context**: Multiple waiters draft and fire orders on the same active table concurrently (PDR-014).
+- **The Question**: Which technical mechanism should the Solution Architect select in Stage 2 to achieve non-blocking order append, idempotency, and conflict detection?
+  - Option A: Event Sourcing / Delta Command Append.
+  - Option B: Atomic SQL Stored Procedure / Table Session Delta Transactions with RowVersion concurrency checks.
+  - Option C: Distributed In-Memory Command Queue (Redis / Channel-based background worker).
+- **Status**: `OPEN QUESTION` (Delegated to Stage 2 Solution Architecture)
 
 ---
 

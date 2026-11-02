@@ -1,7 +1,7 @@
 # Business Requirements Specification (BRS) — SmartRestaurant
 
 - **Document Version**: 1.0.0
-- **Document Status**: `PROPOSED`
+- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
 - **Related Documents**: [PRD.md](./PRD.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md), [DOMAIN-GLOSSARY.md](./DOMAIN-GLOSSARY.md)
 
 ---
@@ -141,6 +141,15 @@
 | **BR-RULE-05** | Discount Stacking | Item-level promotional discounts cannot stack with an order-level percentage voucher unless explicitly enabled in restaurant settings. | Configurable Policy |
 | **BR-RULE-06** | Checkout Lock | When a table enters `BillingRequested` status, server tablets cannot add additional dishes unless cashier unlocks the table back to `Occupied`. | Concurrency Guard |
 | **BR-RULE-07** | Shift Closure | A cashier cannot close their active shift if there are unpaid open bills initiated by that cashier's terminal. | Hard System Block |
+| **BR-RULE-08** | Business Date Shift | All orders and invoices created within an active shift belong to the shift's `BusinessDate` (configured per branch, default 06:00), preserving financial continuity across midnight. | Accounting Invariant |
+| **BR-RULE-09** | Two-Phase Inventory Lock | Firing an order reserves countable stock (`Tạm giữ`); kitchen completion or service converts to actual consumption (`Xuất kho`). Formula: `Available = Physical - Reserved`. Prevents overselling. | Inventory Integrity |
+| **BR-RULE-10** | VietQR Race Resolution | Switching payment to Cash invalidates the active QR token; late-arriving bank webhooks route to `Giao dịch treo đối soát` (Suspense Ledger) with immediate audio-visual alert for manual review. | Payment Safety |
+| **BR-RULE-11** | Multi-Bill Split Sessions | Tables undergoing Split Bill DO NOT freeze the table. Servers can continue adding new dishes to open sub-bills with explicit target assignment. Table releases only when 100% of sub-bills are paid and all items served. | Lifecycle Invariant |
+| **BR-RULE-12** | Table Unmerge with Item Reallocation | Joined tables can be unmerged at any time with line items reallocated to the detached table, preserving preparation states without re-firing kitchen tickets. | Operation Guard |
+| **BR-RULE-13** | Room & Area Surcharge Snapshot | VIP rooms and areas support percentage and flat fee surcharges snapshotted at bill creation; moving tables does not recalculate existing items retroactively. | Billing Transparency |
+| **BR-RULE-14** | Direct FOH Service Routing | Packaged drinks and direct grab items bypass Bar KDS preparation queues but remain fully bound to billing, revenue, and inventory controls. | Prep Efficiency |
+| **BR-RULE-15** | Kitchen Error Remake Dish | Dishes remade due to kitchen error incur no extra charge to the guest, generate high-priority KDS remake tickets, and log raw material loss to the Waste Register. | Quality & Accounting |
+| **BR-RULE-16** | Non-Blocking Concurrent Ordering | Multiple waiters can compose orders for the same table concurrently without table lockouts; system ensures append-only safety and detects item-level update conflicts. | Concurrency Rule |
 
 ---
 

@@ -78,6 +78,18 @@ flowchart TD
    $$\sum_{i=1}^{N} \text{SubBill}_i = \text{MasterTotal}$$
 4. The cashier collects payment for each portion sequentially until the master balance reaches zero.
 
+### 2.3. Operational Guard: Multi-Bill Sessions Without Table Freezing (PDR-009)
+- Splitting a bill distributes line items across multiple sub-bills without locking the table.
+- Waiters can continue adding dishes or firing rounds to the active table session. Newly added items must be explicitly assigned to an open, unpaid sub-bill (or a newly created sub-bill); the system never assigns items arbitrarily.
+- **Cancellation of Split**: Cashier can cancel the split and re-consolidate items only if NO sub-bill has incurred any payment.
+- **Table Release**: The physical table is released to `CleaningNeeded` only when 100% of sub-bills are settled (`Paid`) and all items have reached terminal service states (`Served` or cancelled with waste audit).
+
+### 2.4. Room & Area Surcharge Calculation (PDR-011)
+- When tables are in a private VIP room or specific area with configured surcharges:
+  - System applies configured percentage (% of subtotal) or flat fee as a distinct, transparent line item on provisional checks and invoices.
+  - Surcharge values are snapshotted at bill creation; transferring tables does not recalculate surcharges retroactively for previously ordered items.
+- Note on Corporate Accounts: Full corporate credit/receivables (Ký nợ / Công nợ B2B) is deferred to v1.2+; MVP enforces complete settlement via Cash, Card, or VietQR.
+
 ---
 
 ## 3. Shift Management & Cash Drawer Balancing Workflow
@@ -114,6 +126,6 @@ stateDiagram-v2
 | Exception Scenario | Risk Description | System Resolution & Safeguards |
 | :--- | :--- | :--- |
 | **Concurrent Settlement & Item Fire**: Cashier processes checkout while a server tries to fire another round of desserts from Table 04. | Unpaid items left on the table after checkout. | **Checkout State Lock**: When the cashier opens the payment modal, Table 04 enters `BillingRequested` status. The POS blocks servers from firing new items. If guests demand more food, the cashier must cancel the payment modal, reverting the table to `Occupied`. |
-| **Double QR Payment**: Guest scans the QR code twice or two guests scan the same table QR code simultaneously. | Customer double-charged for a single meal. | **Idempotent Payment Token**: Each VietQR code embeds an immutable payment reference token. If the bank webhook detects a duplicate transfer for an already closed invoice reference, the funds are flagged into an `UnallocatedCustomerDeposit` account and an urgent alert prompts the cashier to issue an immediate cash refund. |
+| **Double QR / Delayed Webhook (PDR-008)**: Customer pays Cash because QR timed out, then bank webhook arrives 3 minutes later. | Customer double-charged (Cash + Bank Transfer). | **Suspense Ledger & Anti-Duplicate Match**: Switching tender to Cash cancels the active QR token. When the late webhook arrives, funds route to a "Giao dịch treo đối soát" (Suspense Queue) with instant alerts to Cashier and Manager. Bank transaction ID and payment ref prevent duplicate crediting. No automatic unverified refunds; governed manual reconciliation workflow applies. |
 | **Partial Tender Failure**: Guest pays 500k Cash, but their credit card is declined for the remaining 700k balance. | Incomplete transaction state. | **Multi-Tender Ledger**: Cashier records 500,000 VND Cash as confirmed. Outstanding balance reflects 700,000 VND. The invoice remains open (`PartiallyPaid`). The guest can provide an alternate card or switch to VietQR transfer to settle the remaining balance. The initial 500,000 VND remains locked in the cash ledger. |
 | **Invoice Void After Settlement**: Cashier accidentally bills Table 04 instead of Table 05 and notices the mistake after closing the check. | Corrupted sales and tax reports. | **Supervisor Void & Re-Open**: A cashier cannot void a paid invoice. Only the Restaurant Manager (via PIN override) can void a completed transaction. Voiding reverses the accounting entry, logs the supervisor's ID, logs the reason, re-opens the original table session, and prints a formal Void Credit Slip. |

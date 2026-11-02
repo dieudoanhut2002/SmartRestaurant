@@ -1,7 +1,7 @@
 # Product Requirements Document (PRD) — SmartRestaurant
 
 - **Document Version**: 1.0.0
-- **Document Status**: `PROPOSED`
+- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
 - **Owner**: Senior Product Architect & Business Analyst
 - **Target Release**: SmartRestaurant v1.0 (MVP)
 
@@ -107,7 +107,9 @@ flowchart LR
 ### 4.2. Out-of-Scope for Initial MVP (Deferred to v1.1+)
 - Public customer self-ordering via table QR codes (Phase 2).
 - Direct third-party food delivery aggregator integrations (GrabFood, ShopeeFood).
-- Centralized inter-branch warehouse inventory transfer logistics.
+- Centralized inter-branch warehouse inventory transfer logistics and commissary purchase routing (MVP supports multi-branch independent operations under one organization).
+- Detailed raw ingredient recipe BOM formulation (gram, ml) and deep kitchen ingredient deduction (deferred to v1.1; MVP tracks direct countable saleable items).
+- Corporate customer credit account management (Ký nợ / Công nợ B2B) and AR aging ledgers (deferred to v1.1+).
 - Customer loyalty point accrual and automated SMS/marketing campaigns.
 - Biometric (fingerprint) staff authentication.
 

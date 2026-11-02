@@ -81,3 +81,35 @@ This file tracks the formal architectural and technical decisions made for **Sma
   - Eliminates operational training friction for restaurant staff.
   - Aligns with Vietnamese commercial and tax receipt standards.
   - Requires UTF-8 character encoding support across thermal printers and canvas typography.
+
+---
+
+### ADR-008: Business Date Partitioning for Overnight Shift Financial Accounting
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Hospitality operations frequently cross midnight (00:00). Grouping sales by calendar date splits overnight shifts and causes accounting discrepancies.
+- **Decision**: Introduce `BusinessDate` (Ngày Kinh Doanh) as an invariant property across `ShiftSession`, `DiningSession`, `Order`, and `Invoice`. All orders in a shift inherit the shift's `BusinessDate` until the shift is formally closed.
+- **Consequences**:
+  - Financial consistency and exact cash reconciliation for overnight operations.
+  - Requires database queries for daily revenue to filter by `BusinessDate` rather than simple UTC date.
+
+---
+
+### ADR-009: Two-Phase Inventory Lock with Phased BOM Rollout
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Deducting inventory only when a dish is ready causes overselling of limited dishes during cooking. Furthermore, complex gram/ml BOM setup risks delaying the MVP launch.
+- **Decision**: In MVP v1.0, manage inventory directly at the portion/item level. Implement a Two-Phase Inventory Lock: Reserve stock (`Tạm giữ`) when the order is fired, and permanently deduct (`Xuất kho`) when marked `ReadyToServe`. Defer sub-gram raw material BOM to v1.1.
+- **Consequences**:
+  - Eliminates overselling during peak hours.
+  - Reduces MVP setup complexity while maintaining operational inventory control.
+
+---
+
+### ADR-010: Resolution of Delayed VietQR Webhooks Following Cash Settlement
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-02
+- **Context**: Delayed bank webhooks arriving after a customer pays cash create duplicate payment accounting conflicts.
+- **Decision**: Invalidate the dynamic QR reference when an invoice is settled via Cash. Route late-arriving bank webhook funds into an `UnallocatedCustomerDeposit` account and trigger an immediate audio-visual alert on the cashier screen to issue a cash refund.
+- **Consequences**:
+  - Prevents untracked revenue discrepancies and preserves cashier drawer auditability.

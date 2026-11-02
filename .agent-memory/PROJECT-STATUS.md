@@ -10,8 +10,8 @@
 
 | Stage | Name | Status | Deliverables |
 | :--- | :--- | :--- | :--- |
-| **Stage 1** | Product Requirements & Business Domain Analysis | **COMPLETED (Pending Sign-off)** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDRs |
-| **Stage 2** | System Architecture & Technical Design | `PENDING` | System Architecture, ERD, SignalR Specs |
+| **Stage 1** | Product Requirements & Business Domain Analysis | **COMPLETED & SIGNED OFF** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001 to PDR-015 |
+| **Stage 2** | System Architecture & Technical Design | `READY TO START` | System Architecture, ERD, SignalR Specs, Concurrency Strategy |
 | **Stage 3** | Detailed Module Specifications & Data Models | `PENDING` | Module Specs, DTOs, Business Rules |
 | **Stage 4** | Implementation & Milestone Planning | `PENDING` | Work Breakdown Structure (WBS), Sprints |
 | **Stage 5** | Iterative Implementation by Approved Milestone | `PENDING` | Solution Scaffolding, Core Code |
@@ -36,20 +36,32 @@
   - [4 Detailed Workflows (Floor, Order, Kitchen, Cashier)](../docs/product/workflows/)
   - [Product Non-Functional Requirements](../docs/product/NON-FUNCTIONAL-REQUIREMENTS.md)
   - [6 Product Decision Records (PDR-001 to PDR-006)](../docs/product/decisions/)
-- [ ] **Milestone 1.3**: Owner Review, Feedback Reconciliation & Stage 1 Sign-off.
+- [x] **Milestone 1.2.5 (Task 02.5)**: Independent Product Review & Critical Business Validation ([PRODUCT-REVIEW-REPORT.md](../docs/product/PRODUCT-REVIEW-REPORT.md), [PRODUCT-REVIEW-VALIDATION.md](../docs/product/PRODUCT-REVIEW-VALIDATION.md)).
+- [x] **Milestone 1.3 (Task 02.6)**: Owner Review, Critical Decisions Reconciliation & Formal Stage 1 Sign-off.
 
 ---
 
-## 3. Approved & Proposed Decisions
+## 3. Approved Decisions Matrix (Task 02.6 Sign-off)
 
 - **CONFIRMED**: Modular Monolith architectural pattern (`ADR-001` / `PDR-001`).
 - **CONFIRMED**: ASP.NET Core Web API + Razor MVC Admin + EF Core + SQL Server + SignalR (`ADR-002`, `ADR-003`).
 - **CONFIRMED**: Konva.js for interactive 2D floor plan visual designer (`ADR-004`).
-- **CONFIRMED**: 100% Vietnamese language presentation layer across all UI terminals (`PDR-006`).
-- **PROPOSED**: Hierarchical Area $\rightarrow$ Room $\rightarrow$ Table spatial layout model (`PDR-002`).
-- **PROPOSED**: Dynamic station routing with Master Expediter display at kitchen pass (`PDR-003`).
-- **PROPOSED**: Recipe BOM inventory deduction on dish readiness (`ReadyToServe`) (`PDR-004`).
-- **PROPOSED**: Two-tier bill splitting (By items & Evenly) + Multi-tender payments (`PDR-005`).
+- **CONFIRMED**: 100% Vietnamese language presentation layer across all UI terminals (`PDR-006` / `ADR-007`).
+- **CONFIRMED**: Hierarchical Area $\rightarrow$ Room $\rightarrow$ Table spatial layout model (`PDR-002`).
+- **CONFIRMED**: Dynamic station routing with Master Expediter display at kitchen pass (`PDR-003`).
+- **CONFIRMED**: Two-Phase Inventory Lock (`Available = Physical - Reserved`) & Countable Items in MVP (`PDR-004`).
+- **CONFIRMED**: Two-tier bill splitting + Multi-tender payments (`PDR-005`).
+- **CONFIRMED**: Configurable Business Date (Cutoff default 06:00) for overnight shifts (`PDR-007`).
+- **CONFIRMED**: VietQR Delayed Webhook handling via Suspense Queue & cashier alert (`PDR-008`).
+- **CONFIRMED**: Multi-Bill per Table Session (Split Bill without table freeze) (`PDR-009`).
+- **CONFIRMED**: Table Unmerge with line item reallocation without ticket regeneration (`PDR-010`).
+- **CONFIRMED**: Area and VIP Room Surcharges (% and flat fee) with rate snapshot (`PDR-011`).
+- **CONFIRMED**: Direct FOH Service Routing bypassing Bar KDS (`PDR-012`).
+- **CONFIRMED**: Independent Shared Room Tables & Entire Room Booking locks (`PDR-013`).
+- **CONFIRMED**: Non-blocking Concurrent Table Ordering business rules (`PDR-014`).
+- **CONFIRMED**: Kitchen Remake Dish workflow with bill protection & waste logging (`PDR-015`).
+- **CONFIRMED**: Multi-branch operational independence under single organization in MVP (`CONTR-01`).
+- **DEFERRED**: Corporate Customer Credit Account / Ký nợ (`REV-07`) deferred to v1.2+ as dedicated B2B AR module.
 
 ---
 

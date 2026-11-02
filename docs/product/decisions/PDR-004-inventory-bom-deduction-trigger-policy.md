@@ -1,49 +1,47 @@
-# Product Decision Record: PDR-004 — Inventory Recipe BOM Deduction Trigger Policy
+# Product Decision Record: PDR-004 — Two-Phase Inventory Lock & Phased BOM Deduction Policy
 
 - **Decision ID**: PDR-004
-- **Title**: Timing Policy for Raw Ingredient Inventory Deduction (BOM)
-- **Status**: `PROPOSED` (Pending User Approval)
+- **Title**: Two-Phase Inventory Lock (Khóa tồn kho 2 bước) and Phased BOM Rollout
+- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
 - **Date**: 2026-11-02
 - **Author**: Senior Product Architect & Business Analyst
 
 ---
 
 ## 1. Context
-Restaurants track raw materials using Recipe Bill of Materials (BOM). When a customer orders a dish, its raw ingredients must be deducted from the inventory balance. The fundamental question is: **At what exact point in the order lifecycle should raw materials be deducted from stock?**
+In restaurant dining, delay occurs between order taking, kitchen prep, serving, and checkout. Deducting inventory only upon settlement causes overselling during peak hours for limited items (e.g., roasted duck, steaks, imported beer). Conversely, immediate deduction without reservation causes inventory drift when kitchen cannot fulfill or dishes are cancelled legitimately.
 
 ---
 
-## 2. Options Considered
+## 2. Decision & Operational Rules (Approved by Project Owner)
 
-### Option A: Immediate Deduction on Waiter Order Firing
-- Deduct stock immediately when the server taps "Fire to Kitchen".
-- *Pros*: Simple to implement; immediate stock availability reflection.
-- *Cons*: High error rate if an order is cancelled or modified before cooking begins. If cancelled, inventory must be reverse-engineered and re-credited, leading to phantom stock discrepancies and inaccurate waste tracking.
+### 2.1. Phased Scope Boundary:
+1. **v1.0 (MVP Scope)**:
+   - Tracks **Direct Saleable / Countable Items**: Packaged drinks (bottled/canned beer, soft drinks, wine), prepared desserts, and discrete portion-based dishes.
+   - Defer raw ingredient sub-gram recipe breakdown (BOM: gram of beef, ml of fish sauce) to **v1.1**.
+   - Modular architecture must expose clean domain interfaces (`IInventoryDeductionEngine`) to allow plug-and-play activation of detailed BOM in v1.1 without structural refactoring.
 
-### Option B: Deduction on Cashier Bill Settlement
-- Deduct stock only when the guest pays their bill at checkout.
-- *Pros*: Only paid food is accounted for.
-- *Cons*: Fails completely to account for food consumed during long dining sessions; completely ignores food cooked but voided/wasted due to guest walkouts or kitchen errors.
+### 2.2. Standard Inventory State Transitions & Formula:
+$$\text{AvailableStock (Tồn khả dụng)} = \text{PhysicalStock (Tồn thực tế)} - \text{ReservedStock (Tồn tạm giữ)}$$
 
-### Option C: Deduction on Kitchen Readiness (`ReadyToServe`) with Scrap Attribution (Recommended)
-- Raw ingredient deduction triggers at the moment the kitchen station marks the dish `ReadyToServe` (or upon entering `Cooking` state).
-- If an item is cancelled while in `Pending` (before cooking starts), zero stock is deducted and no waste occurs.
-- If an item is cancelled after entering `Cooking` or `ReadyToServe`, the raw materials remain deducted and are automatically logged into the `WasteLog` table as scrap loss.
-- *Pros*: Reflects physical culinary reality with 100% accuracy; accurately captures Cost of Goods Sold (COGS) vs Operational Spoilage/Waste.
-- *Cons*: Requires tight coupling between KDS status transitions and the inventory engine.
+1. **Step 1 — Tạm Giữ (Reserve on Order Confirmation / Fire)**:
+   - When an order line is confirmed or fired to kitchen/bar, the required quantity is allocated to `ReservedStock`.
+   - When `AvailableStock <= 0`, system immediately triggers an out-of-stock notification and locks the item against new orders across all POS/waiter tablets.
+2. **Step 2 — Tiêu Thụ Thực Tế (Consume on Prep / Serve)**:
+   - When dish is marked as prepared or served (per station policy), reserved stock converts permanently to `ConsumedStock`:
+     $$\text{PhysicalStock} \leftarrow \text{PhysicalStock} - \text{Quantity}$$
+     $$\text{ReservedStock} \leftarrow \text{ReservedStock} - \text{Quantity}$$
+3. **Step 3 — Hủy Món Hợp Lệ (Legitimate Cancellation)**:
+   - When cancelled before preparation: System releases `ReservedStock` back to `AvailableStock`. No waste recorded.
+4. **Step 4 — Hao Hụt / Hủy Bỏ (Waste & Spoilage)**:
+   - When dish is cancelled after preparation has begun (spoiled, dropped, customer left): `ReservedStock` converts to `WasteStock` in the `WasteLog` table with reason code and manager authorization.
 
----
-
-## 3. Recommendation & Decision
-**Adopt Option C (Deduction on Kitchen Readiness with Scrap Attribution)**.
-
----
-
-## 4. Consequences
-- **Positive**: Eliminates phantom inventory counts; provides accurate operational loss reporting; gives owners actionable insight into kitchen waste causes.
-- **Negative**: Cooks must reliably acknowledge dishes on the KDS screen to keep inventory synchronized.
+### 2.3. Concurrency & Idempotency Safeguards:
+- **Preventing Negative Stock**: Concurrency control must ensure that parallel orders for the last remaining portions cannot cause negative available stock.
+- **Idempotent Retry**: Network retry or re-submitting an order request must not execute duplicate stock reservations or double-deductions.
 
 ---
 
-## 5. Questions & Assumptions
-- *Question*: `OQ-03` asks whether cancelled dishes can occasionally be repurposed by managers rather than written off as pure scrap.
+## 3. Consequences
+- **Positive**: Eliminates overselling; clear audit trail of physical, reserved, consumed, and spoiled inventory; keeps MVP deployment fast and manageable.
+- **Negative**: Deep raw ingredient COGS reporting deferred to v1.1.
