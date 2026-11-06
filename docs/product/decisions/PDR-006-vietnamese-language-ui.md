@@ -37,7 +37,7 @@ Toàn bộ các bề mặt tương tác người dùng trên tất cả các ứ
    - Hộp thoại thông báo SweetAlert2, thông điệp lỗi, thông báo xác thực biểu mẫu và chuông báo âm thanh hình ảnh.
 
 ### 2.2. Ranh Giới Kỹ Thuật & Mã Nguồn Phần Mềm:
-- Các tài liệu kỹ thuật, kiến trúc hệ thống, tên lớp (class) C#, tên cột trong cơ sở dữ liệu và chú thích mã nguồn nội bộ vẫn giữ bằng **tiếng Anh** (theo quy định tại [GEMINI.md](../../GEMINI.md)) nhằm tuân thủ chuẩn mực kỹ nghệ phần mềm và quy ước mã sạch.
+- Các tài liệu kỹ thuật, kiến trúc hệ thống, tên lớp (class) C#, tên cột trong cơ sở dữ liệu và chú thích mã nguồn nội bộ vẫn giữ bằng **tiếng Anh** (theo quy định tại [GEMINI.md](../../../GEMINI.md)) nhằm tuân thủ chuẩn mực kỹ nghệ phần mềm và quy ước mã sạch.
 - Toàn bộ chuỗi ký tự hiển thị phía người dùng phải được quản lý tập trung và khoa học trong các tệp tài nguyên bản địa hóa (`.resx`) hoặc từ điển chuỗi giao diện chuyên dụng, nghiêm cấm gán cứng (hardcode) chuỗi giao diện trực tiếp vào logic nghiệp vụ C#.
 
 ---

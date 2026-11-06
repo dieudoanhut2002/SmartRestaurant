@@ -15,7 +15,21 @@ Chào mừng bạn đến với mục lục tài liệu tập trung của dự �
 
 ## 2. Khám Phá Sản Phẩm & Đặc Tả Nghiệp Vụ (Giai Đoạn 1 - Stage 1)
 
-### 2.1. Bộ Tài Liệu Đặc Tả Sản Phẩm Chính (Master Product Specifications)
+### 2.1. Bộ Hồ Sơ Cơ Sở Đặc Tả Sản Phẩm Chính Thức (Product Specification Baseline Suite — v1.0.0-FROZEN)
+| Tài liệu | Tiêu đề | Trạng thái | Mô tả |
+| :--- | :--- | :--- | :--- |
+| **[docs/product/PRODUCT-SPECIFICATION-BASELINE.md](./product/PRODUCT-SPECIFICATION-BASELINE.md)** | Hồ Sơ Cơ Sở Đặc Tả Sản Phẩm Chính Thức (Master Baseline) | `CONFIRMED & SEALED` | Điểm quy chiếu trung tâm, tuyên ngôn niêm phong v1.0.0-FROZEN, quản trị thay đổi (CR) và mục lục cơ sở. |
+| **[docs/product/MVP-SCOPE-BASELINE.md](./product/MVP-SCOPE-BASELINE.md)** | Cơ Sở Phạm Vi MVP & Lộ Trình Phát Hành | `CONFIRMED & SEALED` | Phạm vi MVP Core (10 phân hệ), MVP Optional (4 phân hệ), phân kỳ Post-MVP (v1.1, v1.2+, v2.0) và loại trừ phạm vi. |
+| **[docs/product/BUSINESS-REQUIREMENTS-BASELINE.md](./product/BUSINESS-REQUIREMENTS-BASELINE.md)** | Cơ Sở Yêu Cầu Nghiệp Vụ Thống Nhất | `CONFIRMED & SEALED` | Danh mục 56 yêu cầu nghiệp vụ chi tiết thuộc 11 miền chức năng, có mã định danh và nguồn gốc rõ ràng. |
+| **[docs/product/BUSINESS-RULES-BASELINE.md](./product/BUSINESS-RULES-BASELINE.md)** | Cơ Sở Quy Tắc Nghiệp Vụ & Bất Biến Vận Hành | `CONFIRMED & SEALED` | Bộ 18 quy tắc nghiệp vụ bất biến (`BR-RULE-01..18`), 15 bất biến cốt lõi (`INV-01..15`) và kết quả kiểm toán 6 miền. |
+| **[docs/product/MODULE-CAPABILITY-BASELINE.md](./product/MODULE-CAPABILITY-BASELINE.md)** | Cơ Sở Phân Hệ & Bản Đồ Năng Lực Nghiệp Vụ | `CONFIRMED & SEALED` | Ranh giới 14 phân hệ, bản đồ 14 năng lực nghiệp vụ (Capability Map), phụ thuộc 1 chiều và Graceful Drain (`OD-17`). |
+| **[docs/product/REQUIREMENT-TRACEABILITY-MATRIX.md](./product/REQUIREMENT-TRACEABILITY-MATRIX.md)** | Ma Trận Truy Xuất Nguồn Gốc Yêu Cầu Hai Chiều | `CONFIRMED & SEALED` | Ma trận truy xuất nguồn gốc 12 cột, ánh xạ từ Nhu cầu $\rightarrow$ Yêu cầu $\rightarrow$ Quy tắc $\rightarrow$ PDR $\rightarrow$ Kiến trúc Stage 2. |
+| **[docs/product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md](./product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md)** | Sổ Đăng Ký Câu Hỏi Mở & Yêu Cầu Hoãn | `CONFIRMED & SEALED` | Sổ quản lý vòng đời toàn bộ quyết định (`OD-14..17`), câu hỏi đã chốt (`OQ-01..07`), yêu cầu hoãn và chủ đề Stage 2. |
+| **[docs/product/STAGE-2-PRODUCT-HANDOFF.md](./product/STAGE-2-PRODUCT-HANDOFF.md)** | Hồ Sơ Bàn Giao Thiết Kế Kỹ Thuật Giai Đoạn 2 | `CONFIRMED & SEALED` | Hồ sơ bàn giao Solution Architect: Bối cảnh nghiệp vụ, NFRs, ràng buộc bất biến và 13 chủ đề kỹ thuật điều tra. |
+| **[docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](./product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md)** | Báo Cáo Thực Hiện Hợp Nhất Cơ Sở Đặc Tả (Task 02.9) | `CONFIRMED & SEALED` | Báo cáo kiểm toán, đối soát Git baseline, kiểm toán nhất quán quy tắc và xác nhận mở khóa Cổng Stage 2. |
+| **[docs/product/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](./product/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md)** | Báo Cáo Kiểm Toán Độc Lập Cơ Sở Đặc Tả Sản Phẩm (Task 02.9.1) | `CONFIRMED & AUDITED` | Kiểm toán độc lập 100% (10 tiêu chí), thẩm định tính truy vết, bảo toàn D1-D5, NFRs, và xác nhận 4 trạng thái quản trị. |
+
+### 2.2. Bộ Tài Liệu Đặc Tả Sản Phẩm Thành Phần (Component Product Specifications)
 | Tài liệu | Tiêu đề | Trạng thái | Mô tả |
 | :--- | :--- | :--- | :--- |
 | **[docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md](./product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md)** | Báo Cáo Kiểm Toán Tổng Thể Tính Truy Vết Quản Trị & Ranh Giới Phê Duyệt | `CONFIRMED` | Kiểm toán tuân thủ toàn diện Stage 1, danh mục 10 điểm kiểm soát người gác cổng, và ranh giới chuyển tiếp Stage 2. |
@@ -27,7 +41,7 @@ Chào mừng bạn đến với mục lục tài liệu tập trung của dự �
 | **[docs/product/MVP-SCOPE.md](./product/MVP-SCOPE.md)** | Phạm Vi MVP & Lộ Trình Phát Hành | `CONFIRMED` | Ma trận ưu tiên tính năng MoSCoW, các loại trừ phạm vi rõ ràng và các mốc phát hành phiên bản. |
 | **[docs/product/DOMAIN-GLOSSARY.md](./product/DOMAIN-GLOSSARY.md)** | Thuật Ngữ Miền Phổ Quát (Ubiquitous Glossary) | `CONFIRMED` | Bảng từ vựng vận hành chuẩn mực song ngữ Anh - Việt cho toàn bộ hệ thống. |
 | **[docs/product/USER-JOURNEYS.md](./product/USER-JOURNEYS.md)** | Hành Trình Người Dùng Toàn Diện (User Journeys) | `CONFIRMED` | 10 hành trình khép kín của các đối tượng tác nhân bao quát toàn bộ hoạt động hàng ngày của nhà hàng. |
-| **[docs/product/OPEN-QUESTIONS.md](./product/OPEN-QUESTIONS.md)** | Danh Mục Câu Hỏi Mở & Nhật Ký Quyết Định | `OPEN` | Phân tích quyết định Cấp 1 (Chặn MVP) và Cấp 2 (Sau MVP). |
+| **[docs/product/OPEN-QUESTIONS.md](./product/OPEN-QUESTIONS.md)** | Danh Mục Câu Hỏi Mở & Nhật Ký Quyết Định | `RESOLVED & CONSOLIDATED` | Toàn bộ câu hỏi mở MVP đã được Chủ Dự Án giải quyết và phê chuẩn chính thức. |
 | **[docs/product/MODULE-OVERVIEW.md](./product/MODULE-OVERVIEW.md)** | Tổng Quan & Ranh Giới Các Module Nghiệp Vụ | `CONFIRMED` | Ranh giới 14 module nghiệp vụ cốt lõi, thực thể dữ liệu và quan hệ phụ thuộc. |
 | **[docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](./product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md)** | Phân Tích Cấu Hình Module & Quản Lý Tính Năng Nghiệp Vụ | `CONFIRMED` | Phân tầng phạm vi cấu hình 7 cấp, danh mục tham số tổng thể (14 module), ma trận tính năng và quy tắc kiểm toán. |
 | **[docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](./product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md)** | Báo Cáo Đối Soát & Kiểm Toán Quản Trị Module | `CONFIRMED` | Kiểm toán nhất quán chéo, xác minh hạ cấp vận hành êm dịu và đối soát phạm vi MVP đơn điểm. |
@@ -36,9 +50,14 @@ Chào mừng bạn đến với mục lục tài liệu tập trung của dự �
 | **[docs/product/TASK-02.8.2.2-CONTROLLED-GOVERNANCE-CORRECTIONS-REPORT.md](./product/TASK-02.8.2.2-CONTROLLED-GOVERNANCE-CORRECTIONS-REPORT.md)** | Báo Cáo Hiệu Chỉnh Quản Trị Có Kiểm Soát | `CONFIRMED` | Báo cáo thực hiện các hiệu chỉnh từ COR-01 đến COR-06 giải quyết dứt điểm các sai lệch quản trị. |
 | **[docs/product/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md](./product/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md)** | Báo Cáo Kiểm Toán Độc Lập Sau Hiệu Chỉnh | `CONFIRMED` | Kiểm toán độc lập 100% từ AUDIT-01 đến AUDIT-10 chứng nhận niêm phong quản trị Stage 1. |
 | **[docs/product/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md](./product/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md)** | Báo Cáo Việt Hóa Toàn Diện Tài Liệu Sản Phẩm (Task 02.8.3) | `CONFIRMED` | Báo cáo kiểm toán, đối soát và hoàn tất Việt hóa có kiểm soát toàn bộ tài liệu Markdown Stage 1. |
+| **[docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](./product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md)** | Báo Cáo Kiểm Tra Độc Lập Chất Lượng Việt Hóa Tài Liệu (Task 02.8.4) | `CONFIRMED` | Thẩm định chất lượng độc lập 8 tiêu chí kiểm toán, bảo toàn 100% ý nghĩa nghiệp vụ và ranh giới quản trị Stage 1. |
+| **[docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](./product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)** | Biên Bản Hợp Nhất Quyết Định Của Chủ Dự Án (Task 02.8.5) | `CONFIRMED` | Biểu quyết chính thức chốt 100% các quyết định mở (OD-14..17, OQ-01..07) và phê chuẩn Cơ cấu 14 Phân hệ. |
+| **[docs/product/OWNER-DECISION-WORKSHOP.md](./product/OWNER-DECISION-WORKSHOP.md)** | Hồ Sơ Quyết Định Sản Phẩm Cho Chủ Dự Án (Workshop Dossier) | `CONFIRMED` | Bộ hồ sơ 8 quyết định mở (OD-14..17, OQ-01..07) kèm phiếu biểu quyết đã được Chủ Dự Án phê chuẩn chính thức. |
+| **[docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](./product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)** | Báo Cáo Triển Khai Quyết Định Của Chủ Dự Án Vào Tài Liệu Sản Phẩm (Task 02.8.6) | `CONFIRMED` | Triển khai chính thức quyết định của Chủ Dự Án vào hồ sơ quyết định và đồng bộ hóa có kiểm soát toàn bộ tài liệu đặc tả Stage 1. |
+| **[docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](./product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md)** | Hồ Sơ Hợp Nhất Cơ Sở Đặc Tả Sản Phẩm Chính Thức (Task 02.9) | `CONFIRMED & SEALED` | Tài liệu cơ sở đặc tả sản phẩm Giai đoạn 1 niêm phong chính thức (v1.0.0-FROZEN); hợp nhất 14 phân hệ, 18 quy tắc, 15 bất biến, ma trận truy vết và mở khóa Cổng Stage 2. |
 | **[docs/product/NON-FUNCTIONAL-REQUIREMENTS.md](./product/NON-FUNCTIONAL-REQUIREMENTS.md)** | Yêu Cầu Phi Chức Năng (NFR) | `CONFIRMED` | Bảo mật, cô lập dữ liệu, chỉ tiêu hiệu năng và quy tắc xử lý đồng thời. |
 
-### 2.2. Các Quy Trình Vận Hành Trọng Yếu (Operational Workflows)
+### 2.3. Các Quy Trình Vận Hành Trọng Yếu (Operational Workflows)
 | Tài liệu | Tiêu đề | Trạng thái | Phạm vi |
 | :--- | :--- | :--- | :--- |
 | **[docs/product/workflows/FLOOR-PLAN-WORKFLOW.md](./product/workflows/FLOOR-PLAN-WORKFLOW.md)** | Quy Trình Quản Lý Sơ Đồ Mặt Bằng & Bàn Ăn | `CONFIRMED` | Trạng thái bàn, sơ đồ Konva.js, chuyển bàn, gộp bàn, hủy gộp bàn, và đặt bao trọn phòng VIP. |
@@ -46,7 +65,7 @@ Chào mừng bạn đến với mục lục tài liệu tập trung của dự �
 | **[docs/product/workflows/KITCHEN-WORKFLOW.md](./product/workflows/KITCHEN-WORKFLOW.md)** | Quy Trình Vận Hành Bếp & Màn Hình KDS | `CONFIRMED` | Điều phối đa trạm, thẻ KDS, đồng hồ SLA, phiếu làm lại món, và nhịp độ bàn ra món expediter. |
 | **[docs/product/workflows/CASHIER-PAYMENT-WORKFLOW.md](./product/workflows/CASHIER-PAYMENT-WORKFLOW.md)** | Quy Trình Thu Ngân, Tính Tiền & Thanh Toán | `CONFIRMED` | Tách hóa đơn không khóa bàn, VietQR đến muộn và sổ treo đối soát, báo cáo chốt ca Z-Report. |
 
-### 2.3. Biên Bản Quyết Định Sản Phẩm (PDRs)
+### 2.4. Biên Bản Quyết Định Sản Phẩm (PDRs)
 | Mã Quyết Định | Tài liệu | Trạng thái | Tóm tắt |
 | :--- | :--- | :--- | :--- |
 | **PDR-001** | [docs/product/decisions/PDR-001-modular-monolith-deployment-model.md](./product/decisions/PDR-001-modular-monolith-deployment-model.md) | `CONFIRMED` | Mô hình triển khai Modular Monolith với phân vùng dữ liệu đa tenant/chi nhánh từ đầu. |

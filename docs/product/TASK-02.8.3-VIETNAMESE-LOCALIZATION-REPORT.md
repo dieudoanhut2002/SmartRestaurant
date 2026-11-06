@@ -11,20 +11,20 @@
 
 ## 1. Tổng Số File Markdown Được Kiểm Kê
 
-Toàn bộ kho lưu trữ dự án SmartRestaurant chứa tổng cộng **48 tệp Markdown (`.md`)**, được phân loại và kiểm kê thành 2 nhóm chính:
+Toàn bộ kho lưu trữ dự án SmartRestaurant chứa tổng cộng **49 tệp Markdown (`.md`)** (chưa bao gồm báo cáo này), được phân loại và kiểm kê thành 2 nhóm chính:
 
 ```mermaid
-pie title Phân Bổ Kiểm Kê Tệp Markdown (48 Files)
-    "Tài liệu sản phẩm đã Việt hóa trong Task 02.8.3" : 31
+pie title Phân Bổ Kiểm Kê Tệp Markdown (50 Files)
+    "Tài liệu sản phẩm đã Việt hóa trong Task 02.8.3" : 32
     "Tài liệu sản phẩm đã là Tiếng Việt / Từ điển chuẩn" : 7
     "Báo cáo kết quả Việt hóa (Tệp này)" : 1
-    "Tệp ngoài phạm vi (Out-of-Scope: Gốc & Memory)" : 9
+    "Tệp ngoài phạm vi (Out-of-Scope: Gốc & Memory)" : 10
 ```
 
-- **Tổng số tệp Markdown trong kho lưu trữ**: 49 tệp (bao gồm cả báo cáo này).
-- **Tệp thuộc diện Ngoài phạm vi (Out-of-Scope - Nghiêm cấm sửa đổi)**: 9 tệp.
-- **Tệp thuộc diện Trong phạm vi Tài liệu Sản phẩm (In-Scope Docs)**: 39 tệp (bao gồm cả báo cáo này).
-  - *Đã thực hiện Việt hóa trực tiếp (In-Place)*: 31 tệp.
+- **Tổng số tệp Markdown trong kho lưu trữ**: 50 tệp (bao gồm cả báo cáo này).
+- **Tệp thuộc diện Ngoài phạm vi (Out-of-Scope - Nghiêm cấm sửa đổi)**: 10 tệp (gồm `GEMINI.md`, `AGENTS.md`, `README.md`, và 7 tệp trong `.agent-memory/`).
+- **Tệp thuộc diện Trong phạm vi Tài liệu Sản phẩm (In-Scope Docs)**: 40 tệp (bao gồm cả báo cáo này).
+  - *Đã thực hiện Việt hóa trực tiếp (In-Place)*: 32 tệp (gồm 17 tài liệu chung/workflow và 15 tài liệu PDR-001..015).
   - *Đã là tiếng Việt trước Task 02.8.3 hoặc là từ điển song ngữ chuẩn*: 7 tệp.
   - *Báo cáo tổng kết bàn giao Task 02.8.3 (tệp này)*: 1 tệp.
 - **Tệp không thể dịch (Unlocalizable)**: **0 tệp**.
@@ -33,7 +33,7 @@ pie title Phân Bổ Kiểm Kê Tệp Markdown (48 Files)
 
 ## 2. Danh Sách File Đã Việt Hóa Trong Task 02.8.3
 
-Toàn bộ 31 tệp dưới đây đã được chuyển ngữ trực tiếp tại chỗ (in-place) sang tiếng Việt chuyên nghiệp, tự nhiên theo đúng thuật ngữ ngành F&B, đồng thời bảo toàn nguyên vẹn định dạng, sơ đồ Mermaid, công thức toán học và các mã định danh kỹ thuật:
+Toàn bộ 32 tệp dưới đây đã được chuyển ngữ trực tiếp tại chỗ (in-place) sang tiếng Việt chuyên nghiệp, tự nhiên theo đúng thuật ngữ ngành F&B, đồng thời bảo toàn nguyên vẹn định dạng, sơ đồ Mermaid, công thức toán học và các mã định danh kỹ thuật:
 
 | STT | Đường dẫn tệp | Tiêu đề tài liệu sau Việt hóa | Số dòng | Trạng thái nghiệp vụ |
 | :---: | :--- | :--- | :---: | :---: |

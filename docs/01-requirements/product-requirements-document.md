@@ -249,6 +249,7 @@ flowchart TD
 
 ## 7. Các Câu Hỏi Mở & Khảo Sát Nghiệp Vụ (Open Questions & Domain Inquiries)
 
-- **OQ-01**: Việc tách hóa đơn có cần hỗ trợ tách theo tỷ lệ phần trăm tùy biến (ví dụ: 60/40) bên cạnh việc tách theo món và chia đều hay không?
-- **OQ-02**: Trong mô hình chuỗi đa chi nhánh, các chi nhánh dùng chung một kho tổng trung tâm hay mỗi chi nhánh quản lý sổ kho độc lập hoàn toàn?
-- **OQ-03**: Phiếu chế biến bếp có cần tự động in nhiệt song song khi bắn đơn xuống KDS hay chỉ in thủ công khi có yêu cầu in lại?
+Toàn bộ các câu hỏi nghiệp vụ và phạm vi ban đầu đã được Chủ Dự Án giải quyết và phê duyệt chính thức:
+- **OQ-01 (Tách hóa đơn theo % tùy biến)**: `ĐÃ GIẢI QUYẾT (RESOLVED)` — Chủ Dự Án phê duyệt Phương án A (Task 02.8.5): Hoãn tách % lẻ sang v1.1; MVP hỗ trợ Tách theo món và Chia đều $1/N$, kết hợp thanh toán đa kênh (Multi-Tender).
+- **OQ-02 (Chuỗi cung ứng kho tổng đa chi nhánh)**: `ĐÃ GIẢI QUYẾT (RESOLVED)` — Phạm vi MVP giới hạn nghiêm ngặt 01 nhà hàng độc lập đơn điểm theo quyết định `OD-01`; quản lý kho tổng trung tâm chuỗi dời sang v2.0 (`OQ-04`).
+- **OQ-03 (Tự động in nhiệt phiếu bếp)**: `ĐÃ GIẢI QUYẾT (RESOLVED)` — Cấu hình theo trạm `AutoPrintOnFire`, mặc định là TẮT (`false`) theo quyết định `OQ-02` (Phương án A, Task 02.8.5), ưu tiên màn hình KDS số và dùng máy in nhiệt làm phương án dự phòng phần cứng.

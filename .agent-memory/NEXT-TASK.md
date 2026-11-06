@@ -1,23 +1,24 @@
 # SmartRestaurant — Next Approved Task Specification
 
-- **Task Identifier**: TASK-03
-- **Task Title**: Stage 1 Sign-Off & Stage 2 Technical Architecture Design
+- **Task Identifier**: TASK-03 (PENDING OWNER DIRECTIVE / ON HOLD)
+- **Task Title**: Stage 2 Technical Architecture Design (Awaiting Specific Request to Start)
 - **Lifecycle Stage**: Stage 2 — System Architecture & Technical Design
+- **Current Status**: **ON HOLD — STANDBY**. Stage 1 has been officially signed off by the Project Owner on 2026-11-06 ("Phê duyệt bước 1 nhưng chưa khởi động Giai đoạn 2, chờ tôi yêu cầu cụ thể"). All agents must wait for explicit request from the Project Owner before commencing Stage 2 work.
 
 ---
 
 ## 1. Objective
-Following user review and formal approval of the Stage 1 Product Requirements Suite (`docs/product/`), transition to **Stage 2: System Architecture & Technical Design**. Define the Modular Monolith solution structure, Entity Framework Core relational data models (ERD), multi-tenant/branch isolation patterns, and real-time SignalR hub contracts.
+Following formal sign-off of Stage 1 (Product Discovery & Specifications Suite `v1.0.0-FROZEN`), transition to **Stage 2: System Architecture & Technical Design** ONLY upon explicit instruction from the Project Owner. When instructed, define the Modular Monolith solution structure, Entity Framework Core relational data models (ERD), multi-tenant/branch isolation patterns, and real-time SignalR hub contracts.
 
 ---
 
-## 2. Scope
+## 2. Scope (To be executed ONLY upon explicit Owner trigger)
 - Reconcile user feedback on Open Questions (`OQ-01`, `OQ-02`, `OQ-03`).
 - Author `docs/02-architecture/system-architecture.md` (Modular Monolith layers, project structure, inter-module interfaces, domain events).
 - Author `docs/02-architecture/data-models-and-erd.md` (Relational schema, entity definitions, indexes, concurrency tokens, foreign key cascades).
 - Author `docs/02-architecture/realtime-signalr-mesh.md` (Hub contracts, event payload definitions, client listener interfaces for POS, KDS, Floor Plan).
 - Update `.agent-memory/` records accordingly.
-- **Strict Boundary**: Do not write application source code, scaffold .NET projects, or apply database migrations during this task.
+- **Strict Boundary**: Do not write application source code, scaffold .NET projects, or apply database migrations during this task. Currently in STRICT STANDBY: zero architectural files to be written until specifically triggered by the Project Owner.
 
 ---
 
@@ -28,13 +29,23 @@ Following user review and formal approval of the Stage 1 Product Requirements Su
 - Certified [Module Governance & Business Rule Reconciliation Audit](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md).
 - Approved [Owner Decision Dossier & Stage 2 Readiness Assessment](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md).
 - Certified [Final Evidence Reconciliation & Governance Boundary Verification](../docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md).
-- User confirmation on open questions (`OD-14`..`OD-17`, `OQ-01`..`OQ-07`).
+- Certified [Independent Vietnamese Documentation Quality Verification](../docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md).
+- Approved [Project Owner Decision Consolidation Record](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md) (100% of open questions `OD-14`..`OD-17`, `OQ-01`..`OQ-07`, and 14 Module Framework officially confirmed).
+- Certified [Owner Decision Implementation Report](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md) (Stage 1 documentation 100% synchronized, Stage 2 Gate unlocked & authorized).
+- Sealed [Product Specification Baseline Suite](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md) (Master Baseline Specification `v1.0.0-FROZEN`).
+- Official [Stage 2 Product Handoff Package](../docs/product/STAGE-2-PRODUCT-HANDOFF.md) for Solution Architect.
 - Architectural guidelines established in [GEMINI.md](../GEMINI.md) and [AGENTS.md](../AGENTS.md).
 
 ---
 
 ## 4. Relevant Documentation
 - [docs/00-index.md](../docs/00-index.md)
+- [docs/product/PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md)
+- [docs/product/STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md)
+- [docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md)
+- [docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)
+- [docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)
+- [docs/product/OWNER-DECISION-WORKSHOP.md](../docs/product/OWNER-DECISION-WORKSHOP.md)
 - [docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md](../docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md)
 - [docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md)
 - [docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md)
@@ -62,4 +73,4 @@ Following user review and formal approval of the Stage 1 Product Requirements Su
 ---
 
 ## 7. Approval Requirements
-- **Gatekeeper Requirement**: Certified Stage 1 Sign-Off via Task 02.7.5 Final Audit (`FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md`) satisfied. Ready for immediate owner authorization to execute.
+- **Gatekeeper Requirement**: Certified Stage 1 Sign-Off and Master Baseline Freeze via Task 02.7.5, Task 02.8.5, Task 02.8.6, and Task 02.9 (`v1.0.0-FROZEN`) satisfied. Stage 2 transition gate is UNLOCKED and fully authorized for immediate execution.

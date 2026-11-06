@@ -121,7 +121,7 @@ flowchart TD
   - Các bước chuyển trạng thái đặt bàn (`Confirmed` - Đã xác nhận, `Seated` - Đã vào bàn, `Cancelled` - Đã hủy, `NoShow` - Khách không đến).
 - **Thực thể dữ liệu / Khái niệm chính**: `Reservation`, `GuestProfile`, `DepositRecord`.
 - **Phụ thuộc**: Phân hệ 04 (`Tables & Areas`).
-- **Phiên bản mục tiêu**: **v1.0 MVP** (Quản lý đặt bàn cốt lõi; CRM nâng cao trong v1.2) *(Chờ Chủ dự án quyết định OD-15)*.
+- **Phiên bản mục tiêu**: **v1.0 MVP (MVP Optional)** (Quản lý đặt bàn cốt lõi bật/tắt linh hoạt 1 chạm theo quyết định OD-15 Phương án A; CRM nâng cao trong v1.2).
 
 ### Phân Hệ 07: POS & Quản Lý Đơn Gọi Món (POS & Order Management)
 - **Trách nhiệm chính**: Tiếp nhận gọi món tiền sảnh, giao diện cảm ứng máy tính bảng, quản lý đợt gọi món và theo dõi phiên ăn uống.

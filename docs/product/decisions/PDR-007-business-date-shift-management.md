@@ -32,7 +32,7 @@ Các nhà hàng, quán bar, câu lạc bộ bia và tụ điểm ẩm thực đ�
 ---
 
 ## 3. Các Tình Huống Vận Hành & Ghi Chú Kiến Trúc
-- **Phiên bàn kéo dài nhiều ngày liên tục (> 24 giờ)**: Trong trường hợp hy hữu một phiên bàn vẫn mở qua nhiều lần chốt ngày, bàn ăn đó vẫn giữ nguyên `BusinessDate` ban đầu khi tạo, nhưng hệ thống sẽ phát cảnh báo vận hành để quản lý can thiệp xử lý, tránh để tồn đọng phiên bàn ảo.
+- **Phiên bàn kéo dài nhiều ngày liên tục (> 24 giờ) — Xác nhận theo OQ-07 (Phương án A)**: Trong trường hợp hy hữu một phiên bàn vẫn mở qua nhiều lần chốt ngày, bàn ăn đó vẫn giữ nguyên `BusinessDate` ban đầu khi tạo theo nguyên tắc cốt lõi `D1`, đồng thời hệ thống hiển thị dải băng cảnh báo màu cam nổi bật trên POS/Admin để Quản lý kiểm tra xử lý mà không cưỡng bức đóng bàn làm gián đoạn khách đang dùng bữa.
 - **Tác động kiến trúc**: Các chỉ mục cơ sở dữ liệu trên các bảng `Orders`, `Payments`, và `ShiftSessions` bắt buộc phải bao gồm cặp khóa `(BranchId, BusinessDate)` để tối ưu hóa hiệu năng các truy vấn vận hành hàng ngày.
 
 ---

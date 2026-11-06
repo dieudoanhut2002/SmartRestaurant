@@ -151,6 +151,8 @@
 | **BR-RULE-14** | Phân Tuyến Trực Tiếp Tại Quầy FOH | Đồ uống đóng chai sẵn và món lấy ngay được phục vụ trực tiếp tại quầy FOH, bỏ qua hàng đợi pha chế của Bar KDS nhưng vẫn bảo đảm liên kết đầy đủ với kiểm soát hóa đơn, doanh thu và tồn kho. | Tối Ưu Tốc Độ Pha Chế |
 | **BR-RULE-15** | Làm Lại Món Do Lỗi Bếp (Remake Dish) | Món ăn nấu lại do lỗi nhà bếp không tính thêm tiền cho khách, sinh thẻ KDS làm lại món ưu tiên cao và tự động ghi nhận tổn thất nguyên liệu vào Sổ Ghi Nhận Hao Phí (WasteLog). | Chất Lượng & Kế Toán |
 | **BR-RULE-16** | Gọi Món Đồng Thời Không Khóa Bàn | Nhiều nhân viên phục vụ có thể cùng lúc chọn món vào một bàn mà không bị khóa chặn bàn; hệ thống bảo đảm cơ chế chỉ nối thêm (append-only) an toàn và phát hiện xung đột cập nhật từng món. | Kiểm Soát Đồng Thời (Concurrency Rule) |
+| **BR-RULE-17** | Xử Lý Khiếu Nại Hóa Đơn Đã Đóng (OD-14) | Hóa đơn đã quyết toán (`IsSettled = true`) là bất biến tuyệt đối trong CSDL MVP. Mọi sai sót tiền mặt được xử lý hoàn tiền thủ công ngoài quầy kèm "Biên bản điều chỉnh sai lệch két giấy" ký tay; hệ thống ghi nhận khoản tiền lệch vào thực thể `ShiftClosingVarianceLog` khi chốt ca kiểm tiền mù kèm mã hóa đơn gốc (`OriginalInvoiceId`); hoãn chức năng sinh bút toán `CreditNote` số hóa sang phiên bản v1.1. | Bất Biến Tài Chính & Kiểm Toán Két |
+| **BR-RULE-18** | Phiên Bàn Kéo Dài > 24 Giờ (OQ-07) | Bàn ăn mở kéo dài hơn 24 giờ qua một hoặc nhiều mốc cắt ca vẫn giữ nguyên `BusinessDate` ban đầu khi mở theo nguyên tắc `D1`, đồng thời hiển thị dải băng cảnh báo màu cam cho Quản lý kiểm tra vận hành, nghiêm cấm việc tự động cưỡng bức đóng bàn làm gián đoạn bữa ăn của khách. | Bảo Toàn Phiên & Cảnh Báo Vận Hành |
 
 ---
 

@@ -92,6 +92,7 @@ sequenceDiagram
 2. **Kiểm tra trạng thái**: Trưởng ca mở sơ đồ mặt bằng trực quan. Bàn 04 đang hiển thị màu Xanh lá (`Trống`).
 3. **Mở phiên phục vụ**: Trưởng ca chạm vào Bàn 04, chọn "Xếp khách", nhập số lượng khách (4 người) và gán nhân viên phục vụ Alex.
 4. **Đồng bộ thời gian thực**: Bàn 04 lập tức chuyển sang màu Vàng hổ phách (`Có khách`). Đồng hồ bắt đầu đếm thời gian dùng bữa thực tế của phiên bàn.
+5. **Đặc tả Phân hệ Đặt Bàn Trước (MOD-06 — MVP Optional theo OD-15: Phương án A)**: Tính năng Đặt bàn trước được vận hành dưới dạng phân hệ tùy chọn có thể bật/tắt 1 chạm qua cờ tính năng. Khi bật `MOD-06`, sơ đồ mặt bằng hiển thị danh sách đặt chỗ, đồng hồ đếm ngược giờ khách đến và khóa bàn đã giữ; khi tắt `MOD-06`, giao diện POS tự động ẩn toàn bộ nút đặt bàn, vận hành tinh gọn thuần túy khách vãng lai.
 
 ---
 
@@ -350,5 +351,5 @@ sequenceDiagram
 1. **Bắt đầu đóng ca**: Thu ngân kết thúc ca làm việc 8 tiếng và nhấn **"Chốt ca làm việc"**.
 2. **Kiểm kê tiền mù (Blind Drop Counting)**: Thu ngân đếm số tờ tiền mặt thực tế trong két theo từng mệnh giá (500k, 200k, 100k, 50k, 20k, 10k) mà không được xem trước số dư kỳ vọng trên hệ thống.
 3. **Phân tích chênh lệch**: Hệ thống đối chiếu và công bố số tiền kỳ vọng: 14.400.000 ₫; tiền mặt thực đếm: 14.350.000 ₫; chênh lệch: -50.000 ₫ (Thiếu).
-4. **Phê duyệt & Xuất Báo cáo Z**: Thu ngân nhập nội dung giải trình chênh lệch. Quản lý kiểm tra đối chiếu các cuống biên nhận thẻ ngân hàng, giao dịch VietQR và tiền mặt, sau đó xác nhận đóng ca bằng mã PIN.
+4. **Phê duyệt & Xuất Báo cáo Z (Xử lý chênh lệch khiếu nại hóa đơn đã thanh toán theo OD-14: Phương án A)**: Thu ngân nhập nội dung giải trình chênh lệch. Nếu trong ca có phát sinh khiếu nại sai sót hóa đơn đã đóng tiền (`OD-14`), Quản lý đối chiếu "Biên bản điều chỉnh sai lệch két giấy" ký tay, nhập mã lý do và mã hóa đơn gốc (`OriginalInvoiceId`) vào hệ thống để lưu vết kiểm toán vào thực thể `ShiftClosingVarianceLog`. Quản lý kiểm tra đối chiếu các cuống biên nhận thẻ ngân hàng, giao dịch VietQR và tiền mặt, sau đó xác nhận đóng ca bằng mã PIN.
 5. **Quyết toán hoàn tất**: Báo cáo Z-Report được in bằng tiếng Việt, lưu trữ vĩnh viễn hồ sơ tài chính của ca làm việc vào hệ thống.

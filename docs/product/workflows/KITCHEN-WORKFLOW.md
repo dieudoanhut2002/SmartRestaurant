@@ -119,7 +119,9 @@ stateDiagram-v2
 
 ## 4. Cơ Chế Dự Phòng Phần Cứng: In Nhiệt Phiếu Bếp ESC/POS (Hardware Fallback)
 
-Mặc dù SmartRestaurant ưu tiên tuyệt đối màn hình bếp KDS số hóa không dùng giấy, thực tế vận hành nhà hàng đòi hỏi phương án dự phòng tin cậy:
-- Nếu một màn hình KDS bị mất nguồn điện, đứt mạng hoặc hỏng cảm ứng, hệ thống kích hoạt **Chế Độ Dự Phòng Phần Cứng (Hardware Fallback Mode)**:
-  - Máy tính bảng phục vụ phát hiện màn hình KDS trạm bếp bị ngắt kết nối và tự động chuyển hướng lệnh in sang **máy in nhiệt nhà bếp ESC/POS** qua cổng IP mạng nội bộ (Port 9100).
+Căn cứ quyết định `OQ-02` (Phương án A đã được Chủ Dự Án phê duyệt chính thức):
+- **Cấu hình mặc định Paperless KDS-first**: Tham số `AutoPrintOnFire` tại các trạm bếp được thiết lập mặc định là **TẮT** (`AutoPrintOnFire: false`), ưu tiên luồng vận hành số hóa hiện đại trên màn hình KDS và loại bỏ hoàn toàn lãng phí giấy in nhiệt.
+- **Phương án dự phòng phần cứng tin cậy**:
+  - Nếu một màn hình KDS bị mất nguồn điện, đứt mạng nội bộ hoặc hỏng cảm ứng, hệ thống kích hoạt **Chế Độ Dự Phòng Phần Cứng (Hardware Fallback Mode)**: máy tính bảng phục vụ phát hiện màn hình KDS trạm bếp bị ngắt kết nối và tự động chuyển hướng lệnh in sang **máy in nhiệt nhà bếp ESC/POS** qua cổng IP mạng nội bộ (Port 9100).
+  - Đầu bếp có thể chủ động bấm nút "In lại phiếu" trên giao diện KDS khi cần phiếu giấy kẹp vào đĩa mang ra bàn.
   - Khi màn hình KDS khởi động lại và kết nối lại SignalR, hệ thống tự động tải lại các thẻ món chưa phục vụ và tiếp tục vận hành số hóa bình thường mà không bị thất lạc bất kỳ đơn món nào.

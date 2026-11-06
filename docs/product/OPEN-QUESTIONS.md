@@ -1,8 +1,8 @@
 # Nhật Ký Các Câu Hỏi Nghiệp Vụ Chờ Quyết Định — SmartRestaurant
 ## (Open Business Questions & Decision Log)
 
-- **Phiên Bản Tài Liệu**: 1.0.0
-- **Trạng Thái Tài Liệu**: `OPEN` (Đang mở chờ xem xét)
+- **Phiên Bản Tài Liệu**: 1.1.0
+- **Trạng Thái Tài Liệu**: `RESOLVED & CONSOLIDATED` (Toàn bộ các câu hỏi MVP đã được Chủ Dự Án biểu quyết phê chuẩn tại Workshop Task 02.8.5)
 - **Chủ Quản Tài Liệu**: Trưởng Ban Kiến Trúc Sản Phẩm & Chuyên Viên Phân Tích Nghiệp Vụ (Senior Product Architect & Business Analyst)
 
 ---
@@ -24,7 +24,7 @@
 - **Câu hỏi**: SmartRestaurant có cần hỗ trợ tách hóa đơn theo tỷ lệ phần trăm tùy biến bất kỳ (ví dụ: Khách A trả 60%, Khách B trả 40%) hoặc chia theo số tiền ấn định tùy ý (ví dụ: Khách A trả 500.000 ₫, Khách B trả số tiền 732.000 ₫ còn lại) hay không?
 - **Tại sao quan trọng**: Việc chia theo số tiền lẻ tùy ý đòi hỏi quy tắc làm tròn số lẻ phức tạp và thuật toán tính lại thuế GTGT trên từng phần giá trị món ăn.
 - **Khuyến nghị mặc định**: **Hoãn việc chia theo phần trăm tùy ý sang v1.1**. Trong MVP chỉ hỗ trợ *Tách theo món* và *Chia đều ($1/N$)*. Nếu khách muốn trả các khoản tiền khác nhau, thu ngân có thể dùng tính năng thanh toán kết hợp nhiều hình thức (Multi-Tender) trên một hóa đơn (ví dụ: thu trước 500.000 ₫ Tiền mặt, sau đó thu 732.000 ₫ Chuyển khoản VietQR trên cùng hóa đơn).
-- **Trạng thái**: `OPEN QUESTION` (Chờ Chủ Dự Án xác nhận)
+- **Trạng thái**: `RESOLVED / OWNER-CONFIRMED` (Chủ Dự Án phê duyệt Phương án A tại Workshop Task 02.8.5: Hoãn chia % lẻ sang v1.1; MVP hỗ trợ Tách món và Chia đều 1/N)
 
 ---
 
@@ -33,7 +33,7 @@
 - **Câu hỏi**: Hệ thống có nên tự động kích hoạt máy in nhiệt ESC/POS in phiếu giấy trong bếp song song với mỗi lần thẻ KDS xuất hiện, hay việc in giấy chỉ là tùy chọn in lại thủ công dự phòng?
 - **Tại sao quan trọng**: Việc in kép gây lãng phí giấy in nhiệt và có thể gây bối rối cho đầu bếp (phải nhìn cả giấy lẫn màn hình). Tuy nhiên, tại một số trạm bếp nhiều dầu mỡ hoặc nhiệt độ cao (ví dụ: trạm nướng lẩu), một số đầu bếp truyền thống vẫn muốn có phiếu giấy ghim trên thanh ray.
 - **Khuyến nghị mặc định**: **Thiết lập việc in phiếu bếp thành một tham số cấu hình theo từng trạm** (`AutoPrintOnFire: true/false`). Mặc định là `false` (ưu tiên màn hình KDS số) kèm nút bấm 1 chạm "In lại phiếu bếp" trên màn hình KDS làm dự phòng phần cứng khẩn cấp.
-- **Trạng thái**: `OPEN QUESTION` (Chờ Chủ Dự Án xác nhận)
+- **Trạng thái**: `RESOLVED / OWNER-CONFIRMED` (Chủ Dự Án phê duyệt Phương án A tại Workshop Task 02.8.5: Mặc định `AutoPrintOnFire: false`, ưu tiên màn hình KDS)
 
 ---
 
@@ -48,7 +48,7 @@
 - **Bối cảnh**: Trong các tình huống hiếm gặp (ví dụ: chi nhánh sân bay mở 24/7, mô hình nhà hàng kết hợp karaoke xuyên đêm, hoặc nhân viên quên đóng một bàn khách đã về), một phiên bàn có thể mở kéo dài hơn 24 giờ, vượt qua 2 hoặc nhiều mốc chuyển ngày kinh doanh (`BusinessDate` Cutoff).
 - **Câu hỏi**: Khi một đơn hàng mở xuyên qua từ 2 mốc cắt ca trở lên, hệ thống có nên tự động cảnh báo quản lý để cưỡng bức đóng bàn/tách bill, hay âm thầm giữ nguyên `BusinessDate` ban đầu cho đến khi thu ngân chốt bill thủ công?
 - **Khuyến nghị mặc định**: Hệ thống giữ nguyên `BusinessDate` gốc để đảm bảo tính nhất quán hạch toán, đồng thời gắn một dải băng cảnh báo màu vàng nổi bật "Phiên bàn kéo dài > 24h" trên bảng điều khiển của Quản lý để nhắc nhở kiểm tra vận hành.
-- **Trạng thái**: `OPEN QUESTION` (Đang đánh giá vận hành)
+- **Trạng thái**: `RESOLVED / OWNER-CONFIRMED` (Chủ Dự Án phê duyệt Phương án A tại Workshop Task 02.8.5: Giữ ngày kinh doanh gốc + dải băng cảnh báo Quản lý)
 
 ---
 
@@ -58,7 +58,7 @@
   - Phương án A: Kiến trúc hướng sự kiện (Event Sourcing) / Lệnh chỉ nối thêm (Delta Command Append).
   - Phương án B: Stored Procedure nguyên tử trong SQL / Giao dịch delta phiên bàn kết hợp kiểm tra đồng thời bằng `RowVersion`.
   - Phương án C: Hàng đợi lệnh trong bộ nhớ phân tán (Hàng đợi Redis / Channel Background Worker).
-- **Trạng thái**: `OPEN QUESTION` (Ủy quyền cho Kiến trúc sư Giải pháp đánh giá trong Stage 2)
+- **Trạng thái**: `DELEGATED TO ARCHITECT` (Ủy quyền cho Kiến trúc sư Giải pháp đánh giá chi tiết trong Stage 2 - TASK-03.4)
 
 ---
 
@@ -68,7 +68,7 @@
   - Phương án A: Giữ tính bất biến cứng không sửa đổi trong CSDL (Khuyến nghị cho MVP). Hóa đơn đã quyết toán được khóa vĩnh viễn trên POS. Mọi khoản hoàn tiền hoặc điều chỉnh được xử lý thủ tục hành chính giấy tờ ngoài phần mềm và đối soát như một khoản chênh lệch tiền mặt khi chốt ca kiểm tiền mù.
   - Phương án B: Xây dựng quy trình Hủy Hóa Đơn & Bút Toán Âm (Credit Note) trong ứng dụng. Yêu cầu mã PIN Quản lý để hủy hóa đơn, sinh bút toán âm triệt tiêu doanh thu và khôi phục/phân bổ lại các món trong phiên bàn.
 - **Khuyến nghị mặc định**: **Phương án A cho MVP**. Duy trì tính bất biến nghiêm ngặt của CSDL cho hóa đơn đã thanh toán; hoãn máy trạng thái hủy/hoàn tiền in-app phức tạp cho đến khi có quyết định chính thức của Chủ Dự Án.
-- **Trạng thái**: `OPEN QUESTION` (OD-14 — Đang chờ Chủ Dự Án quyết định)
+- **Trạng thái**: `RESOLVED / OWNER-CONFIRMED` (Chủ Dự Án phê duyệt Phương án A tại Workshop Task 02.8.5: CSDL bất biến; xử lý giấy chốt ca kiểm tiền mù & ghi log ShiftClosingVarianceLog)
 
 ---
 
@@ -102,7 +102,7 @@
   - `IsServiceChargeTaxable: true` $\rightarrow \text{Thuế GTGT} = (\text{Tiền món sau giảm} + \text{Phí dịch vụ}) \times \text{Thuế suất GTGT}$.
   - `IsServiceChargeTaxable: false` $\rightarrow \text{Thuế GTGT} = \text{Tiền món sau giảm} \times \text{Thuế suất GTGT}$.  
   Mặc định là `true` (thông lệ phổ biến của ngành ẩm thực Việt Nam).
-- **Trạng thái**: `OPEN QUESTION` (Chờ Chủ Dự Án xác nhận)
+- **Trạng thái**: `RESOLVED / OWNER-CONFIRMED` (Chủ Dự Án phê duyệt Phương án A tại Workshop Task 02.8.5: Mặc định `IsServiceChargeTaxable: true`)
 
 ---
 

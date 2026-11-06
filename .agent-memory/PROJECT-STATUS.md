@@ -1,8 +1,8 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (Audited & Sealed — Pending Owner Sign-Off)
-- **Current Milestone**: Transition Gate to Stage 2 — System Architecture & Technical Design (Awaiting Owner Approval)
-- **Status Date**: 2026-11-05
+- **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (100% OFFICIALLY SIGNED OFF & SEALED BY PROJECT OWNER; Stage 2 on Standby Pending Owner Instruction)
+- **Current Milestone**: Milestone 1.14 (Task 02.9.1) Completed — Independent Product Specification Audit Certified (`PASS WITH FINDINGS`); Stage 1 Officially Signed Off by Project Owner; Stage 2 Commencement on Standby Pending Explicit Owner Directive
+- **Status Date**: 2026-11-06
 
 ---
 
@@ -10,8 +10,8 @@
 
 | Stage | Name | Status | Deliverables |
 | :--- | :--- | :--- | :--- |
-| **Stage 1** | Product Requirements & Business Domain Analysis | **AUDITED, COMPLETED & SEALED (PENDING OWNER SIGN-OFF)** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit |
-| **Stage 2** | System Architecture & Technical Design | `PENDING OWNER APPROVAL (GATE LOCKED)` | System Architecture, ERD, SignalR Specs, Concurrency Strategy |
+| **Stage 1** | Product Requirements & Business Domain Analysis | **100% OFFICIALLY SIGNED OFF & SEALED BY OWNER** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit, Task 02.8.5 Consolidation Record, Task 02.8.6 Implementation Report, Task 02.9 Product Specification Baseline Suite (v1.0.0-FROZEN), Task 02.9.1 Audit Report |
+| **Stage 2** | System Architecture & Technical Design | **`PENDING EXPLICIT PROJECT OWNER REQUEST / AUTHORIZATION (ON HOLD — STRICT STANDBY)`** | System Architecture, ERD, SignalR Specs, Concurrency Strategy (Awaiting Owner Directive) |
 | **Stage 3** | Detailed Module Specifications & Data Models | `PENDING` | Module Specs, DTOs, Business Rules |
 | **Stage 4** | Implementation & Milestone Planning | `PENDING` | Work Breakdown Structure (WBS), Sprints |
 | **Stage 5** | Iterative Implementation by Approved Milestone | `PENDING` | Solution Scaffolding, Core Code |
@@ -25,29 +25,25 @@
 - [x] **Milestone 0.1**: Engineering Governance & Rule Establishment (`GEMINI.md`, `AGENTS.md`).
 - [x] **Milestone 0.2**: Mandatory Project Memory Initialization (`.agent-memory/`, `docs/00-index.md`).
 - [x] **Milestone 1.1**: Author comprehensive Product Requirements Document ([PRD](../docs/product/PRD.md)).
-- [x] **Milestone 1.2**: Author complete Business Specifications Suite:
-  - [Vietnamese-First Localization Standard](../docs/product/VIETNAMESE-LOCALIZATION-STANDARD.md)
-  - [Business Requirements Specification](../docs/product/BUSINESS-REQUIREMENTS.md)
-  - [MVP Scope & Roadmap](../docs/product/MVP-SCOPE.md)
-  - [Domain Glossary & Ubiquitous Language](../docs/product/DOMAIN-GLOSSARY.md)
-  - [User Journeys](../docs/product/USER-JOURNEYS.md)
-  - [Open Business Questions](../docs/product/OPEN-QUESTIONS.md)
-  - [Business Module Boundaries](../docs/product/MODULE-OVERVIEW.md)
-  - [4 Detailed Workflows (Floor, Order, Kitchen, Cashier)](../docs/product/workflows/)
-  - [Product Non-Functional Requirements](../docs/product/NON-FUNCTIONAL-REQUIREMENTS.md)
-  - [6 Product Decision Records (PDR-001 to PDR-006)](../docs/product/decisions/)
-- [x] **Milestone 1.2.5 (Task 02.5)**: Independent Product Review & Critical Business Validation ([PRODUCT-REVIEW-REPORT.md](../docs/product/PRODUCT-REVIEW-REPORT.md), [PRODUCT-REVIEW-VALIDATION.md](../docs/product/PRODUCT-REVIEW-VALIDATION.md)).
+- [x] **Milestone 1.2**: Author complete Business Specifications Suite.
+- [x] **Milestone 1.2.5 (Task 02.5)**: Independent Product Review & Critical Business Validation.
 - [x] **Milestone 1.3 (Task 02.6)**: Owner Review, Critical Decisions Reconciliation & Formal Stage 1 Sign-off.
-- [x] **Milestone 1.4 (Task 02.7.5)**: Final Governance Traceability & Approval Boundary Audit ([FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md](../docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md)). 100% compliance certified, zero code leakage verified, Stage 1 formally sealed.
-- [x] **Milestone 1.5 (Task 02.8)**: Module Configuration & Business Feature Management Analysis ([MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md)). 7-tier configuration hierarchy, master parameter catalog (all 14 modules), feature flag matrix, and audit governance.
-- [x] **Milestone 1.6 (Task 02.8.1)**: Module Governance & Business Rule Reconciliation Audit ([MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md)). 100% cross-document reconciliation, workflow degradation verified, and single-store MVP confirmed.
-- [x] **Milestone 1.7 (Task 02.8.2)**: Owner Decision Preparation & Stage 2 Readiness Assessment ([OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md)). 9-part Owner Decision Dossier prepared, 6-dimensional readiness scorecard evaluated (100% score), TASK-03 WBS defined, Stage 1 fully sealed awaiting Owner review.
-- [x] **Milestone 1.8 (Task 02.8.2.1)**: Final Evidence Reconciliation & Governance Boundary Verification ([FINAL-EVIDENCE-RECONCILIATION-REPORT.md](../docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md)). 100% physical evidence backing verified, zero code leakage certified (0 .cs files), ARCHITECTURE-DECISIONS.md verified untouched, Stage 2 authorization gate confirmed locked.
-- [x] **Milestone 1.9 (Task 02.8.3)**: Controlled Vietnamese Documentation Localization ([HO-SO-DAC-TA-NGHIEP-VU-VA-QUYET-DINH-CHU-NHA-HANG.md](../docs/product/HO-SO-DAC-TA-NGHIEP-VU-VA-QUYET-DINH-CHU-NHA-HANG.md), [TASK-02.8.3-CONTROLLED-VIETNAMESE-DOCUMENTATION-LOCALIZATION-REPORT.md](../docs/product/TASK-02.8.3-CONTROLLED-VIETNAMESE-DOCUMENTATION-LOCALIZATION-REPORT.md)). 100% Vietnamese terminology audit passed, clean technical decoupling verified, comprehensive Vietnamese Owner Dossier published. Stage 1 completely sealed awaiting Owner sign-off.
+- [x] **Milestone 1.4 (Task 02.7.5)**: Final Governance Traceability & Approval Boundary Audit.
+- [x] **Milestone 1.5 (Task 02.8)**: Module Configuration & Business Feature Management Analysis.
+- [x] **Milestone 1.6 (Task 02.8.1)**: Module Governance & Business Rule Reconciliation Audit.
+- [x] **Milestone 1.7 (Task 02.8.2)**: Owner Decision Preparation & Stage 2 Readiness Assessment.
+- [x] **Milestone 1.8 (Task 02.8.2.1)**: Final Evidence Reconciliation & Governance Boundary Verification.
+- [x] **Milestone 1.9 (Task 02.8.3)**: Controlled Vietnamese Documentation Localization.
+- [x] **Milestone 1.10 (Task 02.8.4)**: Independent Vietnamese Documentation Quality Verification ([TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](../docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md)).
+- [x] **Milestone 1.11 (Task 02.8.5)**: Project Owner Decision Workshop & Decision Consolidation ([TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)). 100% of open items officially confirmed by Owner; Stage 1 signed off.
+- [x] **Milestone 1.12 (Task 02.8.6)**: Project Owner Decision Recording & Controlled Documentation Update ([TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)). Recorded all owner decisions in workshop dossier, synchronized entire Stage 1 suite, Stage 2 Gate Unlocked.
+- [x] **Milestone 1.13 (Task 02.9)**: Product Specification Baseline Consolidation ([PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md) & [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md)). Officially consolidated and frozen Stage 1 product requirements suite (9 baseline documents: Master Baseline, MVP Scope, Requirements, Rules, Capabilities, Traceability, Open Questions, Stage 2 Handoff, Task Report; `v1.0.0-FROZEN`).
+- [x] **Milestone 1.14 (Task 02.9.1)**: Independent Product Specification Audit ([TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](../docs/product/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md)). Certified `PASS WITH FINDINGS` (0 Critical, 0 High, 1 Medium, 1 Low, 2 Informational).
+- [x] **Stage 1 Formal Sign-Off (2026-11-06)**: Project Owner explicitly reviewed and approved Stage 1 (Step 1). Stage 2 commencement is explicitly held on standby awaiting specific Project Owner instruction (`PENDING EXPLICIT PROJECT OWNER REQUEST`). Zero code written, zero schemas scaffolded.
 
 ---
 
-## 3. Approved Decisions Matrix (Task 02.6 Sign-off)
+## 3. Approved Decisions Matrix (Task 02.6 & Task 02.8.5 Workshop Sign-Off)
 
 - **CONFIRMED**: Modular Monolith architectural pattern (`ADR-001` / `PDR-001`).
 - **CONFIRMED**: ASP.NET Core Web API + Razor MVC Admin + EF Core + SQL Server + SignalR (`ADR-002`, `ADR-003`).
@@ -67,15 +63,22 @@
 - **CONFIRMED**: Non-blocking Concurrent Table Ordering business rules (`PDR-014`).
 - **CONFIRMED**: Kitchen Remake Dish workflow with bill protection & waste logging (`PDR-015`).
 - **CONFIRMED**: Multi-branch operational independence under single organization in MVP (`CONTR-01`).
+- **CONFIRMED**: Paid Bill Immutability & Shift Closing Variance logging (`OD-14` Option A).
+- **CONFIRMED**: Advance Reservations as MVP Optional module (`OD-15` Option A).
+- **CONFIRMED**: 3 Onboarding Configuration Presets (`OD-16` Option A).
+- **CONFIRMED**: Graceful Drain Policy for module deactivation (`OD-17` Option A).
+- **CONFIRMED**: Defer Uneven % Bill Split to v1.1 (`OQ-01` Option A).
+- **CONFIRMED**: Default KDS-first without simultaneous thermal chit print (`OQ-02` Option A).
+- **CONFIRMED**: Default Service Charge taxable under VAT (`OQ-06` Option A).
+- **CONFIRMED**: Retain original BusinessDate + Manager banner for sessions > 24h (`OQ-07` Option A).
+- **CONFIRMED**: Official 14-Module Architecture (10 Core Mandatory + 4 MVP Optional).
 - **DEFERRED**: Corporate Customer Credit Account / Ký nợ (`REV-07`) deferred to v1.2+ as dedicated B2B AR module.
 
 ---
 
 ## 4. Key Open Questions (Awaiting Owner Feedback)
 
-- **OQ-01**: Should bill splitting support arbitrary uneven percentage splits (e.g. 60/40) in addition to item-based and equal splits? *(Recommendation: Defer to post-MVP)*.
-- **OQ-02**: Should kitchen orders automatically trigger physical thermal printer chits simultaneously with KDS screen dispatch? *(Recommendation: Make configurable per station; default false)*.
-- **OQ-03**: Should cancelled dishes post-fire support manager repurposing or strictly write off as scrap? *(Recommendation: Prompt manager with scrap as default)*.
+- **None** — 100% of Open Questions & Owner Decisions have been officially resolved, consolidated, and signed off by the Project Owner in Task 02.8.5. Ready for immediate Stage 2 authorization.
 
 ---
 

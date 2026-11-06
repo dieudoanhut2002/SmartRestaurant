@@ -51,4 +51,5 @@ Thanh toán cho các đoàn khách đi ăn chung là một trong những thời 
 ---
 
 ## 5. Câu Hỏi & Giả Định (Questions & Assumptions)
-- *Câu hỏi*: Câu hỏi mở `OQ-01` theo dõi việc có nên xem xét lại tính năng tách hóa đơn theo tỷ lệ phần trăm tùy ý sau giai đoạn MVP hay không.
+- *Câu hỏi*: Câu hỏi mở `OQ-01` đã được Chủ Dự Án chính thức phê chuẩn (Phương án A tại Workshop Task 02.8.5): hoãn tính năng tách hóa đơn theo % tùy biến lẻ sang v1.1. Trong MVP chỉ hỗ trợ *Tách theo món* và *Tách đều 1/N*. Nếu khách muốn trả khoản tiền khác nhau trên cùng bàn, thu ngân sử dụng tính năng Thanh toán kết hợp đa kênh (Multi-Tender) trên 1 hóa đơn.
+- *Thuế trên phí dịch vụ*: Câu hỏi mở `OQ-06` đã được Chủ Dự Án chính thức phê chuẩn (Phương án A): mặc định tính thuế VAT trên cả phí dịch vụ (`IsServiceChargeTaxable: true`).

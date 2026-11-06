@@ -79,21 +79,21 @@ Bảng phân loại độc lập tách biệt rõ ràng giữa các Quyết đ�
 
 | Mã Quyết Định | Tên Vấn Đề Nghiệp Vụ | Căn Cứ Thẩm Quyền | Phân Loại Quản Trị | Tóm Tắt Tùy Chọn & Khuyến Nghị Chuyên Môn |
 | :---: | :--- | :---: | :---: | :--- |
-| **`D1`** | **Ranh giới Ngày Kinh Doanh & Giờ Cắt Ca** | Owner Sign-off | `OWNER-CONFIRMED` | Mặc định Cutoff 06:00 sáng. Phiên bàn mở giữ nguyên Ngày Kinh Doanh (`BusinessDate`) tại thời điểm mở xuyên suốt ca đêm. (Lưu ý: Việc xử lý phiên bàn kéo dài > 24h thuộc OQ-07 đang OPEN, không thuộc phạm vi phê duyệt của D1). |
+| **`D1`** | **Ranh giới Ngày Kinh Doanh & Giờ Cắt Ca** | Owner Sign-off | `OWNER-CONFIRMED` | Mặc định Cutoff 06:00 sáng. Phiên bàn mở giữ nguyên Ngày Kinh Doanh (`BusinessDate`) tại thời điểm mở xuyên suốt ca đêm. (Lưu ý: Việc xử lý phiên bàn kéo dài > 24h thuộc OQ-07 đã được Chủ Dự Án phê duyệt theo Phương án A: Giữ `BusinessDate` gốc + Banner cảnh báo Quản lý). |
 | **`D2/D5`** | **Khóa Kho Hai Pha & Hàng Đếm Được** | Owner Sign-off | `OWNER-CONFIRMED` | Khóa tại thời điểm gửi bếp; hủy món hợp lệ mở khóa; BOM chi tiết gram/ml hoãn sang v1.1. |
 | **`D3`** | **Xử Lý VietQR Đến Chậm & Hàng Đợi Tiền Treo (Suspense Ledger)** | Owner Sign-off (PDR-008) | `OWNER-CONFIRMED` | Cho phép thu tiền mặt khi QR timeout. Giao dịch QR về muộn đưa vào Hàng đợi Tiền treo; thông báo tức thì cho thu ngân; đối soát thủ công có phê duyệt. |
 | **`D4`** | **Phiên Bàn Đa Hóa Đơn (Multi-Bill) & Tách Bill Không Khóa Bàn** | Owner Sign-off (PDR-009) | `OWNER-CONFIRMED` | Bàn không bị khóa khi tách bill. Phục vụ tiếp tục gọi món vào bill chưa thanh toán. Hỗ trợ tách theo món & tách đều $1/N$; thanh toán Multi-Tender. |
 | **`OD-01`** | **Ranh giới Cửa hàng Đơn lập cho MVP** | Owner Sign-off | `OWNER-CONFIRMED` | 01 nhà hàng độc lập tại 01 địa điểm duy nhất. Không có logistics điều chuyển chuỗi trong MVP. |
 | **`OD-13`** | **Tính Bất Biến của Hóa Đơn Đã Thanh Toán** | Owner Sign-off | `OWNER-CONFIRMED` | Hóa đơn đã thanh toán (`IsSettled = true`) không thể bị sửa đổi trực tiếp bởi Thu ngân/Phục vụ. |
-| **`OD-14`** | **Chính sách Xử lý Khiếu nại & Hủy Hóa Đơn Đã Thanh Toán** | OQ-09 / Task 02.8.1 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Giữ DB bất biến, xử lý giấy ngoại suy.<br>**Phương án B**: Phát triển In-app Void & Refund với PIN Quản lý. |
-| **`OD-15`** | **Phân vị Phân hệ Đặt Bàn Trước (`MOD-06`) trong MVP** | Task 02.8 / Task 02.8.1 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Phân hệ Tùy chọn MVP (`MVP Optional`).<br>**Phương án B**: Hoãn toàn bộ sang Phiên bản v1.1. |
-| **`OD-16`** | **Áp dụng Bộ Gói Cấu Hình Khởi Tạo (Onboarding Presets)** | Task 02.8 / Task 02.8.1 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Áp dụng 3 Gói gợi ý mẫu Wizard không ràng buộc.<br>**Phương án B**: Bác bỏ Presets, cấu hình thủ công 100%. |
-| **`OD-17`** | **Quy Tắc Thoát Nghiệp Vụ Phân Tầng (Graceful Drain Policy)** | Task 02.8 / Task 02.8.1 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Thoát phân tầng theo loại giao dịch (Bàn ăn, Đặt trước, VietQR).<br>**Phương án B**: Chặn tuyệt đối nếu còn bản ghi. |
-| **`OQ-01`** | **Hoãn Tách Hóa Đơn theo Tỷ Lệ % Tùy Biến** | Task 02.6 / Task 02.7.5 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Hoãn sang v1.1; MVP hỗ trợ Tách theo món & Tách đều $1/N$.<br>**Phương án B**: Đưa vào MVP. |
-| **`OQ-02`** | **Cấu Hình Tự Động In Nhiệt Bếp khi Bắn Đơn** | Task 02.6 / Task 02.7.5 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Cấu hình theo trạm, mặc định `AutoPrintOnFire: false` (Ưu tiên KDS).<br>**Phương án B**: Mặc định `true` (Luôn in giấy). |
-| **`OQ-06`** | **Quy Tắc Tính Thuế VAT trên Phí Dịch Vụ** | Task 02.7.5 / Task 02.8 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Cấu hình chi nhánh, mặc định `IsServiceChargeTaxable: true`.<br>**Phương án B**: Mặc định `false`. |
-| **`OQ-07`** | **Kiểm Soát Phiên Bàn Kéo Dài > 24 Giờ Vượt Mốc Cắt Ca** | Task 02.7.5 / Task 02.8 | `OPEN — OWNER DECISION REQUIRED` | **Phương án A**: Giữ Ngày kinh doanh gốc + Dải băng cảnh báo Quản lý.<br>**Phương án B**: Cưỡng bức chốt bàn tự động. |
-| **Khung Phân Hệ** | **Cơ Cấu 10 Core - 4 Optional Modules** | Task 02.8 / Task 02.8.1 | `AI/BA PROPOSAL (Awaiting Sign-off)` | 10 Phân hệ Cốt lõi Bắt buộc; 4 Phân hệ Tùy chọn (MOD-06, MOD-09, MOD-11, MOD-12). |
+| **`OD-14`** | **Chính sách Xử lý Khiếu nại & Hủy Hóa Đơn Đã Thanh Toán** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Giữ DB bất biến (`IsSettled = true`), xử lý chênh lệch thực tế qua biên bản giấy khi chốt két ca & ghi log đối soát (`ShiftClosingVarianceLog`). Hoãn chức năng CreditNote trong app sang v1.1. |
+| **`OD-15`** | **Phân vị Phân hệ Đặt Bàn Trước (`MOD-06`) trong MVP** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Phân hệ Tùy chọn MVP (`MVP Optional`) — có thể bật/tắt linh hoạt 1 chạm qua cờ tính năng; loose coupling với thực thể `Reservation`. |
+| **`OD-16`** | **Áp dụng Bộ Gói Cấu Hình Khởi Tạo (Onboarding Presets)** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Áp dụng 3 Gói gợi ý mẫu Wizard (Gia đình, Tiêu chuẩn, VIP) không ràng buộc trong Wizard Onboarding. |
+| **`OD-17`** | **Quy Tắc Thoát Nghiệp Vụ Phân Tầng (Graceful Drain Policy)** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Thoát phân tầng theo loại giao dịch dở dang (bàn ăn, đặt cọc, VietQR); dữ liệu lịch sử bảo lưu Read-Only. |
+| **`OQ-01`** | **Hoãn Tách Hóa Đơn theo Tỷ Lệ % Tùy Biến** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Hoãn chia % lẻ sang v1.1; MVP hỗ trợ Tách theo món chọn lọc & Tách đều $1/N$. |
+| **`OQ-02`** | **Cấu Hình Tự Động In Nhiệt Bếp khi Bắn Đơn** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Cấu hình theo trạm, mặc định `AutoPrintOnFire: false` (Ưu tiên KDS màn hình; in nhiệt làm fallback). |
+| **`OQ-06`** | **Quy Tắc Tính Thuế VAT trên Phí Dịch Vụ** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Cấu hình chi nhánh, mặc định `IsServiceChargeTaxable: true` (VAT tính trên Tiền món + Phí dịch vụ). |
+| **`OQ-07`** | **Kiểm Soát Phiên Bàn Kéo Dài > 24 Giờ Vượt Mốc Cắt Ca** | Task 02.8.5 Workshop | `OWNER-CONFIRMED (Phương án A)` | **Phương án A**: Giữ Ngày kinh doanh gốc khi mở bàn + Hiển thị dải băng cảnh báo màu cam cho Quản lý. |
+| **Khung Phân Hệ** | **Cơ Cấu 10 Core - 4 Optional Modules** | Task 02.8.5 Workshop | `OWNER-CONFIRMED` | Phê chuẩn chính thức: 10 Phân hệ Cốt lõi Bắt buộc; 4 Phân hệ Tùy chọn (MOD-06, MOD-09, MOD-11, MOD-12). |
 
 ---
 
@@ -211,14 +211,14 @@ Toàn bộ cây làm việc tại thư mục gốc `C:\Git\SmartRestaurant\Smart
 
 ## 9. Trạng Thái Cổng Kiểm Soát Cuối Cùng (Final Status Declaration)
 
-Căn cứ vào kết quả kiểm tra toàn diện, Giám đốc Kiểm toán Quản trị Sản phẩm & Trưởng Ban Kiến trúc Hệ thống chính thức công bố trạng thái cổng kiểm soát:
+Căn cứ vào kết quả biểu quyết chính thức tại Hội thảo Quyết định Task 02.8.5 ([`TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md`](./TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)), Giám đốc Kiểm toán Quản trị Sản phẩm & Trưởng Ban Kiến trúc Hệ thống chính thức công bố trạng thái cổng kiểm soát:
 
 ```
-READY FOR PROJECT OWNER DECISION
+STAGE 1 COMPLETED & SIGNED OFF — READY FOR STAGE 2 AUTHORIZATION
 ```
 
 > [!IMPORTANT]
-> **LỆNH DỪNG QUẢN TRỊ BẮT BUỘC (MANDATORY GOVERNANCE HOLD)**  
-> 1. Toàn bộ hoạt động đặc tả và phân tích Giai đoạn 1 đã **CHÍNH THỨC HOÀN TẤT & ĐƯỢC NIÊM PHONG**.  
-> 2. Hệ thống **TUYỆT ĐỐI KHÔNG TỰ ĐỘNG BẮT ĐẦU** Stage 2 (TASK-03) hay viết mã nguồn kỹ thuật.  
-> 3. Hệ thống đang ở trạng thái trực ban, trân trọng kính mời Chủ Dự Án (Project Owner) đưa ra các quyết định chính thức (đặc biệt đối với `OD-14`) để làm căn cứ pháp lý kích hoạt Giai đoạn 2.
+> **XÁC NHẬN HOÀN TẤT GIAI ĐOẠN 1 (STAGE 1 FORMAL SIGN-OFF)**  
+> 1. Toàn bộ hoạt động đặc tả, phân tích và biểu quyết quyết định Giai đoạn 1 đã **CHÍNH THỨC HOÀN TẤT & ĐƯỢC CHỦ DỰ ÁN PHÊ DUYỆT 100%**.  
+> 2. Các quyết định cốt lõi (`OD-14..17`, `OQ-01..07`, Khung 14 Phân hệ) đã được hợp nhất thành các ranh giới bất biến.  
+> 3. Cổng quản trị Giai đoạn 2 đã sẵn sàng được mở khóa để triển khai **TASK-03: Thiết Kế Kiến Trúc Hệ Thống & ERD**.

@@ -37,7 +37,7 @@
 | **Giao Diện Tiếng Việt 100%** | Toàn bộ giao diện tiếng Việt tự nhiên, định dạng VNĐ (`#,,### ₫`), hiển thị thời gian 24h. | **Bắt buộc (Must Have)** | v1.0 MVP | Nền tảng để nhân viên nhà hàng vận hành không gặp rào cản ngôn ngữ. |
 | **Mã PIN Quản Lý Ủy Quyền** | Mã PIN bảo mật khi hủy hóa đơn, hủy món sau nấu, chiết khấu thủ công. | **Bắt buộc (Must Have)** | v1.0 MVP | Kiểm soát nội bộ sống còn chống thất thoát và gian lận. |
 | **Bảng Điều Khiển Doanh Thu Trực Quan** | Doanh thu theo giờ theo Ngày kinh doanh, món bán chạy, tốc độ quay vòng bàn. | **Nên có (Should Have)** | v1.0 MVP | Cung cấp thông tin điều hành hàng ngày cho Quản lý nhà hàng. |
-| **Đặt Bàn Trước** | Lịch đặt bàn hẹn trước kèm đồng hồ đếm ngược giờ khách đến. | **Nên có (Should Have)** | v1.0 MVP | Phục vụ kế hoạch đón khách giờ cao điểm và cuối tuần *(Chờ chốt OD-15)*. |
+| **Đặt Bàn Trước (`MOD-06`)** | Lịch đặt bàn hẹn trước kèm đồng hồ đếm ngược giờ khách đến, cọc tiền và chuyển sang phiên bàn. | **MVP Tùy chọn (Optional)** | v1.0 MVP | Phục vụ đón khách đặt trước; bật/tắt linh hoạt 1 chạm; xác nhận theo OD-15 (Phương án A). |
 | **Sổ Ghi Nhận Hao Phí & Hủy Hàng** | Ghi nhận món cháy, đổ vỡ và hao hụt làm lại món kèm mã lý do bắt buộc. | **Nên có (Should Have)** | v1.0 MVP | Liên kết lỗi nhà bếp với sai lệch tồn kho. |
 | **Làm Lại Món Lỗi Nhà Bếp (Remake Dish)**| Thẻ làm lại món ưu tiên cao không tính thêm tiền khách; ghi sổ hao hụt WasteLog. | **Nên có (Should Have)** | v1.0 MVP | Bảo vệ độ chính xác hóa đơn của khách và theo dõi tỷ lệ sai sót của bếp. |
 | **In Nhiệt Dự Phòng ESC/POS** | In phiếu tạm tính và phiếu chế biến tiếng Việt UTF-8 ra máy in nhiệt. | **Nên có (Should Have)** | v1.0 MVP | Phương án dự phòng phần cứng khi bảo trì mạng hoặc màn hình. |

@@ -62,32 +62,32 @@ flowchart TD
 ```
 
 ### 2.1. Tầng A: Các Module Cốt Lõi (Đề Xuất Bắt Buộc — Không Thể Bị Tắt)
-Các module cốt lõi cấu thành bộ động cơ vận hành khả thi tối thiểu (MVP) của SmartRestaurant. Mặc dù các năng lực nghiệp vụ nền tảng đã được xác nhận trong bộ yêu cầu PRD/BRS cơ sở, việc đóng gói chúng thành các module bắt buộc không thể tắt là một đề xuất kiến trúc chờ Chủ nhà hàng phê duyệt chính thức:
+Các module cốt lõi cấu thành bộ động cơ vận hành khả thi tối thiểu (MVP) của SmartRestaurant. Toàn bộ 10 phân hệ dưới đây đã được **Chủ Dự Án phê duyệt chính thức (OWNER-CONFIRMED)** tại Workshop Task 02.8.5 là các module bắt buộc không thể tắt:
 
 | Mã Module | Tên Module (VN / EN) | Căn cứ nghiệp vụ bắt buộc phải là Module cốt lõi | Tác động nếu hệ thống cho phép tắt | Phân loại quản trị |
 | :--- | :--- | :--- | :--- | :---: |
-| **MOD-01** | Quản lý Tổ chức & Điểm Bán / Store Identity | Thiết lập hồ sơ pháp lý điểm bán đơn, định danh chi nhánh, và múi giờ vận hành cơ sở. | Ứng dụng đổ vỡ vì thiếu điểm neo danh tính cửa hàng. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-02** | Phân quyền & Tài khoản / RBAC & Staff PIN | Quản lý đăng nhập của nhân viên, xác thực PIN thu ngân, và mã PIN ủy quyền của Quản lý. | Hàng rào bảo mật sụp đổ; hoàn toàn mất kiểm soát kiểm toán việc hủy món hay chốt tiền két. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-03** | Cấu hình Nghiệp vụ / System Configuration | Quản lý giờ chốt ngày kinh doanh (06:00), thuế suất VAT (8%/10%), lời chào hóa đơn, và định dạng VNĐ. | Không thể tính toán thuế, không thể in hóa đơn VNĐ, hoặc không thể chia tách ca qua đêm. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-04** | Sơ đồ Bàn & Khu vực / Tables & Dining Areas | Cung cấp vòng đời trạng thái không gian bàn ăn (`Trống`, `Có khách`, `Đang thanh toán`, `Cần dọn`). | Phục vụ không thể gắn đơn món vào bàn vật lý hoặc không theo dõi được bàn có khách. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-05** | Thực đơn & Nhóm tùy chọn / Menu & Modifiers | Lưu trữ danh mục món ăn gốc, các biến thể khẩu phần (S/M/L), món gọi thêm và ghi chú chế biến. | Động cơ gọi món không có hàng hóa, giá bán hoặc tùy chọn để nhân viên chọn món cho khách. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-07** | Bán hàng POS & Đơn hàng / POS & Order Capture | Quản lý phiên dùng bữa, giỏ hàng tạm, các đợt gọi món bổ sung, và tính năng hủy gộp bàn. | Nhân viên phục vụ không thể nhận món từ khách, không thể gọi món thêm, hay gửi lệnh xuống bếp. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-08** | Điều phối Đơn hàng / Order Routing Dispatcher | Phân tách đơn gọi món của bàn thành các phiếu chế biến riêng cho từng bộ phận sản xuất mục tiêu. | Bộ phận Bếp/Bar không bao giờ nhận được phiếu; các món ăn bị kẹt cứng trong giỏ hàng POS. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-10** | Thu ngân, Tính tiền & Hóa đơn / Billing & Cashier | Tính tạm tính, chiết khấu, VAT, phí phục vụ, tách hóa đơn đa phương thức, và Báo cáo Z chốt ca. | Nhà hàng không thể in tạm tính, không thể thu tiền, không thể chia bill hay cân bằng tiền két ca. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-13** | Báo cáo Doanh thu & Bán hàng / Sales Reporting | Tổng hợp doanh thu gộp hàng ngày, biểu đồ nhiệt doanh thu theo giờ, phân tích nhóm món, và số dư tiền mặt. | Quản lý không thể đối soát số dư két tiền ca hoặc đánh giá hiệu quả tài chính nhà hàng. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **MOD-14** | Đồng bộ Vận hành Thời gian thực / Real-Time Synchronization | Đảm bảo tính nhất quán trạng thái tức thì giữa các máy POS/KDS (trạng thái bàn, chuông báo xong món, tạm tính). | Các thiết bị đầu cuối trở thành các ốc đảo rời rạc đòi hỏi nhân viên phải liên tục bấm tải lại trang thủ công. | `AI/BA PROPOSAL (Derived from BRS)` |
+| **MOD-01** | Quản lý Tổ chức & Điểm Bán / Store Identity | Thiết lập hồ sơ pháp lý điểm bán đơn, định danh chi nhánh, và múi giờ vận hành cơ sở. | Ứng dụng đổ vỡ vì thiếu điểm neo danh tính cửa hàng. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-02** | Phân quyền & Tài khoản / RBAC & Staff PIN | Quản lý đăng nhập của nhân viên, xác thực PIN thu ngân, và mã PIN ủy quyền của Quản lý. | Hàng rào bảo mật sụp đổ; hoàn toàn mất kiểm soát kiểm toán việc hủy món hay chốt tiền két. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-03** | Cấu hình Nghiệp vụ / System Configuration | Quản lý giờ chốt ngày kinh doanh (06:00), thuế suất VAT (8%/10%), lời chào hóa đơn, và định dạng VNĐ. | Không thể tính toán thuế, không thể in hóa đơn VNĐ, hoặc không thể chia tách ca qua đêm. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-04** | Sơ đồ Bàn & Khu vực / Tables & Dining Areas | Cung cấp vòng đời trạng thái không gian bàn ăn (`Trống`, `Có khách`, `Đang thanh toán`, `Cần dọn`). | Phục vụ không thể gắn đơn món vào bàn vật lý hoặc không theo dõi được bàn có khách. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-05** | Thực đơn & Nhóm tùy chọn / Menu & Modifiers | Lưu trữ danh mục món ăn gốc, các biến thể khẩu phần (S/M/L), món gọi thêm và ghi chú chế biến. | Động cơ gọi món không có hàng hóa, giá bán hoặc tùy chọn để nhân viên chọn món cho khách. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-07** | Bán hàng POS & Đơn hàng / POS & Order Capture | Quản lý phiên dùng bữa, giỏ hàng tạm, các đợt gọi món bổ sung, và tính năng hủy gộp bàn. | Nhân viên phục vụ không thể nhận món từ khách, không thể gọi món thêm, hay gửi lệnh xuống bếp. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-08** | Điều phối Đơn hàng / Order Routing Dispatcher | Phân tách đơn gọi món của bàn thành các phiếu chế biến riêng cho từng bộ phận sản xuất mục tiêu. | Bộ phận Bếp/Bar không bao giờ nhận được phiếu; các món ăn bị kẹt cứng trong giỏ hàng POS. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-10** | Thu ngân, Tính tiền & Hóa đơn / Billing & Cashier | Tính tạm tính, chiết khấu, VAT, phí phục vụ, tách hóa đơn đa phương thức, và Báo cáo Z chốt ca. | Nhà hàng không thể in tạm tính, không thể thu tiền, không thể chia bill hay cân bằng tiền két ca. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-13** | Báo cáo Doanh thu & Bán hàng / Sales Reporting | Tổng hợp doanh thu gộp hàng ngày, biểu đồ nhiệt doanh thu theo giờ, phân tích nhóm món, và số dư tiền mặt. | Quản lý không thể đối soát số dư két tiền ca hoặc đánh giá hiệu quả tài chính nhà hàng. | `OWNER-CONFIRMED (Core Mandatory)` |
+| **MOD-14** | Đồng bộ Vận hành Thời gian thực / Real-Time Synchronization | Đảm bảo tính nhất quán trạng thái tức thì giữa các máy POS/KDS (trạng thái bàn, chuông báo xong món, tạm tính). | Các thiết bị đầu cuối trở thành các ốc đảo rời rạc đòi hỏi nhân viên phải liên tục bấm tải lại trang thủ công. | `OWNER-CONFIRMED (Core Mandatory)` |
 
 ---
 
-### 2.2. Tầng B: Các Module Nghiệp Vụ Tùy Chọn (Đề Xuất Chủ Nhà Hàng Có Thể Bật/Tắt)
-Các module tùy chọn cung cấp những năng lực vận hành chuyên biệt. Chủ nhà hàng có thể bật hoặc tắt các module này tùy theo mô hình ẩm thực, số lượng nhân sự, trang thiết bị phần cứng sẵn có hoặc ngân sách đầu tư:
+### 2.2. Tầng B: Các Module Nghiệp Vụ Tùy Chọn (Chủ Dự Án Đã Phê Chuẩn Cơ Chế Bật/Tắt)
+Các module tùy chọn cung cấp những năng lực vận hành chuyên biệt đã được Chủ Dự Án chính thức phê chuẩn thuộc diện MVP Optional (OD-15 & Khung 14 Phân hệ). Chủ nhà hàng có thể bật hoặc tắt các module này tùy theo mô hình ẩm thực, số lượng nhân sự, trang thiết bị phần cứng sẵn có hoặc ngân sách đầu tư:
 
 | Mã Module | Tên Module (VN / EN) | Giá trị nghiệp vụ & Mục tiêu vận hành | Tác động vận hành khi BẬT | Tác động vận hành khi TẮT | Phân loại quản trị |
 | :--- | :--- | :--- | :--- | :--- | :---: |
-| **MOD-06** | Quản lý Đặt bàn & Khách hàng / Table Reservation | Quản lý danh sách đặt bàn trước, đồng hồ đếm ngược giờ khách đến, tiền đặt cọc và số lượng khách. | Sơ đồ mặt bằng hiển thị nhãn đếm ngược đặt bàn; bàn đã đặt được khóa chống xếp khách vãng lai. | Nhà hàng chỉ phục vụ khách vãng lai thuần túy. Tab "Đặt bàn" ẩn khỏi toàn bộ POS/Admin. Không phát cảnh báo đặt bàn. | `OPEN — OWNER DECISION REQUIRED (OD-15)` |
-| **MOD-09** | Hệ thống Màn hình Bếp (KDS) / Digital KDS | Hàng đợi đơn món cảm ứng điện tử cho trạm Bếp Nóng, Bếp Nguội và Quầy Bar kèm đồng hồ SLA. | Nhân viên bếp chuyển trạng thái món trên màn hình (`Đang nấu` $\rightarrow$ `Đã xong`). Tiếp thực nhận chuông báo. | Khu bếp vận hành hoàn toàn bằng phiếu in nhiệt giấy ESC/POS vật lý. Lệnh báo bếp gửi thẳng ra máy in mạng. | `AI/BA PROPOSAL (Feature Confirmed in PDR-003)` |
-| **MOD-11** | Cổng Thanh toán VietQR / VietQR Gateway | Tạo mã VietQR động Napas 24/7 tự động kèm xác minh webhook bất đồng bộ và sổ treo đối soát. | Thu ngân hiển thị QR động trên màn hình; ngân hàng xác nhận tiền tự động; xử lý webhook đến muộn. | Thu ngân nhận Tiền mặt, quẹt thẻ qua máy POS ngân hàng cầm tay ngoài, hoặc chuyển khoản chụp ủy nhiệm chi thủ công. | `AI/BA PROPOSAL (Feature Confirmed in PDR-008)` |
-| **MOD-12** | Quản lý Tồn kho & Hao hụt / Countable Stock & Waste | Khóa tồn kho 2 bước thời gian thực (`Tồn khả dụng = Tồn thực tế - Tồn tạm giữ`) cho khẩu phần, chai, lon. | Hệ thống ngăn chặn bán vượt số lượng tồn; tự động khóa món hết (86); ghi nhận lỗi bếp vào Sổ Hủy Hỏng. | Tính năng tự động tạm giữ kho thời gian thực bị tắt. Hàng rào bảo vệ hết hàng dựa vào nhân viên bấm "Tạm hết món (86)" thủ công, bếp hô miệng, và hạn mức chuẩn bị đầu ca. | `AI/BA PROPOSAL (Feature Confirmed in PDR-004)` |
+| **MOD-06** | Quản lý Đặt bàn & Khách hàng / Table Reservation | Quản lý danh sách đặt bàn trước, đồng hồ đếm ngược giờ khách đến, tiền đặt cọc và số lượng khách. | Sơ đồ mặt bằng hiển thị nhãn đếm ngược đặt bàn; bàn đã đặt được khóa chống xếp khách vãng lai. | Nhà hàng chỉ phục vụ khách vãng lai thuần túy. Tab "Đặt bàn" ẩn khỏi toàn bộ POS/Admin. Không phát cảnh báo đặt bàn. | `OWNER-CONFIRMED (OD-15: Phương án A)` |
+| **MOD-09** | Hệ thống Màn hình Bếp (KDS) / Digital KDS | Hàng đợi đơn món cảm ứng điện tử cho trạm Bếp Nóng, Bếp Nguội và Quầy Bar kèm đồng hồ SLA. | Nhân viên bếp chuyển trạng thái món trên màn hình (`Đang nấu` $\rightarrow$ `Đã xong`). Tiếp thực nhận chuông báo. | Khu bếp vận hành hoàn toàn bằng phiếu in nhiệt giấy ESC/POS vật lý. Lệnh báo bếp gửi thẳng ra máy in mạng. | `OWNER-CONFIRMED (MVP Optional)` |
+| **MOD-11** | Cổng Thanh toán VietQR / VietQR Gateway | Tạo mã VietQR động Napas 24/7 tự động kèm xác minh webhook bất đồng bộ và sổ treo đối soát. | Thu ngân hiển thị QR động trên màn hình; ngân hàng xác nhận tiền tự động; xử lý webhook đến muộn. | Thu ngân nhận Tiền mặt, quẹt thẻ qua máy POS ngân hàng cầm tay ngoài, hoặc chuyển khoản chụp ủy nhiệm chi thủ công. | `OWNER-CONFIRMED (MVP Optional)` |
+| **MOD-12** | Quản lý Tồn kho & Hao hụt / Countable Stock & Waste | Khóa tồn kho 2 bước thời gian thực (`Tồn khả dụng = Tồn thực tế - Tồn tạm giữ`) cho khẩu phần, chai, lon. | Hệ thống ngăn chặn bán vượt số lượng tồn; tự động khóa món hết (86); ghi nhận lỗi bếp vào Sổ Hủy Hỏng. | Tính năng tự động tạm giữ kho thời gian thực bị tắt. Hàng rào bảo vệ hết hàng dựa vào nhân viên bấm "Tạm hết món (86)" thủ công, bếp hô miệng, và hạn mức chuẩn bị đầu ca. | `OWNER-CONFIRMED (MVP Optional)` |
 
 ---
 
@@ -220,7 +220,7 @@ stateDiagram-v2
 
 #### B. Tắt Một Module Đang Hoạt Động (Thoát Phân Hóa & Bảo Tồn Dữ Liệu)
 Khi quản trị viên chuyển một module đang hoạt động sang trạng thái `Disabled`:
-1. **Kiểm toán giao dịch phân hóa (Chính sách đề xuất OD-17 — Chờ Chủ nhà hàng quyết định)**:
+1. **Kiểm toán giao dịch phân hóa (Chính sách thoát êm dịu OD-17: Phương án A — Đã được Chủ Dự Án phê chuẩn)**:
    - *Phiên bàn đang phục vụ / Hóa đơn đang mở*: Tuyệt đối không thể tắt tính năng thanh toán hoặc POS khi bàn ăn vẫn đang có đơn dở dang. Các phiên hoạt động phải đạt trạng thái kết thúc (`Paid` hoặc `Cancelled`).
    - *Lịch đặt bàn trước trong tương lai (MOD-06)*: KHÔNG áp dụng lệnh chặn cứng nhiều tuần. Thay vào đó, hệ thống cảnh báo quản lý: *"Có 5 lượt đặt bàn trong tương lai. Bạn muốn: (A) Giữ lại để đón khách thủ công, hay (B) Hủy và gửi thông báo cho khách?"*.
    - *Giao dịch ngân hàng đang chờ webhook (MOD-11)*: Các hóa đơn có trạng thái `PendingWebhook` phải chờ hết 120s timeout hoặc chuyển sang Dự phòng Tiền mặt trước khi hoàn tất việc tắt module.
@@ -310,8 +310,8 @@ flowchart TD
 
 Nhằm đơn giản hóa việc thiết lập hệ thống ban đầu cho các nhà hàng mới, 3 bộ cấu hình mẫu vận hành được đề xuất.
 
-> [!WARNING]
-> **THÔNG BÁO QUẢN TRỊ**: Các cấu hình mẫu dưới đây **CHỈ LÀ ĐỀ XUẤT CỦA AI/BA**. Chúng đại diện cho các khuyến nghị vận hành nhằm hỗ trợ chủ nhà hàng mới và **KHÔNG PHẢI LÀ QUY TẮC SẢN PHẨM ĐÃ PHÊ DUYỆT**. Chủ nhà hàng chưa rà soát hoặc phê duyệt các mẫu này. Chủ quán luôn giữ toàn quyền tùy biến bất kỳ module hoặc tham số riêng lẻ nào.
+> [!NOTE]
+> **THÔNG BÁO QUẢN TRỊ (OD-16: PHƯƠNG ÁN A — OWNER-CONFIRMED)**: 3 bộ cấu hình mẫu dưới đây đã được **Chủ Dự Án chính thức phê duyệt (OWNER-CONFIRMED)** tại Workshop Task 02.8.5 theo Quyết định `OD-16 (Phương án A)`. Các gói mẫu này đóng vai trò là **bộ gợi ý cấu hình ban đầu không ràng buộc (Non-binding suggestions)** trong Wizard khởi tạo giúp rút ngắn thời gian thiết lập ban đầu. Chủ nhà hàng và Quản lý luôn giữ toàn quyền tùy biến, bật hoặc tắt bất kỳ phân hệ hoặc tham số riêng lẻ nào sau đó.
 
 ```mermaid
 flowchart TD
@@ -335,9 +335,9 @@ flowchart TD
 
 | Cấu hình mẫu đề xuất | Mô hình F&B mục tiêu | Các Module bật sẵn | Các Module tắt sẵn | Đánh đổi vận hành & Rủi ro tiềm ẩn | Trạng thái quản trị |
 | :--- | :--- | :--- | :--- | :--- | :---: |
-| **Mẫu 1: Quán Ăn Gia Đình / Bình Dân** | Quy mô nhỏ, 10–20 bàn, 1 thu ngân, 2–3 phục vụ, bếp trưởng thường là chủ quán. | 10 Module Cốt Lõi + `MOD-11` (VietQR). | `MOD-06` (Đặt bàn), `MOD-09` (KDS), `MOD-12` (Tồn kho). | **Rủi ro**: Không bảo vệ tồn kho; kẹt giấy máy in làm gián đoạn đơn; khách không đặt chỗ trước được. **Ưu điểm**: Không tốn phần cứng, thiết lập cực nhanh (< 15 phút). | `AI/BA PROPOSAL` |
-| **Mẫu 2: Nhà Hàng Tiêu Chuẩn** | Quy mô vừa, 20–50 bàn, phân tuyến bếp rõ ràng, quầy bar riêng, bàn ra món. | 10 Module Cốt Lõi + `MOD-09` (KDS) + `MOD-11` (VietQR) + `MOD-12` (Kho món đếm được). | `MOD-06` (Đặt bàn — giả định chỉ đón khách vãng lai). | **Rủi ro**: Cần máy tính bảng/màn hình trong bếp; đòi hỏi nhân viên tự giác ghi sổ hủy khi hỏng món. **Ưu điểm**: Chống bán vượt tồn, bếp không giấy, thanh toán QR tức thì. | `AI/BA PROPOSAL` |
-| **Mẫu 3: Nhà Hàng Cao Cấp / Phòng VIP** | Quy mô lớn, nhiều phòng ăn riêng, sảnh sân vườn/rooftop, nhiều đợt món, đặt bàn trước. | Toàn bộ 14 Module được bật (Cốt lõi + Đặt bàn + KDS + VietQR + Kho đếm được + Phụ phí VIP). | Không có (Mọi tính năng đều kích hoạt). | **Rủi ro**: Độ phức tạp nhận thức cao nhất; nhân viên phải theo dõi đặt chỗ, khóa phòng và nhập kho. **Ưu điểm**: Kiểm soát tối đa, tăng doanh thu phụ phí VIP, lưu giữ hồ sơ khách hàng trọn vẹn. | `AI/BA PROPOSAL` |
+| **Mẫu 1: Quán Ăn Gia Đình / Bình Dân** | Quy mô nhỏ, 10–20 bàn, 1 thu ngân, 2–3 phục vụ, bếp trưởng thường là chủ quán. | 10 Module Cốt Lõi + `MOD-11` (VietQR). | `MOD-06` (Đặt bàn), `MOD-09` (KDS), `MOD-12` (Tồn kho). | **Rủi ro**: Không bảo vệ tồn kho; kẹt giấy máy in làm gián đoạn đơn; khách không đặt chỗ trước được. **Ưu điểm**: Không tốn phần cứng, thiết lập cực nhanh (< 15 phút). | `OWNER-CONFIRMED (OD-16)` |
+| **Mẫu 2: Nhà Hàng Tiêu Chuẩn** | Quy mô vừa, 20–50 bàn, phân tuyến bếp rõ ràng, quầy bar riêng, bàn ra món. | 10 Module Cốt Lõi + `MOD-09` (KDS) + `MOD-11` (VietQR) + `MOD-12` (Kho món đếm được). | `MOD-06` (Đặt bàn — giả định chỉ đón khách vãng lai). | **Rủi ro**: Cần máy tính bảng/màn hình trong bếp; đòi hỏi nhân viên tự giác ghi sổ hủy khi hỏng món. **Ưu điểm**: Chống bán vượt tồn, bếp không giấy, thanh toán QR tức thì. | `OWNER-CONFIRMED (OD-16)` |
+| **Mẫu 3: Nhà Hàng Cao Cấp / Phòng VIP** | Quy mô lớn, nhiều phòng ăn riêng, sảnh sân vườn/rooftop, nhiều đợt món, đặt bàn trước. | Toàn bộ 14 Module được bật (Cốt lõi + Đặt bàn + KDS + VietQR + Kho đếm được + Phụ phí VIP). | Không có (Mọi tính năng đều kích hoạt). | **Rủi ro**: Độ phức tạp nhận thức cao nhất; nhân viên phải theo dõi đặt chỗ, khóa phòng và nhập kho. **Ưu điểm**: Kiểm soát tối đa, tăng doanh thu phụ phí VIP, lưu giữ hồ sơ khách hàng trọn vẹn. | `OWNER-CONFIRMED (OD-16)` |
 
 ### 7.2. Các Rủi Ro Khi Sử Dụng Cấu Hình Mẫu
 1. **Tạo cảm giác ngộ nhận đã hoàn tất**: Quản lý nhà hàng có thể tưởng rằng các mẫu này là cố định không thể sửa và bỏ qua việc cấu hình các tham số trọng yếu của quán (như giờ chốt ngày hoặc thuế VAT).
@@ -353,18 +353,18 @@ Tuân thủ nghiêm ngặt Quyết định của Chủ nhà hàng `OD-01` và Ph
 | Phân hệ / Năng lực | Phân kỳ phát hành | Cơ sở lựa chọn & Ranh giới vận hành | Phân loại |
 | :--- | :---: | :--- | :---: |
 | **Vận Hành Độc Lập Đơn Điểm** | `MVP Cốt lõi` | Tập trung 100% nguồn lực kỹ thuật để hoàn thiện vận hành nhà hàng độc lập đơn điểm (`OD-01`). | `OWNER-CONFIRMED (OD-01)` |
-| **10 Module Cốt Lõi Bắt Buộc (`Tầng A`)** | `MVP Cốt lõi` | Động cơ vận hành thiết yếu cho phục vụ tại bàn, ghi nhận món, điều phối bếp và quyết toán két tiền. | `AI/BA PROPOSAL (Derived from BRS)` |
-| **KDS Màn Hình Bếp & Quầy Bar (`MOD-09`)** | `MVP Tùy chọn` | Hàng đợi đơn món cảm ứng không dùng giấy cho đầu bếp và nhân viên pha chế. | `AI/BA PROPOSAL (Tính năng đã duyệt theo PDR-003; Trạng thái tùy chọn là đề xuất)` |
-| **Cổng VietQR Động & Sổ Treo (`MOD-11`)** | `MVP Tùy chọn` | Thanh toán Napas 24/7 tự động kèm dự phòng tiền mặt và sổ đối soát giao dịch treo (`PDR-008`). | `AI/BA PROPOSAL (Tính năng đã duyệt theo PDR-008; Trạng thái tùy chọn là đề xuất)` |
-| **Khóa Tồn Kho Món Đếm Được 2 Bước (`MOD-12`)** | `MVP Tùy chọn` | Quản lý các khẩu phần bán trực tiếp, chai, lon (`Tồn khả dụng = Tồn thực tế - Tạm giữ`) theo `PDR-004`. | `AI/BA PROPOSAL (Tính năng đã duyệt theo PDR-004; Trạng thái tùy chọn là đề xuất)` |
-| **Quản Lý Đặt Bàn Trước (`MOD-06`)** | `MVP Tùy chọn` | Đặt chỗ trước cơ bản, số lượng khách và đếm ngược giờ khách đến. | `OPEN — OWNER DECISION REQUIRED (OD-15)` |
+| **10 Module Cốt Lõi Bắt Buộc (`Tầng A`)** | `MVP Cốt lõi` | Động cơ vận hành thiết yếu cho phục vụ tại bàn, ghi nhận món, điều phối bếp và quyết toán két tiền. | `OWNER-CONFIRMED (Task 02.8.5)` |
+| **KDS Màn Hình Bếp & Quầy Bar (`MOD-09`)** | `MVP Tùy chọn` | Hàng đợi đơn món cảm ứng không dùng giấy cho đầu bếp và nhân viên pha chế. | `OWNER-CONFIRMED (MVP Optional)` |
+| **Cổng VietQR Động & Sổ Treo (`MOD-11`)** | `MVP Tùy chọn` | Thanh toán Napas 24/7 tự động kèm dự phòng tiền mặt và sổ đối soát giao dịch treo (`PDR-008`). | `OWNER-CONFIRMED (MVP Optional)` |
+| **Khóa Tồn Kho Món Đếm Được 2 Bước (`MOD-12`)** | `MVP Tùy chọn` | Quản lý các khẩu phần bán trực tiếp, chai, lon (`Tồn khả dụng = Tồn thực tế - Tạm giữ`) theo `PDR-004`. | `OWNER-CONFIRMED (MVP Optional)` |
+| **Quản Lý Đặt Bàn Trước (`MOD-06`)** | `MVP Tùy chọn` | Đặt chỗ trước cơ bản, số lượng khách và đếm ngược giờ khách đến (bật/tắt linh hoạt). | `OWNER-CONFIRMED (OD-15: Phương án A)` |
 | **Định Lượng BOM Công Thức Chi Tiết (gram/ml)** | `Sau MVP (v1.1)` | Khấu trừ nguyên liệu thô theo công thức dời sang v1.1 để bảo vệ tiến độ MVP theo Quyết định D5 (`PDR-004`). | `OWNER-CONFIRMED (D5 / PDR-004)` |
 | **Màn Hình Bàn Ra Món Master Expediter** | `Sau MVP (v1.1)` | Màn hình điều phối ra món tổng hợp dời sang v1.1; đầu bếp làm việc trực tiếp trên KDS trạm. | `AI/BA PROPOSAL (Đề xuất trong PDR-003)` |
 | **Tài Khoản Ký Nợ Doanh Nghiệp (Khách Ký Nợ)** | `Trì hoãn (v1.2+)`| Tài khoản công nợ B2B dời sang sau MVP dưới dạng module Quản lý Công nợ Phải thu (AR) riêng biệt (`REV-07`).| `OWNER-CONFIRMED DEFERRED (REV-07)` |
 | **Xoay Tự Do Trên Sơ Đồ Mặt Bằng** | `Sau MVP (v1.2)` | Trình thiết kế sơ đồ giới hạn ở 4 góc vuông 90° (0°, 90°, 180°, 270°) để giảm độ phức tạp giao diện. | `AI/BA PROPOSAL` |
 | **Khách Tự Quét QR Đặt Món & Trả Trước** | `Sau MVP (v2.0)` | Khách dùng điện thoại quét mã QR tại bàn để tự gọi món dời sang Giai đoạn 2. | `OWNER-CONFIRMED (PRD §4.2)` |
 | **Điều Chuyển Kho Tổng Cung Ứng Đa Chi Nhánh** | `Sau MVP (v2.0)` | Luân chuyển kho liên chi nhánh và hậu cần nhượng quyền dời sang v2.0 (`CONTR-01`). | `OWNER-CONFIRMED (CONTR-01)` |
-| **Tách Hóa Đơn Theo Tỷ Lệ % Tùy Ý (60/40)** | `Sau MVP` | Tách hóa đơn giới hạn ở Tách theo món và Chia đều ($1/N$) trong MVP (`OQ-01`). | `OPEN — OWNER DECISION REQUIRED (OQ-01)` |
+| **Tách Hóa Đơn Theo Tỷ Lệ % Tùy Ý (60/40)** | `Sau MVP` | Tách hóa đơn giới hạn ở Tách theo món và Chia đều ($1/N$) trong MVP; % lẻ dời sang v1.1 (`OQ-01`). | `OWNER-CONFIRMED (OQ-01: Phương án A)` |
 
 ---
 
@@ -373,7 +373,7 @@ Tuân thủ nghiêm ngặt Quyết định của Chủ nhà hàng `OD-01` và Ph
 Việc thiết lập khung quản lý tính năng và cấu hình module này tích hợp hoàn toàn ăn khớp với toàn bộ các tài liệu đặc tả của Giai đoạn 1 mà không làm phát sinh phình to phạm vi (scope creep):
 
 | Tài liệu đặc tả hiện có | Tác động của Hệ thống Cấu hình Module | Trạng thái nhất quán |
-| :--- | :--- | :---: |
+| :--- | :--- | :--- :---: |
 | **[PRD.md](./PRD.md)** | Tái khẳng định ranh giới Modular Monolith 14 module; củng cố trọng tâm đơn điểm cho MVP v1.0. | `CONSISTENT` |
 | **[BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md)** | Làm rõ BR-01 đến BR-14 bằng cách chỉ rõ yêu cầu nào là cốt lõi bắt buộc so với tùy chọn bật/tắt. | `CONSISTENT` |
 | **[MVP-SCOPE.md](./MVP-SCOPE.md)** | Khớp nối hoàn hảo với thứ tự ưu tiên MoSCoW; bảo tồn các loại trừ rõ ràng (BOM gram/ml, Khách ký nợ). | `CONSISTENT` |
@@ -383,17 +383,17 @@ Việc thiết lập khung quản lý tính năng và cấu hình module này t�
 
 ---
 
-## 10. Các Câu Hỏi Mở & Quyết Định Cần Chủ Nhà Hàng Phê Duyệt
+## 10. Các Quyết Định Của Chủ Dự Án Đã Phê Chuẩn & Ghi Nhận Chính Thức
 
-Các chính sách cấu hình dưới đây đòi hỏi sự xác nhận chính thức từ Chủ nhà hàng. Các quyết định này không cản trở việc mô hình hóa kiến trúc Giai đoạn 2, do các giá trị mặc định an toàn đã được xác lập:
+Toàn bộ các chính sách cấu hình và câu hỏi mở dưới đây đã được **Chủ Dự Án phê duyệt chính thức (OWNER-CONFIRMED)** tại Workshop Task 02.8.5 và ghi nhận đầy đủ trong Task 02.8.6:
 
-| Mã quyết định | Chính sách / Chủ đề mở | Khuyến nghị mặc định của AI/BA | Tác động lên hệ thống nếu duyệt | Hành động yêu cầu từ Chủ nhà hàng |
-| :---: | :--- | :--- | :--- | :--- |
-| **OD-15** | Trạng thái của `MOD-06` (Đặt bàn trước) trong MVP | **Đưa vào MVP dưới dạng Module Tùy chọn** (`MVP Optional`). | Nhà hàng không nhận đặt chỗ có thể tắt tính năng gọn gàng mà không có chi phí dư thừa. | **Phê duyệt `MOD-06` là Module Tùy chọn của MVP hoặc dời sang v1.1.** |
-| **OD-16** | Áp dụng các cấu hình mẫu khởi tạo (Gia đình, Tiêu chuẩn, VIP) | **Áp dụng dưới dạng mẫu gợi ý không bắt buộc** (`AI/BA PROPOSAL`). | Giúp thiết lập nhanh ban đầu; không hạn chế việc tùy biến sâu sau đó. | **Phê duyệt hoặc bác bỏ 3 bộ cấu hình mẫu đề xuất.** |
-| **OD-17** | Xử lý tắt Module khi đang có lịch đặt bàn trước | **Bắt buộc thoát êm dịu**: Chặn tắt module cho đến khi các lịch đặt bàn trong ngày kinh doanh hiện tại được xử lý xong. | Ngăn chặn tình trạng khách đến ăn nhưng phần mềm không còn dữ liệu lưu vết. | **Xác nhận chính sách Thoát Êm Dịu (Graceful Drain) khi tắt module.** |
-| **OQ-02** | Hành vi in phiếu giấy vật lý khi KDS được bật | **Cài đặt cấp trạm**: Mặc định `AutoPrintOnFire` là `false`. | Ngăn ngừa lãng phí giấy in khi đầu bếp đã nhìn màn hình cảm ứng điện tử. | **Xác nhận cài đặt in phiếu giấy mặc định.** |
-| **OQ-06** | Tính thuế VAT trên phí dịch vụ | **Cài đặt cấp chi nhánh**: Mặc định `IsServiceChargeTaxable` là `true`. | Phù hợp với thông lệ tính thuế giá trị gia tăng trong ngành F&B tại Việt Nam. | **Xác nhận quy tắc tính thuế VAT trên phí dịch vụ mặc định.** |
+| Mã quyết định | Chính sách / Chủ đề | Phương án Chủ Dự Án phê duyệt | Tác động lên hệ thống | Trạng thái phê duyệt |
+| :---: | :--- | :--- | :--- | :---: |
+| **OD-15** | Trạng thái của `MOD-06` (Đặt bàn trước) trong MVP | **Phương án A — Đưa vào MVP dưới dạng Module Tùy chọn** (`MVP Optional`). | Nhà hàng không nhận đặt chỗ có thể tắt tính năng 1 chạm gọn gàng; thiết kế loose coupling. | `OWNER-CONFIRMED` |
+| **OD-16** | Áp dụng các cấu hình mẫu khởi tạo (Presets) | **Phương án A — Cung cấp 3 bộ cấu hình mẫu gợi ý** (Gia đình, Tiêu chuẩn, VIP) trong Wizard Onboarding. | Rút ngắn thời gian khởi tạo hệ thống từ 2 giờ xuống 15 phút; quản lý tùy chỉnh tự do. | `OWNER-CONFIRMED` |
+| **OD-17** | Xử lý tắt Module khi đang có giao dịch dở dang | **Phương án A — Thoát phân tầng theo loại giao dịch** (`Graceful Drain Policy`). | Chặn tạo mới; hoàn tất nốt bàn đang ăn, cọc đặt bàn, webhook; dữ liệu cũ giữ Read-Only. | `OWNER-CONFIRMED` |
+| **OQ-02** | Hành vi in phiếu giấy vật lý khi KDS được bật | **Phương án A — Cài đặt cấp trạm**: Mặc định `AutoPrintOnFire: false`. | Ưu tiên KDS điện tử, giảm lãng phí giấy; máy in nhiệt ESC/POS làm dự phòng phần cứng. | `OWNER-CONFIRMED` |
+| **OQ-06** | Tính thuế VAT trên phí dịch vụ | **Phương án A — Cài đặt cấp chi nhánh**: Mặc định `IsServiceChargeTaxable: true`. | Thuế VAT tính trên cả Phí dịch vụ; tuân thủ chuẩn mực kế toán F&B tại Việt Nam. | `OWNER-CONFIRMED` |
 
 ---
 
