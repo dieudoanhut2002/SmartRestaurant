@@ -303,7 +303,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     - Updated 8 Decision Briefs (`OD-14`..`OD-17`, `OQ-01`, `OQ-02`, `OQ-06`, `OQ-07`) to `CHÍNH THỨC PHÊ DUYỆT — PHƯƠNG ÁN A` and `OWNER-CONFIRMED (PHƯƠNG ÁN A)`.
     - Confirmed 14 Module Classification table (10 Core Mandatory + 4 MVP Optional) to `OWNER-CONFIRMED`.
     - Completed official Ballot Register table with Option A choices, `OWNER-CONFIRMED` statuses, and signature date `2026-11-06`.
-    - Updated document status from `PENDING` to `OFFICIALLY RECORDED & SIGNED OFF BY PROJECT OWNER` and Stage 2 Gate to `UNLOCKED & AUTHORIZED`.
+    - Updated document status from `PENDING` to `OFFICIALLY RECORDED & SIGNED OFF BY PROJECT OWNER` *(Governance Correction: Stage 2 Gate historically marked UNLOCKED, subsequently corrected per Owner mandate to `NOT AUTHORIZED / LOCKED`)*.
   - Executed controlled documentation updates across Stage 1 suite:
     - [MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md): Updated 10 Core & 4 Optional modules to `OWNER-CONFIRMED`, updated Graceful Drain (§4.1B) and Open Questions table (§10).
     - [CASHIER-PAYMENT-WORKFLOW.md](../docs/product/workflows/CASHIER-PAYMENT-WORKFLOW.md): Updated paid bill correction exception (§4) to confirmed `OD-14: Phương án A`.
@@ -320,7 +320,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 - **Execution Constraints Enforced**:
   - Documentation synchronization only; zero application code, .NET projects, or migrations created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
   - `.agent-memory/ARCHITECTURE-DECISIONS.md` strictly untouched (0 diff against HEAD).
-- **Verdict**: 100% SYNCHRONIZED, RECONCILED & SEALED — STAGE 2 TRANSITION GATE UNLOCKED & AUTHORIZED FOR TASK-03.
+- **Verdict**: 100% SYNCHRONIZED, RECONCILED & SEALED — *(Governance Correction: Stage 2 Transition Gate status corrected to `NOT AUTHORIZED / LOCKED`; Stage 1 is OWNER-APPROVED; Task 03 requires explicit Owner instruction)*.
 - **Status**: Completed & Sealed.
 
 ---
@@ -346,7 +346,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Zero application code, .NET projects, or migrations created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
   - `.agent-memory/ARCHITECTURE-DECISIONS.md` strictly untouched (0 diff against HEAD).
   - Preserved 100% of Owner-confirmed invariants (`D1-D5`, `OD-01..17`, `OQ-01..07`).
-- **Verdict**: STAGE 1 PRODUCT SPECIFICATION BASELINE 100% CONSOLIDATED, AUDITED & FROZEN (`v1.0.0-FROZEN`) — STAGE 2 TRANSITION GATE UNLOCKED & AUTHORIZED FOR TASK-03.
+- **Verdict**: STAGE 1 PRODUCT SPECIFICATION BASELINE 100% CONSOLIDATED, AUDITED & FROZEN (`v1.0.0-FROZEN`) — *(Governance Correction: Stage 2 Gate corrected per Owner mandate to `NOT AUTHORIZED / LOCKED`; Task 03 strictly locked)*.
 - **Status**: Completed & Sealed.
 
 ---
@@ -373,3 +373,57 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Updated [.agent-memory/PROJECT-STATUS.md](./PROJECT-STATUS.md), [.agent-memory/NEXT-TASK.md](./NEXT-TASK.md), and [.agent-memory/DEVELOPMENT-LOG.md](./DEVELOPMENT-LOG.md) reflecting official sign-off and resolving audit finding F-02.
   - Absolute code & technical scaffolding discipline maintained (0 code files written, 0 projects scaffolded, 0 migrations generated).
 - **Status**: Stage 1 Signed Off & Sealed; Standing by for Project Owner Directives.
+
+---
+
+### [2026-11-06] — Task 02.9.2: Governance Finding Resolution
+- **Objective**: Execute controlled baseline refinements to systematically resolve all 4 audit findings (F-01..F-04) from Task 02.9.1, verify baseline consistency, and confirm the Clean Pass attestation.
+- **Deliverables**:
+  - Authored [TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/product/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md).
+  - Resolved `AUDIT-FINDING-F-01` (Medium): Refined dual DB key scoping in [MVP-SCOPE-BASELINE.md](../docs/product/MVP-SCOPE-BASELINE.md), [BUSINESS-REQUIREMENTS-BASELINE.md](../docs/product/BUSINESS-REQUIREMENTS-BASELINE.md) (`BR-SEC-004`), [PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md), and [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md) §5.8 (`TECH-06`).
+  - Resolved `AUDIT-FINDING-F-02` (Low): Verified agent memory synchronization across [PROJECT-STATUS.md](./PROJECT-STATUS.md), [NEXT-TASK.md](./NEXT-TASK.md), and [DEVELOPMENT-LOG.md](./DEVELOPMENT-LOG.md).
+  - Resolved `AUDIT-FINDING-F-03` (Informational): Standardized `NFR-PERF-05` as an explicit stress-test benchmarking target in [NON-FUNCTIONAL-REQUIREMENTS.md](../docs/product/NON-FUNCTIONAL-REQUIREMENTS.md), [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md), and [OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md](../docs/product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md) (`TECH-07`).
+  - Resolved `AUDIT-FINDING-F-04` (Informational): Clarified official technical delegation of inventory deduction trigger in [BUSINESS-RULES-BASELINE.md](../docs/product/BUSINESS-RULES-BASELINE.md), [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md), and [OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md](../docs/product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md) (`TECH-02`).
+  - Updated master index in [docs/00-index.md](../docs/00-index.md).
+- **Execution Constraints Enforced**:
+  - Pure documentation refinements; zero application code, .NET projects, or migrations created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
+  - `.agent-memory/ARCHITECTURE-DECISIONS.md` strictly untouched (0 diff against HEAD).
+- **Resolution Verdict**: 100% OF AUDIT FINDINGS RESOLVED (0 OPEN FINDINGS REMAINING) — CLEAN PASS CERTIFIED — STAGE 1 SEALED & SIGNED OFF — STAGE 2 ON HOLD PENDING OWNER DIRECTIVE.
+- **Status**: Completed & Sealed.
+
+---
+
+### [2026-11-06] — Task 02.9.2.1: Independent Governance Integrity Verification
+- **Objective**: Conduct an independent empirical audit verifying the complete governance integrity and consistency of the codebase following Task 02.9.2, in strict compliance with the Project Owner's mandate.
+- **Deliverables**:
+  - Authored [TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/product/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md) certifying:
+    - 10/10 audit items passed: F-01 dual key wording resolution, F-02 PROJECT-STATUS locked status, F-03 NFR-PERF-05 benchmark target, F-04 inventory trigger open status, REV-11 remake dish integrity, DirectFOHPick integrity, Owner decision register integrity (23 items), Stage 2 gate enforcement (`NOT AUTHORIZED / LOCKED`), absence of `docs/02-architecture/` (`False`), and repository zero code leakage.
+    - Zero code leakage verified: exactly 0 .cs, 0 .csproj, 0 .sln, 0 .sql files.
+    - Zero diff on `ARCHITECTURE-DECISIONS.md`, `GEMINI.md`, `AGENTS.md` against HEAD `b94a2eb`.
+    - Automated link validation: 56/56 links valid, 0 broken links.
+  - Updated master documentation index in [docs/00-index.md](../docs/00-index.md).
+- **Audit Verdict**: `PASS (100% VERIFIED & CERTIFIED — CLEAN GOVERNANCE SEAL)`.
+- **Governance Gate**: `STAGE 1 = OWNER-APPROVED` | `STAGE 2 = NOT AUTHORIZED / LOCKED`.
+- **Status**: Completed & Sealed.
+
+---
+
+### [2026-11-06] — Task 02.8.6.1: Governance Correction & Decision Traceability Verification
+- **Objective**: Execute controlled refinements resolving the Decision ID mismatch finding (`AUDIT-FINDING-ID-01`) identified in Task 02.9.2.1, disambiguate `OD-13` (paid bill immutability) vs `OD-14` (paid bill complaint/refund policy) vs `BillingRequested Option 2`, and verify complete bidirectional traceability for all 23 Owner decisions.
+- **Deliverables**:
+  - Authored [TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/product/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md).
+  - Executed surgical baseline refinements across 7 documents:
+    - [BUSINESS-RULES-BASELINE.md](../docs/product/BUSINESS-RULES-BASELINE.md): `BR-RULE-06` source set to `PDR-009 (Op2) / D4`; `BR-RULE-17` source set to `OD-14 (Op A) / OD-13`.
+    - [BUSINESS-REQUIREMENTS-BASELINE.md](../docs/product/BUSINESS-REQUIREMENTS-BASELINE.md): `BR-POS-005` description updated to `(PDR-009 BillingRequested Option 2 / D4)`.
+    - [REQUIREMENT-TRACEABILITY-MATRIX.md](../docs/product/REQUIREMENT-TRACEABILITY-MATRIX.md): `BR-POS-005` mapped to `PDR-009 (Op2)/D4`; `BR-BIL-005` mapped to `OD-14 / OD-13` and `OD-14 / PDR-009`.
+    - [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md): Item 6 mapped to `PDR-009 (BillingRequested Option 2) / D4`; Item 7 mapped to `OD-14 Option A (kết hợp OD-13)`; Item 13 added explicitly for `OQ-07 Option A`.
+    - [PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md): §4 Item 6 updated; §4 Item 8 updated with `OQ-07`.
+    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md): `BR-RULE-06` and Mermaid class invariants updated.
+    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md): Consistency audit mapping updated.
+  - Updated master index in [docs/00-index.md](../docs/00-index.md).
+- **Execution Constraints Enforced**:
+  - Zero code, zero project/solution, zero SQL scripts created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
+  - `docs/02-architecture/` verified non-existent (`Test-Path = False`).
+- **Traceability Verdict**: `PASS (CLEAN TRACEABILITY & FULL GOVERNANCE INTEGRITY SEAL)`.
+- **Governance Gate**: `STAGE 1 = OWNER-APPROVED` | `STAGE 2 = NOT AUTHORIZED / LOCKED`.
+- **Status**: Completed & Sealed.

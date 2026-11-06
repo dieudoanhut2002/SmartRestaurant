@@ -52,7 +52,7 @@ Mọi yêu cầu nghiệp vụ trong tài liệu này được phân loại tr�
 | **BR-POS-002** | Gọi Món Cảm Ứng Nhanh | Giao diện cảm ứng tối ưu hóa, danh mục món trực quan, tìm kiếm nhanh theo mã hoặc tên món dưới 100ms. | BRS §2.3 | `MOD-07` | `OWNER-CONFIRMED` |
 | **BR-POS-003** | Quản Lý Các Đợt Gọi Món (Order Rounds) | Mỗi lần bấm "Báo bếp" tạo thành một đợt gọi món riêng biệt, lưu vết thời gian và nhân viên gửi. | BRS §2.3 | `MOD-07` | `OWNER-CONFIRMED` |
 | **BR-POS-004** | Gọi Món Đồng Thời Không Khóa Bàn | Nhiều phục vụ có thể đồng thời mở cùng một bàn để thêm món mà không bị chặn, lưu vết an toàn chỉ nối thêm (`PDR-014`). | BRS §2.3 | `MOD-07` | `OWNER-CONFIRMED` |
-| **BR-POS-005** | Bàn Tạm Tính Vẫn Cho Phép Sửa Món | Bàn đang ở trạng thái `BillingRequested` vẫn cho phép thêm món hoặc hủy món hợp lệ (`OD-13 Option 2`). | BRS §2.3 | `MOD-07` | `OWNER-CONFIRMED` |
+| **BR-POS-005** | Bàn Tạm Tính Vẫn Cho Phép Sửa Món | Bàn đang ở trạng thái `BillingRequested` vẫn cho phép thêm món hoặc hủy món hợp lệ (`PDR-009 BillingRequested Option 2 / D4`). | BRS §2.3 | `MOD-07` | `OWNER-CONFIRMED` |
 | **BR-POS-006** | Chuyển Bàn & Gộp Bàn | Cho phép chuyển toàn bộ phiên sang bàn trống khác, hoặc gộp 2 hay nhiều bàn thành 1 phiên chung. | BRS §2.3 | `MOD-04, 07` | `OWNER-CONFIRMED` |
 | **BR-POS-007** | Hủy Gộp Bàn Tái Phân Bổ Món | Cho phép hủy gộp bàn bất kỳ lúc nào, phân bổ lại món ăn về bàn tách ra mà không phải bắn lại phiếu bếp (`PDR-010`). | BRS §2.3 | `MOD-04, 07` | `OWNER-CONFIRMED` |
 
@@ -130,4 +130,4 @@ Mọi yêu cầu nghiệp vụ trong tài liệu này được phân loại tr�
 | **BR-SEC-001** | Phân Quyền Vai Trò Nghiệp Vụ (RBAC) | Hỗ trợ 6 vai trò tiêu chuẩn: Admin, Quản lý, Thu ngân, Bồi bàn, Đầu bếp, Thủ kho với ma trận quyền hạn rõ ràng. | BRS §1 | `MOD-02` | `OWNER-CONFIRMED` |
 | **BR-SEC-002** | Đăng Nhập Nhanh Bằng PIN 4 Số | Cho phép bồi bàn và thu ngân chuyển đổi tài khoản tức thì trên màn hình cảm ứng bằng mã PIN cá nhân bảo mật. | BRS §1 | `MOD-02` | `OWNER-CONFIRMED` |
 | **BR-SEC-003** | Phê Duyệt Thao Tác Nhạy Cảm Bằng PIN | Hủy món đã nấu, áp dụng chiết khấu lớn, hoặc hủy hóa đơn bắt buộc phải nhập mã PIN của Quản lý nhà hàng. | BRS §1 | `MOD-02` | `OWNER-CONFIRMED` |
-| **BR-SEC-004** | Phân Vùng Dữ Liệu Đa Khách Thuê | Khóa nhận diện `OrganizationId` và `BranchId` được áp dụng trên mọi câu lệnh truy vấn dữ liệu từ ngày đầu. | BRS §1 | `MOD-01` | `OWNER-CONFIRMED` |
+| **BR-SEC-004** | Phân Vùng Dữ Liệu Đa Chi Nhánh | Cấu trúc dữ liệu sẵn sàng phân vùng đa chi nhánh từ ngày đầu; không bắt buộc mọi entity phải chứa cả hai trường `OrganizationId` và `BranchId`; việc phân vùng dữ liệu và ownership theo entity là nội dung đánh giá ở Stage 2 (`OD-01`, `TECH-06`). | BRS §1 | `MOD-01` | `OWNER-CONFIRMED` |

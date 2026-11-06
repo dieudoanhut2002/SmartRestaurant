@@ -101,19 +101,22 @@ stateDiagram-v2
 
 ---
 
-### 3.5. Kịch Bản 5: Làm Lại Món Do Lỗi Nhà Bếp (Remake Dish — PDR-015)
+### 3.5. Kịch Bản 5: Làm Lại Món Do Lỗi Nhà Bếp (Remake Dish — PDR-015 / REV-11)
 - **Bài toán thực tế**: Món ăn bị khách từ chối tại bàn do lỗi nấu nướng (cháy, mặn, nhầm yêu cầu dị ứng).
-- **Quy trình vận hành**:
-  1. Phục vụ gửi yêu cầu Làm Lại Món kèm mã PIN Quản lý và mã phân loại lỗi.
-  2. Một **Thẻ KDS Làm Lại Màu Tím** ưu tiên cao xuất hiện ngay đầu hàng đợi chế biến tại trạm bếp chịu trách nhiệm.
-  3. Tiêu đề thẻ hiển thị: **"LÀM LẠI DO LỖI BẾP"** kèm chi tiết lỗi nổi bật (ví dụ: "Cháy khét - Đổi đĩa mới").
-  4. Món ăn được nấu lại khẩn trương mà không tính thêm tiền cho khách; chi phí suất ăn lỗi được tự động ghi vào Sổ Hao Phí Nhà Bếp.
+- **Quy trình vận hành & Ràng buộc nghiệp vụ**:
+  1. Phục vụ gửi yêu cầu Làm Lại Món kèm mã PIN Quản lý ủy quyền và mã lý do cụ thể.
+  2. Hệ thống ghi nhận đầy đủ: Người yêu cầu (requester), Quản lý duyệt PIN, Mốc thời gian (timestamp), Lý do làm lại và Bộ phận bếp chịu trách nhiệm (department).
+  3. Một **Phiếu Chế Biến Ưu Tiên Cao** xuất hiện ngay đầu hàng đợi tại trạm bếp (Đề xuất giao diện: Thẻ nổi bật màu tím / cảnh báo nhấp nháy là gợi ý UI của AI, không phải yêu cầu bắt buộc nếu chưa có phê duyệt của Owner).
+  4. Tiêu đề thẻ hiển thị: **"LÀM LẠI DO LỖI BẾP"** kèm chi tiết lỗi nổi bật (ví dụ: "Cháy khét - Đổi đĩa mới").
+  5. Món ăn được nấu lại khẩn trương mà **tuyệt đối không thu thêm tiền của khách hàng** (giữ nguyên tổng tiền hóa đơn).
+  6. Suất ăn lỗi bị loại bỏ được tự động ghi nhận vào **Sổ Hao Phí Nhà Bếp (`WasteLog` / ScrapLoss)** để hạch toán thất thoát nguyên liệu theo quy tắc nghiệp vụ đã phê duyệt.
 
 ---
 
-### 3.6. Kịch Bản 6: Phân Tuyến Trực Tiếp Tại Quầy FOH (Direct FOH — PDR-012)
-- Bia lon, nước ngọt đóng chai và khăn lạnh được cấu hình cờ lấy trực tiếp tại tiền sảnh sẽ bỏ qua hoàn toàn hàng đợi pha chế của Bar KDS.
+### 3.6. Kịch Bản 6: Phân Tuyến Trực Tiếp Tại Quầy FOH (Direct FOH — PDR-012 / REV-08)
+- Bia lon, nước ngọt đóng chai và khăn lạnh được cấu hình cờ lấy trực tiếp tại tiền sảnh (`DirectFOHPick: true`) sẽ được phục vụ trực tiếp tại khu vực khách, **bỏ qua hoàn toàn hàng đợi pha chế của Bar KDS** theo quyết định `REV-08`.
 - Nhân viên phục vụ lấy đồ trực tiếp từ tủ mát khu vực ăn uống, giảm tải cho nhân viên pha chế quầy bar trong giờ cao điểm.
+- **Tính toàn vẹn nghiệp vụ**: Món `DirectFOHPick` vẫn được ghi nhận đầy đủ và nhất quán trong luồng gọi món (order), ghi nhận doanh thu (revenue), quản lý tồn kho (inventory) và tính tiền thanh toán (payment); tuyệt đối không tạo ra mâu thuẫn với quyết định `D2` về thời điểm trừ tồn kho.
 
 ---
 

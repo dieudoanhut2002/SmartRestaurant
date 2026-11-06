@@ -41,7 +41,7 @@
 | **BR-POS-002** | Giao diện gọi món cảm ứng nhanh tại bàn | BRS §2.3 | `PRD §4.3` | `PDR-006` | — | `UJ-01` | Order Workflow | `MOD-07` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-POS-003** | Quản lý đợt gọi món (Order Rounds) | BRS §2.3 | `PRD §4.3` | `PDR-003` | — | `UJ-01, 02` | Order Workflow | `MOD-07` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-POS-004** | Gọi món đồng thời không khóa bàn | BRS §2.3 | `REV-10` | `PDR-014` | `BR-RULE-16` | `UJ-01` | Order Workflow | `MOD-07` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
-| **BR-POS-005** | Bàn tạm tính vẫn cho phép sửa/gọi món | BRS §2.3 | `OD-13 Op2`| `PDR-005` | `BR-RULE-06` | `UJ-01, 05` | Order & Cashier Workflow | `MOD-07, 10` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
+| **BR-POS-005** | Bàn tạm tính vẫn cho phép sửa/gọi món | BRS §2.3 | `PDR-009 (Op2)/D4` | `PDR-005` | `BR-RULE-06` | `UJ-01, 05` | Order & Cashier Workflow | `MOD-07, 10` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-POS-006** | Chuyển bàn và gộp bàn | BRS §2.3 | `PRD §4.1` | `PDR-002` | `BR-RULE-04` | `UJ-01, 07` | Floor Plan Workflow | `MOD-04, 07` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-POS-007** | Hủy gộp bàn tái phân bổ món không báo lại | BRS §2.3 | `REV-05` | `PDR-010` | `BR-RULE-12` | `UJ-01, 07` | Floor Plan Workflow | `MOD-04, 07` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-RES-001** | Tiếp nhận thông tin đặt bàn & cọc | BRS §2.4 | `OD-15` | `PDR-013` | — | `UJ-08` | Floor Plan Workflow | `MOD-06` | `MVP Optional` | `OWNER-CONFIRMED` | Phụ thuộc MOD-04 |
@@ -58,7 +58,7 @@
 | **BR-BIL-002** | Tách hóa đơn theo món chọn lọc | BRS §2.6 | `D4` | `PDR-005` | `BR-RULE-11` | `UJ-05` | Cashier Payment Workflow | `MOD-10` | `MVP Core` | `OWNER-CONFIRMED` | Không khóa bàn |
 | **BR-BIL-003** | Tách hóa đơn chia đều ($1/N$) | BRS §2.6 | `D4` | `PDR-005` | `BR-RULE-11` | `UJ-05` | Cashier Payment Workflow | `MOD-10` | `MVP Core` | `OWNER-CONFIRMED` | Dồn tiền lẻ vào bill cuối |
 | **BR-BIL-004** | Thanh toán đa phương thức (Multi-tender)| BRS §2.6 | `PDR-005` | `PDR-005` | — | `UJ-05` | Cashier Payment Workflow | `MOD-10` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
-| **BR-BIL-005** | Hóa đơn đã thanh toán là bất biến CSDL | BRS §2.6 | `OD-14` | `OD-14` | `BR-RULE-17` | `UJ-05, 06` | Cashier Payment Workflow | `MOD-10` | `MVP Core` | `OWNER-CONFIRMED` | Lệch két giải quyết ở chốt ca |
+| **BR-BIL-005** | Hóa đơn đã thanh toán là bất biến CSDL | BRS §2.6 | `OD-14 / OD-13` | `OD-14 / PDR-009` | `BR-RULE-17` | `UJ-05, 06` | Cashier Payment Workflow | `MOD-10` | `MVP Core` | `OWNER-CONFIRMED` | Lệch két giải quyết ở chốt ca |
 | **BR-BIL-006** | Kiểm tiền mù cuối ca (Blind Shift Close)| BRS §2.6 | `PDR-007` | `PDR-007` | `BR-RULE-07` | `UJ-05, 06` | Cashier Payment Workflow | `MOD-10, 13` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-PAY-001** | Sinh mã VietQR động Napas 24/7 tự động | BRS §2.7 | `D3` | `PDR-008` | `BR-RULE-10` | `UJ-05` | Cashier Payment Workflow | `MOD-11` | `MVP Optional` | `OWNER-CONFIRMED` | Phụ thuộc MOD-10 |
 | **BR-PAY-002** | Nhận webhook Napas xác nhận tự động | BRS §2.7 | `D3` | `PDR-008` | `BR-RULE-10` | `UJ-05` | Cashier Payment Workflow | `MOD-11` | `MVP Optional` | `OWNER-CONFIRMED` | Phụ thuộc MOD-14 |
@@ -79,4 +79,4 @@
 | **BR-SEC-001** | Ma trận 6 vai trò tiêu chuẩn (RBAC) | BRS §1 | `PRD §4.9` | `PDR-001` | — | Toàn bộ | System Admin | `MOD-02` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-SEC-002** | Đăng nhập nhanh bằng PIN 4 số | BRS §1 | `PRD §4.9` | `PDR-001` | — | `UJ-01, 05` | POS & Cashier Workflows | `MOD-02` | `MVP Core` | `OWNER-CONFIRMED` | Không có |
 | **BR-SEC-003** | Phê duyệt thao tác nhạy cảm bằng PIN | BRS §1 | `PRD §4.9` | `PDR-001` | `BR-RULE-02, 17` | `UJ-01, 05, 06` | Tất cả Workflows | `MOD-02` | `MVP Core` | `OWNER-CONFIRMED` | ManagerPinAudit |
-| **BR-SEC-004** | Phân vùng đa khách thuê OrganizationId | BRS §1 | `CONTR-01` | `PDR-001` | — | Toàn bộ | Data Layer | `MOD-01` | `MVP Core` | `OWNER-CONFIRMED` | Multi-branch ready |
+| **BR-SEC-004** | Phân vùng dữ liệu đa chi nhánh | BRS §1 | `CONTR-01 / OD-01` | `PDR-001` | — | Toàn bộ | Data Layer | `MOD-01` | `MVP Core` | `OWNER-CONFIRMED` | Đánh giá phân vùng theo entity Stage 2 (`TECH-06`) |

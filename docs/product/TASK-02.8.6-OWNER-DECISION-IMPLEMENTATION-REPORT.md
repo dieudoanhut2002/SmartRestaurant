@@ -13,8 +13,9 @@
   5. [`docs/00-index.md`](../00-index.md) (Mục lục tài liệu dự án)
   6. Toàn bộ hệ thống BRS, PDRs, User Journeys và Workflows hiện hành
 - **Ngày Thực Hiện**: 2026-11-06
-- **Trạng Thái Quản Trị**: **`100% IMPLEMENTED, RECONCILED & SEALED`**
-- **Cổng Chuyển Tiếp Giai Đoạn 2 (Stage 2 Gate)**: **`UNLOCKED & AUTHORIZED FOR IMMEDIATE EXECUTION`**
+- **Trạng Thái Quản Trị**: **`STAGE 1: OWNER-APPROVED | STAGE 2: NOT AUTHORIZED / LOCKED`**
+- **Cổng Chuyển Tiếp Giai Đoạn 2 (Stage 2 Gate)**: **`NOT AUTHORIZED / LOCKED (CHỜ CHỈ THỊ BẰNG VĂN BẢN RIÊNG CỦA CHỦ DỰ ÁN)`**
+- **Ghi Chú Hiệu Chỉnh Quản Trị (Governance Correction — 2026-11-06)**: Chủ Dự Án đã chính thức phê duyệt nghiệm thu Stage 1 với các finding được ghi nhận và theo dõi. Quyết định phê duyệt nghiệm thu Stage 1 KHÔNG PHẢI là ủy quyền bắt đầu Stage 2. Trạng thái quản trị chính thức được thiết lập: Stage 1 = OWNER-APPROVED, Stage 2 = NOT AUTHORIZED / LOCKED. Tuyệt đối không được khởi động Task 03 khi chưa có ủy quyền riêng.
 
 ---
 
@@ -94,9 +95,9 @@ Căn cứ quy tắc quản trị §3.1 và §3.2, toàn bộ 9 mục dưới đ�
 - **Phân loại**: **`OWNER-CONFIRMED`** (Phương án A).
 - **Quy tắc nghiệp vụ được xác lập**:
   1. Trong màn hình Wizard thiết lập nhà hàng ban đầu, cung cấp 3 bộ cấu hình gợi ý sẵn:
-     - *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp, tắt phí dịch vụ, trừ kho lon/chai.
-     - *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp, bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
-     - *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP theo giờ, kiểm soát ca nghiêm ngặt, in nhiệt dự phòng.
+     - *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp (in nhiệt là kênh chính khi tắt KDS), tắt phí dịch vụ, trừ kho lon/chai.
+     - *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp (KDS-first, `AutoPrintOnFire: false` per `OQ-02`), bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
+     - *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP (tỷ lệ % hoặc số tiền cố định theo lượt per `REV-06`; không hỗ trợ tính theo giờ trong MVP), kiểm soát ca nghiêm ngặt, in nhiệt dự phòng (`AutoPrintOnFire: false` per `OQ-02`, in nhiệt làm dự phòng phần cứng).
   2. Các gói presets này hoàn toàn mang tính chất gợi ý ban đầu (Non-binding suggestions), không áp đặt cứng. Quản lý có thể tùy biến lại từng tham số bất kỳ lúc nào.
 
 ### 3.4. `OD-17`: Quy Tắc Thoát Nghiệp Vụ Phân Tầng Khi Tắt Module (Graceful Drain Policy)
@@ -149,9 +150,16 @@ Tuân thủ nghiêm ngặt nguyên tắc quản trị:
 - **Số lượng câu hỏi mở hoặc quyết định nghiệp vụ còn tồn đọng trong phạm vi Giai đoạn 1 (Stage 1 MVP Scope)**: **CHÍNH XÁC KHÔNG (0) MỤC**. Toàn bộ các điểm chặn nghiệp vụ đã được Chủ Dự Án giải quyết triệt để.
 
 ### Ghi Chú Phân Định Các Vấn Đề Kỹ Thuật Ủy Quyền Cho Giai Đoạn 2 (Stage 2 Technical Delegations):
-Các mục dưới đây không phải là câu hỏi nghiệp vụ bỏ sót của Stage 1, mà là các quyết định kỹ thuật thuộc thẩm quyền của **Kiến trúc sư Giải pháp (Solution Architect)** trong Giai đoạn 2 (`TASK-03`):
-1. **`OQ-08` (Cơ chế kiểm soát đồng thời đơn hàng bàn chung)**: Ủy quyền cho Kiến trúc sư lựa chọn giữa RowVersion, Append-Only Delta Commands hoặc Redis Distributed Memory Queue tại `TASK-03.4`.
-2. **`OQ-10` (Ranh giới khóa phân vùng dữ liệu đa chi nhánh)**: Ủy quyền cho Kiến trúc sư đánh giá theo từng thực thể (`OrganizationId` vs `BranchId`) tại `TASK-03.2`.
+Các mục dưới đây không phải là câu hỏi nghiệp vụ bỏ sót của Stage 1, mà là các chủ đề nghiên cứu, đánh giá và đề xuất kỹ thuật được bàn giao cho **Kiến trúc sư Giải pháp (Solution Architect)** thực hiện trong Giai đoạn 2 (`TASK-03`):
+1. **`OQ-08` (Cơ chế kiểm soát đồng thời đơn hàng bàn chung)**: Nghiên cứu, so sánh đánh giá ưu/nhược điểm giữa RowVersion, Append-Only Delta Commands hoặc In-memory Channels tại `TASK-03.4`, tuyệt đối tuân thủ nguyên tắc nghiệp vụ gọi món đồng thời không khóa bàn đã được Owner phê chuẩn (`PDR-014`).
+2. **`OQ-10` (Ranh giới khóa phân vùng dữ liệu đa chi nhánh)**: Đánh giá theo từng thực thể (`OrganizationId` vs `BranchId`) tại `TASK-03.2`, tuân thủ nguyên tắc giới hạn phạm vi MVP là một nhà hàng độc lập tại một địa điểm (`OD-01`).
+
+> [!IMPORTANT]
+> **RANH GIỚI QUẢN TRỊ DÀNH CHO KIẾN TRÚC SƯ GIẢI PHÁP (STAGE 2 TECHNICAL DELEGATION GUARD)**:  
+> Việc ủy thác nghiên cứu kỹ thuật đối với `OQ-08` và `OQ-10` **TUYỆT ĐỐI KHÔNG** trao cho Solution Architect thẩm quyền:  
+> 1. Thay đổi hoặc làm sai lệch các quyết định nghiệp vụ đã được Chủ Dự Án phê duyệt (`PDR-014`, `OD-01`).  
+> 2. Tự ý cấp phép (self-authorize) mở khóa Giai đoạn 2.  
+> 3. Tự triển khai kỹ thuật, viết mã nguồn C#, tạo project hay cấu trúc CSDL khi Giai đoạn 2 chưa được Chủ Dự Án ủy quyền bằng văn bản.
 
 ### Ghi Chú Các Khảo Sát Hậu MVP (Post-MVP Inquiries):
 1. **`OQ-04` (Logistics kho tổng đa chi nhánh)**: Khảo sát cho phiên bản `v2.0`.
@@ -189,7 +197,7 @@ Chủ Dự Án đã đưa ra các điều kiện ràng buộc cụ thể trong q
 
 | Mã Quyết Định | Tệp Tài Liệu Được Cập Nhật | Vị Trí / Dòng | Bản Chất Cập Nhật |
 | :---: | :--- | :--- | :--- |
-| **Tất cả (OD-14..17, OQ-01..07, 14 Modules)** | [`docs/product/OWNER-DECISION-WORKSHOP.md`](./OWNER-DECISION-WORKSHOP.md) | Header, §1, §3, §4, §8, §9 | Ghi nhận 100% Phương án A; điền đầy đủ phiếu biểu quyết; mở khóa Cổng Stage 2 `UNLOCKED`. |
+| **Tất cả (OD-14..17, OQ-01..07, 14 Modules)** | [`docs/product/OWNER-DECISION-WORKSHOP.md`](./OWNER-DECISION-WORKSHOP.md) | Header, §1, §3, §4, §8, §9 | Ghi nhận 100% Phương án A; điền đầy đủ phiếu biểu quyết; nghiệm thu Stage 1; Cổng Stage 2 niêm phong `NOT AUTHORIZED / LOCKED`. |
 | **OD-15, OD-16, OD-17, OQ-02, OQ-06, Khung 14 Module** | [`docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md`](./MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md) | §2.1, §2.2, §4.1B, §8, §10 | Cập nhật 10 Core Mandatory & 4 MVP Optional thành `OWNER-CONFIRMED`; cập nhật chính sách thoát êm dịu và bảng câu hỏi mở. |
 | **OD-14** | [`docs/product/workflows/CASHIER-PAYMENT-WORKFLOW.md`](./workflows/CASHIER-PAYMENT-WORKFLOW.md) | §4 (Bảng ngoại lệ) | Cập nhật chính sách khiếu nại sau thanh toán: CSDL bất biến, biên bản giấy, log `ShiftClosingVarianceLog`. |
 | **OD-14** | [`docs/product/BUSINESS-REQUIREMENTS.md`](./BUSINESS-REQUIREMENTS.md) | §3 (Quy tắc nghiệp vụ) | Bổ sung quy tắc bắt buộc **`BR-RULE-17`**: Xử lý khiếu nại hóa đơn đã đóng tiền. |
@@ -204,7 +212,7 @@ Chủ Dự Án đã đưa ra các điều kiện ràng buộc cụ thể trong q
 | **OQ-07** | [`docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md`](./OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) | §2 (Bảng Sổ đăng ký) | Cập nhật dòng `D1` ghi chú `OQ-07` đã được Chủ Dự Án phê duyệt theo Phương án A. |
 | **OQ-01, OQ-02, OQ-03** | [`docs/01-requirements/product-requirements-document.md`](../01-requirements/product-requirements-document.md) | §7 (Câu hỏi mở) | Cập nhật trạng thái `ĐÃ GIẢI QUYẾT (RESOLVED)` kèm dẫn chiếu nghị quyết chính thức. |
 | **Tất cả các tài liệu** | [`docs/00-index.md`](../00-index.md) | Mục 2 & Mục 4 | Cập nhật `OPEN-QUESTIONS.md` và `OWNER-DECISION-WORKSHOP.md` sang `CONFIRMED`; bổ sung báo cáo Task 02.8.6. |
-| **Bộ nhớ dự án** | [`.agent-memory/PROJECT-STATUS.md`](../../.agent-memory/PROJECT-STATUS.md) | §1, §2, §3, §4 | Cập nhật tiến độ Milestone 1.12; Stage 1 hoàn tất 100%; Stage 2 Unlocked & Authorized. |
+| **Bộ nhớ dự án** | [`.agent-memory/PROJECT-STATUS.md`](../../.agent-memory/PROJECT-STATUS.md) | §1, §2, §3, §4 | Cập nhật tiến độ Milestone 1.12; Stage 1 hoàn tất 100% (OWNER-APPROVED); Stage 2 NOT AUTHORIZED / LOCKED. |
 | **Bộ nhớ dự án** | [`.agent-memory/DEVELOPMENT-LOG.md`](../../.agent-memory/DEVELOPMENT-LOG.md) | Dòng 296+ | Ghi nhận nhật ký kiểm toán tamper-evident thực hiện Task 02.8.6. |
 | **Bộ nhớ dự án** | [`.agent-memory/NEXT-TASK.md`](../../.agent-memory/NEXT-TASK.md) | §3, §4, §7 | Cập nhật tài liệu đầu vào và xác nhận điều kiện mở khóa Cổng Stage 2 (TASK-03). |
 
@@ -293,18 +301,18 @@ Untracked files:
 
 ```
 ================================================================================
-STAGE 1 & STAGE 2 GOVERNANCE STATUS DECLARATION:
+STAGE 1 & STAGE 2 GOVERNANCE STATUS DECLARATION (GOVERNANCE CORRECTION APPLIED):
 
 STAGE 1: PRODUCT REQUIREMENTS & BUSINESS SPECIFICATIONS
-- STATUS: 100% OFFICIALLY SIGNED OFF, RECONCILED & SEALED
+- STATUS: 100% OWNER-APPROVED, RECONCILED & SEALED
 - OWNER DECISIONS: 100% RECORDED & SYNCHRONIZED ACROSS ALL 18 SPECIFICATIONS
 - REMAINING OPEN QUESTIONS IN STAGE 1: ZERO (0)
 - SCOPE DRIFT: ZERO (SINGLE STORE BOUNDARY & COUNTABLE INVENTORY PRESERVED)
 
 STAGE 2: SYSTEM ARCHITECTURE & TECHNICAL SOLUTION DESIGN
-- STATUS: UNLOCKED & AUTHORIZED FOR IMMEDIATE COMMENCEMENT
-- GATEKEEPER CONDITION: SATISFIED (TASK 02.8.5 & TASK 02.8.6 CERTIFIED)
-- AUTHORIZED WORK BREAKDOWN STRUCTURE (TASK-03):
+- STATUS: NOT AUTHORIZED / LOCKED (CHỜ CHỈ THỊ BẰNG VĂN BẢN RIÊNG CỦA CHỦ DỰ ÁN)
+- GATEKEEPER CONDITION: STAGE 1 OWNER-APPROVED (STAGE 2 GATE IS NOT AUTHORIZED / LOCKED)
+- PLANNED WORK BREAKDOWN STRUCTURE (TASK-03 — CHỜ ỦY QUYỀN):
   * TASK-03.1: Modular Monolith System Architecture (docs/02-architecture/system-architecture.md)
   * TASK-03.2: Relational Data Models & Comprehensive ERD (docs/02-architecture/data-models-and-erd.md)
   * TASK-03.3: Real-Time SignalR Hub Contracts & Event Mesh (docs/02-architecture/realtime-signalr-mesh.md)
@@ -312,4 +320,4 @@ STAGE 2: SYSTEM ARCHITECTURE & TECHNICAL SOLUTION DESIGN
 ================================================================================
 ```
 
-Nhiệm vụ **TASK 02.8.6** chính thức khép lại toàn bộ vòng đời của **Giai Đoạn 1 (Stage 1)**. Toàn bộ các yêu cầu nghiệp vụ và quyết định của Chủ Dự Án đã được phản ánh chuẩn xác vào kho tài liệu sản phẩm, mở đường cho Đội ngũ Kỹ thuật tự tin khởi động **Giai Đoạn 2 (Stage 2 — Technical Architecture & Solution Design)**.
+Nhiệm vụ **TASK 02.8.6** chính thức khép lại các công việc cập nhật tài liệu của **Giai Đoạn 1 (Stage 1)**. Toàn bộ các yêu cầu nghiệp vụ và quyết định của Chủ Dự Án đã được phản ánh chuẩn xác vào kho tài liệu sản phẩm. Căn cứ quyết định của Chủ Dự Án: Giai đoạn 1 đã được nghiệm thu (OWNER-APPROVED), Giai đoạn 2 ở trạng thái **`NOT AUTHORIZED / LOCKED`**. Toàn bộ hệ thống duy trì chế độ chờ (standby); nghiêm cấm khởi động Task 03 khi chưa có lệnh bằng văn bản từ Chủ Dự Án.

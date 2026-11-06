@@ -1,7 +1,7 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (100% OFFICIALLY SIGNED OFF & SEALED BY PROJECT OWNER; Stage 2 on Standby Pending Owner Instruction)
-- **Current Milestone**: Milestone 1.14 (Task 02.9.1) Completed — Independent Product Specification Audit Certified (`PASS WITH FINDINGS`); Stage 1 Officially Signed Off by Project Owner; Stage 2 Commencement on Standby Pending Explicit Owner Directive
+- **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (Stage 1: OWNER-APPROVED; Stage 2: NOT AUTHORIZED / LOCKED — Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner)
+- **Current Milestone**: Milestone 1.17 (Task 02.8.6.1) Completed — Governance Correction & Decision Traceability Certified; Stage 1 Officially OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED
 - **Status Date**: 2026-11-06
 
 ---
@@ -10,8 +10,8 @@
 
 | Stage | Name | Status | Deliverables |
 | :--- | :--- | :--- | :--- |
-| **Stage 1** | Product Requirements & Business Domain Analysis | **100% OFFICIALLY SIGNED OFF & SEALED BY OWNER** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit, Task 02.8.5 Consolidation Record, Task 02.8.6 Implementation Report, Task 02.9 Product Specification Baseline Suite (v1.0.0-FROZEN), Task 02.9.1 Audit Report |
-| **Stage 2** | System Architecture & Technical Design | **`PENDING EXPLICIT PROJECT OWNER REQUEST / AUTHORIZATION (ON HOLD — STRICT STANDBY)`** | System Architecture, ERD, SignalR Specs, Concurrency Strategy (Awaiting Owner Directive) |
+| **Stage 1** | Product Requirements & Business Domain Analysis | **`OWNER-APPROVED`** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit, Task 02.8.5 Consolidation Record, Task 02.8.6 Implementation Report, Task 02.9 Baseline Suite (v1.0.0-FROZEN), Task 02.9.1 Audit Report, Task 02.9.2 Resolution Report, Task 02.9.2.1 Integrity Audit, Task 02.8.6.1 Traceability Verification |
+| **Stage 2** | System Architecture & Technical Design | **`NOT AUTHORIZED / LOCKED`** | System Architecture, ERD, SignalR Specs, Concurrency Strategy (Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner) |
 | **Stage 3** | Detailed Module Specifications & Data Models | `PENDING` | Module Specs, DTOs, Business Rules |
 | **Stage 4** | Implementation & Milestone Planning | `PENDING` | Work Breakdown Structure (WBS), Sprints |
 | **Stage 5** | Iterative Implementation by Approved Milestone | `PENDING` | Solution Scaffolding, Core Code |
@@ -36,10 +36,13 @@
 - [x] **Milestone 1.9 (Task 02.8.3)**: Controlled Vietnamese Documentation Localization.
 - [x] **Milestone 1.10 (Task 02.8.4)**: Independent Vietnamese Documentation Quality Verification ([TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](../docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md)).
 - [x] **Milestone 1.11 (Task 02.8.5)**: Project Owner Decision Workshop & Decision Consolidation ([TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)). 100% of open items officially confirmed by Owner; Stage 1 signed off.
-- [x] **Milestone 1.12 (Task 02.8.6)**: Project Owner Decision Recording & Controlled Documentation Update ([TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)). Recorded all owner decisions in workshop dossier, synchronized entire Stage 1 suite, Stage 2 Gate Unlocked.
+- [x] **Milestone 1.12 (Task 02.8.6)**: Project Owner Decision Recording & Controlled Documentation Update ([TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)). Recorded all owner decisions in workshop dossier, synchronized entire Stage 1 suite; Stage 2 Gate NOT AUTHORIZED / LOCKED per Owner Directive.
 - [x] **Milestone 1.13 (Task 02.9)**: Product Specification Baseline Consolidation ([PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md) & [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md)). Officially consolidated and frozen Stage 1 product requirements suite (9 baseline documents: Master Baseline, MVP Scope, Requirements, Rules, Capabilities, Traceability, Open Questions, Stage 2 Handoff, Task Report; `v1.0.0-FROZEN`).
 - [x] **Milestone 1.14 (Task 02.9.1)**: Independent Product Specification Audit ([TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](../docs/product/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md)). Certified `PASS WITH FINDINGS` (0 Critical, 0 High, 1 Medium, 1 Low, 2 Informational).
-- [x] **Stage 1 Formal Sign-Off (2026-11-06)**: Project Owner explicitly reviewed and approved Stage 1 (Step 1). Stage 2 commencement is explicitly held on standby awaiting specific Project Owner instruction (`PENDING EXPLICIT PROJECT OWNER REQUEST`). Zero code written, zero schemas scaffolded.
+- [x] **Milestone 1.15 (Task 02.9.2)**: Governance Finding Resolution ([TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/product/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md)). 100% of audit findings (F-01..F-04) resolved; controlled baseline suite refined; certified Clean Pass.
+- [x] **Milestone 1.16 (Task 02.9.2.1)**: Independent Governance Integrity Verification ([TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/product/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md)). 10/10 audit criteria passed; certified 100% compliance; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
+- [x] **Milestone 1.17 (Task 02.8.6.1)**: Governance Correction & Decision Traceability Verification ([TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/product/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md)). Surgical resolution of Decision ID mismatches (`OD-13` vs `OD-14`, `BillingRequested Op2`); 100% verified traceability chain for 23 Owner Decisions; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
+- [x] **Stage 1 Formal Sign-Off (2026-11-06)**: Project Owner explicitly reviewed and approved Stage 1 (OWNER-APPROVED). Stage 2 is NOT AUTHORIZED / LOCKED. Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner. Zero code written, zero schemas scaffolded.
 
 ---
 

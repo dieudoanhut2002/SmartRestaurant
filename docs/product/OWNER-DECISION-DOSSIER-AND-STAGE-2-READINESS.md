@@ -221,4 +221,4 @@ STAGE 1 COMPLETED & SIGNED OFF — READY FOR STAGE 2 AUTHORIZATION
 > **XÁC NHẬN HOÀN TẤT GIAI ĐOẠN 1 (STAGE 1 FORMAL SIGN-OFF)**  
 > 1. Toàn bộ hoạt động đặc tả, phân tích và biểu quyết quyết định Giai đoạn 1 đã **CHÍNH THỨC HOÀN TẤT & ĐƯỢC CHỦ DỰ ÁN PHÊ DUYỆT 100%**.  
 > 2. Các quyết định cốt lõi (`OD-14..17`, `OQ-01..07`, Khung 14 Phân hệ) đã được hợp nhất thành các ranh giới bất biến.  
-> 3. Cổng quản trị Giai đoạn 2 đã sẵn sàng được mở khóa để triển khai **TASK-03: Thiết Kế Kiến Trúc Hệ Thống & ERD**.
+> 3. Cổng quản trị Giai đoạn 2 ở trạng thái **`NOT AUTHORIZED / LOCKED`**. Việc triển khai **TASK-03: Thiết Kế Kiến Trúc Hệ Thống & ERD** chỉ được thực hiện khi có văn bản hoặc chỉ thị phê duyệt riêng của Chủ Dự Án. Toàn bộ hệ thống duy trì chế độ chờ (standby).

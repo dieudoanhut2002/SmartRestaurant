@@ -1,9 +1,9 @@
 # SmartRestaurant — Next Approved Task Specification
 
-- **Task Identifier**: TASK-03 (PENDING OWNER DIRECTIVE / ON HOLD)
-- **Task Title**: Stage 2 Technical Architecture Design (Awaiting Specific Request to Start)
+- **Task Identifier**: TASK-03 (LOCKED / NOT AUTHORIZED)
+- **Task Title**: Stage 2 Technical Architecture Design (Awaiting Explicit Owner Authorization)
 - **Lifecycle Stage**: Stage 2 — System Architecture & Technical Design
-- **Current Status**: **ON HOLD — STANDBY**. Stage 1 has been officially signed off by the Project Owner on 2026-11-06 ("Phê duyệt bước 1 nhưng chưa khởi động Giai đoạn 2, chờ tôi yêu cầu cụ thể"). All agents must wait for explicit request from the Project Owner before commencing Stage 2 work.
+- **Current Status**: **STAGE 1 = OWNER-APPROVED; STAGE 2 = NOT AUTHORIZED / LOCKED**. Chủ Dự Án đã chính thức phê duyệt nghiệm thu Stage 1 vào ngày 2026-11-06 nhưng chưa ủy quyền khởi động Stage 2. Tuyệt đối không được khởi động Task 03 nếu chưa có ủy quyền riêng của Chủ Dự Án. Toàn bộ hệ thống duy trì chế độ chờ (standby).
 
 ---
 
@@ -31,7 +31,7 @@ Following formal sign-off of Stage 1 (Product Discovery & Specifications Suite `
 - Certified [Final Evidence Reconciliation & Governance Boundary Verification](../docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md).
 - Certified [Independent Vietnamese Documentation Quality Verification](../docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md).
 - Approved [Project Owner Decision Consolidation Record](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md) (100% of open questions `OD-14`..`OD-17`, `OQ-01`..`OQ-07`, and 14 Module Framework officially confirmed).
-- Certified [Owner Decision Implementation Report](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md) (Stage 1 documentation 100% synchronized, Stage 2 Gate unlocked & authorized).
+- Certified [Owner Decision Implementation Report](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md) (Stage 1 documentation 100% synchronized; Stage 2 Gate NOT AUTHORIZED / LOCKED per Owner directive).
 - Sealed [Product Specification Baseline Suite](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md) (Master Baseline Specification `v1.0.0-FROZEN`).
 - Official [Stage 2 Product Handoff Package](../docs/product/STAGE-2-PRODUCT-HANDOFF.md) for Solution Architect.
 - Architectural guidelines established in [GEMINI.md](../GEMINI.md) and [AGENTS.md](../AGENTS.md).
@@ -73,4 +73,4 @@ Following formal sign-off of Stage 1 (Product Discovery & Specifications Suite `
 ---
 
 ## 7. Approval Requirements
-- **Gatekeeper Requirement**: Certified Stage 1 Sign-Off and Master Baseline Freeze via Task 02.7.5, Task 02.8.5, Task 02.8.6, and Task 02.9 (`v1.0.0-FROZEN`) satisfied. Stage 2 transition gate is UNLOCKED and fully authorized for immediate execution.
+- **Gatekeeper Requirement**: Certified Stage 1 Sign-Off and Master Baseline Freeze via Task 02.7.5, Task 02.8.5, Task 02.8.6, Task 02.9 (`v1.0.0-FROZEN`), Task 02.9.2, and Task 02.8.6.1 satisfied (`STAGE 1 = OWNER-APPROVED`). Stage 2 transition gate is **`NOT AUTHORIZED / LOCKED`**. Commencing Task 03 requires explicit, separate authorization from the Project Owner. Entire system remains on STRICT STANDBY. Zero architectural files or code permitted until authorized.

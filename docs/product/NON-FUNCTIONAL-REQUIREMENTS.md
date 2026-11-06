@@ -27,10 +27,9 @@
 
 ## 2. Phân Lập Dữ Liệu Đa Khách Thuê & Đa Chi Nhánh (Multi-Tenant & Multi-Branch Data Isolation)
 
-### NFR-ISO-01: Phân Vùng Dữ Liệu Logic Theo Chi Nhánh & Doanh Nghiệp
-- **Yêu cầu**: Toàn bộ các bảng giao dịch (`Orders`, `OrderItems`, `Tables`, `DiningSessions`, `Invoices`, `Payments`, `InventoryTransactions`, `Shifts`) bắt buộc phải mang các trường `OrganizationId` và `BranchId`.
-- **Thực thi bộ lọc truy vấn**: Bộ lọc truy vấn toàn cục (Global Query Filters) trong Entity Framework Core phải bảo đảm các truy vấn tự động giới hạn phạm vi trong ngữ cảnh chi nhánh đang đăng nhập của người dùng, ngăn ngừa rò rỉ dữ liệu chéo giữa các chi nhánh.
-- **Giả định**: Các bản triển khai ban đầu chạy trên một cơ sở dữ liệu cài đặt độc lập. Việc mở rộng chuỗi đa chi nhánh trong phiên bản v2.0 sẽ tận dụng các khóa phân vùng `OrganizationId` và `BranchId` đã được thiết kế sẵn.
+### NFR-ISO-01: Phân Vùng Dữ Liệu Logic Theo Chi Nhánh & Doanh Nghiệp (F-01 Resolution)
+- **Định hướng kiến trúc (`OD-01`)**: MVP triển khai cho một nhà hàng độc lập tại một địa điểm kinh doanh vật lý duy nhất. Cấu trúc dữ liệu được chuẩn bị sẵn sàng cho khả năng mở rộng đa chi nhánh trong tương lai.
+- **Ranh giới quản trị**: Không có yêu cầu bắt buộc mọi database entity phải chứa cả hai trường `OrganizationId` và `BranchId`. Việc phân vùng dữ liệu, ownership và cơ chế cô lập dữ liệu (ví dụ: Global Query Filters vs Composite Keys) theo từng nhóm entity là nội dung kỹ thuật cần được đánh giá ở Stage 2 (`TECH-06`). Không đưa ra quyết định database architecture trong tài liệu sản phẩm này.
 
 ---
 
@@ -42,7 +41,7 @@
 | **NFR-PERF-02** | Độ trễ phát sóng đơn SignalR từ POS sang KDS | $\le 500\text{ ms}$ từ lúc phục vụ bấm "Báo bếp" đến khi thẻ món xuất hiện trên màn hình KDS. | Đo kiểm trong môi trường mạng LAN nhà hàng thông thường với $\le 50$ thiết bị kết nối đồng thời. |
 | **NFR-PERF-03** | Engine tính tiền & thuế phí | $\le 50\text{ ms}$ để tính toán xong tiền tạm tính, voucher, phí dịch vụ và thuế GTGT. | Tính toán trong bộ nhớ (In-memory) cho các hóa đơn có tối đa 100 dòng món ăn. |
 | **NFR-PERF-04** | Đồng bộ trạng thái bàn trên sơ đồ mặt bằng | $\le 300\text{ ms}$ để cập nhật đổi màu huy hiệu trạng thái bàn trên toàn bộ các thiết bị. | Phát sóng trạng thái thị giác tức thì qua SignalR `TableHub`. |
-| **NFR-PERF-05** | Tải cao điểm giờ cao điểm | Chịu tải đồng thời lên đến $50$ đơn gọi món cùng lúc và $200$ bàn hoạt động trên mỗi chi nhánh mà không bị suy giảm hiệu năng. | *Mục tiêu cần kiểm chứng qua kiểm thử tải (Stress-test)* — [CÂU HỎI MỞ]. |
+| **NFR-PERF-05** | Tải cao điểm giờ cao điểm (F-03 Resolution) | Chịu tải đồng thời lên đến $50$ đơn gọi món cùng lúc và $200$ bàn hoạt động trên mỗi chi nhánh mà không bị suy giảm hiệu năng. | *Mục tiêu thử nghiệm áp lực (Stress-test Target)*: Giao cho Solution Architect xây dựng kịch bản kiểm thử tải (k6/NBomber) trong Stage 2 để xác định ngưỡng tài nguyên phần cứng phù hợp, tránh áp đặt thành ràng buộc cứng gây lãng phí tài nguyên (over-engineering). |
 
 ---
 

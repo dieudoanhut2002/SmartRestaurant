@@ -54,9 +54,9 @@ Toàn bộ các mục biểu quyết đã được Chủ Dự Án phê duyệt c
 - **Phương án được chọn**: **PHƯƠNG ÁN A — Cung Cấp 3 Gói Cấu Hình Mẫu Gợi Ý Ban Đầu (Gia Đình, Tiêu Chuẩn, VIP) Trong Wizard Onboarding**.
 - **Quy tắc nghiệp vụ được xác lập**:
   1. Trong giao diện thiết lập nhà hàng lần đầu (Setup Wizard), cung cấp 3 bộ cấu hình gợi ý sẵn:
-     - *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp, tắt phí dịch vụ, trừ kho theo lon/chai.
-     - *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp, bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
-     - *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP theo giờ, kiểm soát ca nghiêm ngặt, in nhiệt dự phòng.
+     - *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp (in nhiệt là kênh chính khi tắt KDS), tắt phí dịch vụ, trừ kho theo lon/chai.
+     - *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp (KDS-first, `AutoPrintOnFire: false` per `OQ-02`), bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
+     - *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP (tỷ lệ % hoặc số tiền cố định theo lượt per `REV-06`; không hỗ trợ tính theo giờ trong MVP), kiểm soát ca nghiêm ngặt, in nhiệt dự phòng (`AutoPrintOnFire: false` per `OQ-02`, in nhiệt làm dự phòng phần cứng).
   2. Các gói Presets này hoàn toàn mang tính gợi ý, không áp đặt cứng. Quản lý có thể tùy chỉnh lại từng tham số bất kỳ lúc nào.
 
 #### `OD-17`: Quy Tắc Thoát Nghiệp Vụ Phân Tầng Khi Tắt Module (Graceful Drain Policy)
@@ -133,20 +133,24 @@ Toàn bộ các mục biểu quyết đã được Chủ Dự Án phê duyệt c
 
 ---
 
-## 4. Tuyên Bố Kết Thúc Giai Đoạn 1 & Mở Khóa Giai Đoạn 2
+## 4. Tuyên Bố Kết Thúc Giai Đoạn 1 & Ranh Giới Giai Đoạn 2
 
 ```
 ================================================================================
-FORMAL STAGE 1 SIGN-OFF DECLARATION:
-STAGE 1: PRODUCT REQUIREMENTS & BUSINESS SPECIFICATIONS — 100% SEALED & SIGNED OFF
+FORMAL STAGE 1 SIGN-OFF DECLARATION (GOVERNANCE CORRECTION APPLIED — 2026-11-06):
+STAGE 1: PRODUCT REQUIREMENTS & BUSINESS SPECIFICATIONS — 100% OWNER-APPROVED
 OPEN QUESTIONS & OWNER DECISIONS REMAINING: ZERO (0)
-TRANSITION GATE TO STAGE 2: UNLOCKED & AUTHORIZED FOR EXECUTION
-TASK APPROVED FOR IMMEDIATE COMMENCEMENT: TASK-03 (SOLUTION ARCHITECTURE & ERD)
+TRANSITION GATE TO STAGE 2: NOT AUTHORIZED / LOCKED
+NEXT TASK STATUS: TASK-03 IS LOCKED — AWAITING EXPLICIT WRITTEN OWNER AUTHORIZATION
 ================================================================================
 ```
 
-### Các Tác Vụ Của Giai Đoạn 2 (TASK-03 WBS):
-Sau khi hoàn tất Task 02.8.5, Đội ngũ Kỹ thuật được chính thức cấp phép khởi động **Stage 2: Thiết Kế Kiến Trúc Kỹ Thuật & Giải Pháp (TASK-03)** theo đúng phạm vi:
+> [!IMPORTANT]
+> **THÔNG BÁO QUẢN TRỊ (GOVERNANCE CORRECTION)**:  
+> Ngày 2026-11-06, Chủ Dự Án đã chính thức phê duyệt nghiệm thu Stage 1 với các finding được ghi nhận và theo dõi. Quyết định phê duyệt nghiệm thu Stage 1 KHÔNG PHẢI là ủy quyền bắt đầu Stage 2. Toàn bộ hệ thống duy trì chế độ chờ (STRICT STANDBY). Cổng Giai đoạn 2 được niêm phong ở trạng thái **`NOT AUTHORIZED / LOCKED`**.
+
+### Các Tác Vụ Của Giai Đoạn 2 (TASK-03 WBS — CHỜ ỦY QUYỀN):
+Khi Chủ Dự Án ban hành văn bản chính thức ủy quyền khởi động Stage 2, Đội ngũ Kỹ thuật sẽ triển khai **Stage 2: Thiết Kế Kiến Trúc Kỹ Thuật & Giải Pháp (TASK-03)** theo phạm vi đã chuẩn bị:
 1. **TASK-03.1**: Thiết kế Kiến trúc Tổng thể Modular Monolith (`docs/02-architecture/system-architecture.md`).
 2. **TASK-03.2**: Thiết kế Mô hình Dữ liệu Quan hệ & ERD Chi Tiết (`docs/02-architecture/data-models-and-erd.md`).
 3. **TASK-03.3**: Thiết kế Hợp đồng Thời gian thực SignalR Hubs Mesh (`docs/02-architecture/realtime-signalr-mesh.md`).

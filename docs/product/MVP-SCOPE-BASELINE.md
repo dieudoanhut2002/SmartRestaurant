@@ -17,7 +17,7 @@ SmartRestaurant được định vị là phần mềm quản lý vận hành ch
 ### 1.2. Ranh Giới Đơn Điểm Cốt Lõi (Single Independent Restaurant — OD-01 / CONTR-01)
 - **Phạm vi MVP**: Toàn bộ luồng vận hành, giao diện người dùng và tính năng của bản phát hành MVP v1.0 được thiết kế chuyên biệt cho **một nhà hàng độc lập tại một địa điểm kinh doanh vật lý duy nhất**.
 - **Không có nghiệp vụ chuỗi trong MVP**: Tuyệt đối không xây dựng các màn hình điều chuyển kho giữa các chi nhánh, đồng bộ danh mục thực đơn chuỗi, hay phân bổ doanh thu nhượng quyền trong phiên bản này.
-- **Sẵn sàng mở rộng trong lược đồ dữ liệu**: Mặc dù chỉ kích hoạt 1 chi nhánh khi chạy, toàn bộ thực thể dữ liệu nghiệp vụ đều chứa các khóa ngoại `OrganizationId` và `BranchId` để chuẩn bị cho tương lai.
+- **Sẵn sàng mở rộng trong lược đồ dữ liệu (OD-01 / TECH-06 / F-01 Resolution)**: Mặc dù chỉ kích hoạt 1 chi nhánh khi chạy trong MVP, cấu trúc dữ liệu được định hướng sẵn sàng cho khả năng mở rộng trong tương lai. **Không có yêu cầu bắt buộc mọi database entity phải chứa cả hai trường `OrganizationId` và `BranchId`**. Việc phân vùng dữ liệu, quyền sở hữu (ownership) và khả năng mở rộng theo từng nhóm entity là nội dung kỹ thuật cần được đánh giá ở Stage 2; tài liệu sản phẩm này tuyệt đối không đưa ra quyết định database architecture sớm.
 
 ---
 

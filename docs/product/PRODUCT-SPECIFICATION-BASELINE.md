@@ -81,7 +81,7 @@ Bộ cơ sở đặc tả sản phẩm được tổ chức phân cấp, chuyên
 ### 3.1. Trọng Tâm Nhà Hàng Độc Lập Đơn Điểm Trong MVP (OD-01 / CONTR-01)
 - **Phạm Vi Vận Hành Thực Tế**: Bản phát hành MVP v1.0 phục vụ trọn vẹn và tối ưu hóa chuyên sâu cho **một nhà hàng độc lập tại một địa điểm kinh doanh vật lý duy nhất**.
 - **Trải Nghiệm Tối Ưu Cho F&B Vừa & Nhỏ**: Giao diện trực quan, dễ đào tạo cho nhân viên thời vụ, giảm thiểu thao tác chạm, thiết lập nhanh trong 15 phút.
-- **Sẵn Sàng Kiến Trúc Dữ Liệu Cho Chuỗi (Extensibility Readiness)**: Toàn bộ bảng dữ liệu trong CSDL được gắn sẵn khóa phân vùng `OrganizationId` và `BranchId` để sẵn sàng cho tương lai nhượng quyền/đa chi nhánh (v2.0) mà không cần tái cấu trúc dữ liệu.
+- **Sẵn Sàng Kiến Trúc Dữ Liệu Cho Chuỗi (Extensibility Readiness — OD-01 / TECH-06 / F-01 Resolution)**: Cấu trúc dữ liệu được định hướng sẵn sàng cho mở rộng tương lai; **không có yêu cầu bắt buộc mọi database entity phải chứa cả hai trường `OrganizationId` và `BranchId`**. Việc phân vùng dữ liệu, ownership và khả năng mở rộng theo từng nhóm entity là nội dung kỹ thuật cần được đánh giá ở Stage 2, không đưa ra quyết định database architecture sớm tại Stage 1.
 - **Loại Trừ Quản Lý Chuỗi Trong MVP**: Tuyệt đối không đưa logic điều chuyển kho tổng, quản lý danh mục chuỗi tập trung hay báo cáo tài chính hợp nhất liên chi nhánh vào MVP.
 
 ### 3.2. Chuẩn Mực Bản Địa Hóa Tiếng Việt (Vietnamese-First — PDR-006)
@@ -101,7 +101,7 @@ Bộ cơ sở đặc tả bảo toàn tuyệt đối tính toàn vẹn của cá
 3. **`D3` (Xử Lý VietQR Đến Muộn)**: Cho phép chuyển sang tiền mặt khi QR chờ lâu. Giao dịch webhook ngân hàng đến muộn tự động đi vào Sổ Treo Đối Soát (`SuspenseLedger`), phát cảnh báo quản lý, không ghi nhận thanh toán trùng, không tự ý hoàn tiền khi chưa xác minh.
 4. **`D4` (Tách Hóa Đơn / Đa Hóa Đơn)**: Một phiên bàn hỗ trợ nhiều hóa đơn con thanh toán độc lập. Bàn đang thanh toán không bị khóa; nhân viên tiếp tục gọi thêm món vào hóa đơn chưa thanh toán. Bàn chỉ giải phóng khi 100% hóa đơn con đã thanh toán và hoàn tất phục vụ.
 5. **`D5` (Phân Kỳ Tồn Kho)**: MVP quản lý hàng thành phẩm và hàng đếm được (lon, chai, suất ăn đóng gói). Định lượng nguyên liệu thô theo công thức chi tiết (BOM gram/ml) hoãn sang v1.1.
-6. **`BillingRequested Option 2` & `BR-RULE-06`**: Khi bàn đã in tạm tính, hóa đơn chưa thanh toán vẫn hoàn toàn được phép chỉnh sửa hoặc bổ sung món mới; hóa đơn đã thanh toán là bất biến tuyệt đối (`OD-14`). Sai sót tiền mặt xử lý ngoài quầy bằng biên bản giấy và ghi nhật ký chênh lệch ca `ShiftClosingVarianceLog`.
+6. **`BillingRequested Option 2` & `BR-RULE-06` (liên hệ `OD-13`)**: Khi bàn đã in tạm tính, hóa đơn chưa thanh toán vẫn hoàn toàn được phép chỉnh sửa hoặc bổ sung món mới (`PDR-009 / D4`); hóa đơn đã thanh toán là bất biến tuyệt đối (`OD-13`). Sai sót tiền mặt xử lý ngoài quầy bằng biên bản giấy và ghi nhật ký chênh lệch ca `ShiftClosingVarianceLog` theo quyết định `OD-14` (Phương án A).
 7. **`REV-05 đến REV-11`**:
    - `REV-05` (Hủy gộp bàn tái phân bổ món không bắn lại bếp — `PDR-010`).
    - `REV-06` (Chốt phụ phí phòng VIP/khu vực tại thời điểm tạo đơn — `PDR-011`).
@@ -110,7 +110,7 @@ Bộ cơ sở đặc tả bảo toàn tuyệt đối tính toàn vẹn của cá
    - `REV-09` (Bàn độc lập trong phòng dùng chung & khóa bao trọn phòng — `PDR-013`).
    - `REV-10` (Gọi món đồng thời không khóa bàn — `PDR-014`).
    - `REV-11` (Quy trình làm lại món do lỗi bếp không tính tiền khách, ghi nhận hao phí — `PDR-015`).
-8. **Quyết Định Hội Thảo Task 02.8.5 (`OD-14` đến `OD-17`, `OQ-01`, `OQ-02`, `OQ-06`)**:
+8. **Quyết Định Hội Thảo Task 02.8.5 (`OD-14` đến `OD-17`, `OQ-01`, `OQ-02`, `OQ-06`, `OQ-07`)**:
    - `OD-14`: Phương án A (Hóa đơn đã đóng bất biến trong CSDL; giải quyết sai lệch tiền mặt ngoài quầy kèm biên bản giấy và log chốt ca; `CreditNote` hoãn sang v1.1).
    - `OD-15`: Phương án A (Phân hệ Đặt bàn trước `MOD-06` là `MVP Optional`, thiết kế khớp nối lỏng loose-coupling).
    - `OD-16`: Phương án A (3 Gói Onboarding Presets: Gia đình, Tiêu chuẩn, VIP dưới dạng gợi ý cấu hình không ràng buộc).
@@ -118,6 +118,7 @@ Bộ cơ sở đặc tả bảo toàn tuyệt đối tính toàn vẹn của cá
    - `OQ-01`: Phương án A (Hoãn tách hóa đơn theo % lẻ 60/40 sang v1.1; MVP hỗ trợ Tách theo món và Chia đều $1/N$).
    - `OQ-02`: Phương án A (Mặc định ưu tiên KDS điện tử `AutoPrintOnFire: false`; máy in nhiệt ESC/POS làm dự phòng phần cứng).
    - `OQ-06`: Phương án A (Mặc định thuế VAT tính trên cả phí dịch vụ `IsServiceChargeTaxable: true`).
+   - `OQ-07`: Phương án A (Bàn ăn kéo dài > 24 giờ qua mốc cắt ca giữ nguyên `BusinessDate` ban đầu theo `D1`, hiển thị banner cam cảnh báo Quản lý; không tự động cưỡng bức đóng bàn).
 
 ---
 

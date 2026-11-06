@@ -36,6 +36,11 @@ $$\text{AvailableStock (Tồn khả dụng)} = \text{PhysicalStock (Tồn thực
 4. **Bước 4 — Hao Hụt / Hủy Bỏ (Waste & Spoilage)**:
    - Khi món bị hủy sau khi bếp đã bắt đầu chế biến (cháy khét, rơi đổ, khách bỏ về): `ReservedStock` chuyển đổi thành `WasteStock` và ghi nhận vào bảng theo dõi hủy hỏng `WasteLog` kèm mã lý do bắt buộc và sự phê duyệt của Quản lý bằng mã PIN.
 
+> [!NOTE] Phân Định Ranh Giới Về Thời Điểm Kích Hoạt Khấu Trừ Kho Thực Tế (F-04 Resolution)
+> - **Quy tắc bất biến đã duyệt**: Căn cứ quyết định của Chủ Dự Án `D2` và `D5`, công thức $\text{Tồn khả dụng} = \text{Tồn thực tế} - \text{Tạm giữ}$ và phạm vi quản lý món đếm được trong MVP là bất biến đã được xác nhận.
+> - **Chủ đề kỹ thuật mở**: Thời điểm kích hoạt chuyển từ `Reserved` sang `Consumed` và chính sách trừ tồn kho thực tế (khi KDS báo hoàn thành, khi phục vụ bưng món, hay khi thanh toán) tiếp tục được duy trì ở trạng thái **OPEN / TECHNICAL INVESTIGATION** cho Giai đoạn 2. Không tự ý ấn định sự kiện trigger nào là mặc định.
+> - **Món DirectFOHPick**: Được ghi nhận đầy đủ trong luồng đơn hàng, doanh thu, tồn kho và thanh toán, nhưng không dùng quy định này để suy diễn trigger trừ tồn kho.
+
 ### 2.3. Hàng Rào Bảo Vệ Bất Đồng Bộ & Tính Bất Khả Biến (Concurrency & Idempotency):
 - **Ngăn chặn tồn kho âm (Preventing Negative Stock)**: Kiểm soát tranh chấp (concurrency control) phải đảm bảo các đơn đặt món song song cho những suất cuối cùng không thể làm cho tồn khả dụng bị âm.
 - **Thử lại an toàn (Idempotent Retry)**: Việc mạng bị thử lại hoặc bấm gửi đơn gọi món nhiều lần tuyệt đối không được gây ra việc tạm giữ tồn kho trùng lặp hay trừ kho hai lần.

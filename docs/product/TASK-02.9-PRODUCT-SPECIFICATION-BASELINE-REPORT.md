@@ -117,7 +117,7 @@ Nhóm BA và Quản trị sản phẩm đã hoàn thành việc tạo lập và 
 Kiểm toán chéo toàn diện đã được thực hiện trên 6 miền vận hành trọng yếu:
 
 1. **Miền Đơn Hàng & Bàn Ăn (Order & Table)**:
-   - Xác nhận trạng thái `BillingRequested` cho phép sửa món và gọi thêm món (`BR-RULE-06 / OD-13 Option 2`).
+   - Xác nhận trạng thái `BillingRequested` cho phép sửa món và gọi thêm món (`BR-RULE-06 / PDR-009 BillingRequested Option 2 / D4`, liên hệ bất biến `OD-13`).
    - Món mới gọi thêm nối tiếp vào bill hiện tại hoặc tạo sub-bill độc lập; bàn chỉ giải phóng khi 100% bill thanh toán.
    - Thao tác gọi món đồng thời không khóa bàn theo cơ chế append-only an toàn (`BR-RULE-16`).
    - Phiên bàn > 24 giờ giữ nguyên `BusinessDate` ban đầu theo `D1`, kích hoạt banner màu cam cảnh báo Quản lý, không tự động đóng cưỡng bức bàn (`OQ-07 / BR-RULE-18`).

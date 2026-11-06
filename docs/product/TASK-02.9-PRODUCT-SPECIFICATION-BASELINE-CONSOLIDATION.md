@@ -227,8 +227,8 @@ flowchart LR
    - *Nghiệp vụ*: Giảm giá khuyến mãi theo từng món ăn không được cộng dồn với voucher giảm giá theo phần trăm toàn đơn, trừ khi chính sách đó được bật rõ ràng trong cấu hình của nhà hàng (`AllowDiscountStacking: true`).
    - *Thực thi*: Bộ máy tính giá áp dụng mức giảm tối ưu nhất hoặc chặn cộng dồn theo cờ cấu hình.
 
-6. **`BR-RULE-06` — Bàn Đang Thanh Toán Vẫn Cho Phép Sửa Đổi (BillingRequested Editable Invariant — OD-13 Option 2)**:
-   - *Nghiệp vụ*: Khi bàn đang ở trạng thái `BillingRequested` (Đã in tạm tính), bàn ăn và hóa đơn chưa thanh toán **vẫn hoàn toàn được phép chỉnh sửa**. Phục vụ có thể thêm món gọi thêm (nối tiếp vào hóa đơn hiện có hoặc tạo hóa đơn con mới) hoặc hủy món theo phân quyền. Bàn CHỈ ĐƯỢC GIẢI PHÓNG khi 100% hóa đơn con đã thanh toán đầy đủ (`IsSettled = true`) và toàn bộ món ăn đã phục vụ xong. Nghiêm cấm trực tiếp sửa hóa đơn đã thanh toán.
+6. **`BR-RULE-06` — Bàn Đang Thanh Toán Vẫn Cho Phép Sửa Đổi (BillingRequested Editable Invariant — PDR-009 BillingRequested Option 2 / D4)**:
+   - *Nghiệp vụ*: Khi bàn đang ở trạng thái `BillingRequested` (Đã in tạm tính), bàn ăn và hóa đơn chưa thanh toán **vẫn hoàn toàn được phép chỉnh sửa**. Phục vụ có thể thêm món gọi thêm (nối tiếp vào hóa đơn hiện có hoặc tạo hóa đơn con mới) hoặc hủy món theo phân quyền. Bàn CHỈ ĐƯỢC GIẢI PHÓNG khi 100% hóa đơn con đã thanh toán đầy đủ (`IsSettled = true`) và toàn bộ món ăn đã phục vụ xong. Nghiêm cấm trực tiếp sửa hóa đơn đã thanh toán theo bất biến `OD-13`.
    - *Thực thi*: Bảo toàn linh hoạt vận hành tiền sảnh & tính toàn vẹn kiểm toán tài chính.
 
 7. **`BR-RULE-07` — Chặn Đóng Ca Thu Ngân Khi Còn Hóa Đơn Mở (Open Invoice Cashier Shift Guard)**:
@@ -294,8 +294,8 @@ classDiagram
         +INV-03: TwoPhaseInventoryCountable (D2/D5)
         +INV-04: VietQRSuspenseLedger (D3)
         +INV-05: NonBlockingSplitBill (D4)
-        +INV-06: BillingRequestedEditable (OD-13 Option 2)
-        +INV-07: PaidBillImmutability (OD-14 Option A)
+        +INV-06: BillingRequestedEditable (PDR-009 Op2 / D4)
+        +INV-07: PaidBillImmutability (OD-14 Op A / OD-13)
         +INV-08: ReservationLooseCoupling (OD-15 Option A)
         +INV-09: NonBindingPresets (OD-16 Option A)
         +INV-10: GracefulDrainDataPreserved (OD-17 Option A)
@@ -430,8 +430,8 @@ flowchart TD
     subgraph Preset3["GÓI 3: NHÀ HÀNG CAO CẤP / PHÒNG VIP (VIP FINE DINING)"]
         P3_A["Toàn Bộ 14 Phân Hệ: BẬT 100%"]
         P3_B["Đặt Bàn Trước (MOD-06): BẬT (Nhận cọc & đếm ngược)"]
-        P3_C["Phụ Thu Phòng VIP: BẬT (10% hoặc phí giờ cố định)"]
-        P3_D["KDS Bếp + Máy In Nhiệt Dự Phòng: BẬT"]
+        P3_C["Phụ Thu Phòng VIP: BẬT (10% hoặc phí cố định theo lượt per REV-06)"]
+        P3_D["KDS Bếp: BẬT (KDS-first, AutoPrintOnFire: false, In Nhiệt Dự Phòng)"]
         P3_E["Kho Món Đếm Được & Sổ Hủy Hỏng: BẬT Nghiêm Ngặt"]
     end
 ```

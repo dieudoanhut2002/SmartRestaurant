@@ -6,8 +6,9 @@
 - **Giai Đoạn**: Stage 1 — Khám Phá Sản Phẩm & Đặc Tả Miền Nghiệp Vụ (Product Discovery & Business Domain Specifications)
 - **Vai Trò Đảm Nhiệm**: Chuyên Viên Phân Tích Nghiệp Vụ, Quản Trị Sản Phẩm & Trợ Lý Chuẩn Bị Quyết Định (Business Analyst, Product Governance Analyst & Decision Preparation Assistant)
 - **Ngày Phát Hành**: 2026-11-06
-- **Trạng Thái Quản Trị**: **`OFFICIALLY RECORDED & SIGNED OFF BY PROJECT OWNER (ĐÃ GHI NHẬN & PHÊ DUYỆT CHÍNH THỨC BỞI CHỦ DỰ ÁN)`**
-- **Cổng Giai Đoạn 2 (Stage 2 Gate)**: **`UNLOCKED & AUTHORIZED (ĐÃ MỞ KHÓA & ĐỦ ĐIỀU KIỆN KHỞI ĐỘNG)`**
+- **Trạng Thái Quản Trị**: **`STAGE 1: OWNER-APPROVED | STAGE 2: NOT AUTHORIZED / LOCKED`**
+- **Cổng Giai Đoạn 2 (Stage 2 Gate)**: **`NOT AUTHORIZED / LOCKED (CHỜ CHỈ THỊ BẰNG VĂN BẢN RIÊNG CỦA CHỦ DỰ ÁN)`**
+- **Ghi Chú Hiệu Chỉnh Quản Trị (Governance Correction — 2026-11-06)**: Chủ Dự Án đã chính thức phê duyệt nghiệm thu Stage 1 với các finding được ghi nhận và theo dõi. Quyết định phê duyệt nghiệm thu Stage 1 KHÔNG PHẢI là ủy quyền bắt đầu Stage 2. Trạng thái quản trị chính thức được thiết lập: Stage 1 = OWNER-APPROVED, Stage 2 = NOT AUTHORIZED / LOCKED. Tuyệt đối không được khởi động Task 03 khi chưa có ủy quyền riêng.
 
 ---
 
@@ -162,9 +163,9 @@ Quá trình chuẩn bị quyết định tuân thủ nghiêm ngặt nguyên tắ
 14. **Câu hỏi chính xác cần Chủ Dự Án quyết định**: *Chủ Dự Án có phê duyệt việc tích hợp 3 gói cấu hình mẫu gợi ý (Cafe, À la carte, Pub/Beer) vào quy trình thiết lập ban đầu (Phương án A) hay yêu cầu cấu hình thủ công 100% (Phương án B)?*
 15. **Quyết định của Chủ Dự Án**: **PHƯƠNG ÁN A — Cung Cấp 3 Gói Cấu Hình Mẫu Gợi Ý Ban Đầu (Gia Đình, Tiêu Chuẩn, VIP) Trong Wizard Onboarding**.
     - Trong giao diện thiết lập nhà hàng lần đầu (Setup Wizard), cung cấp 3 bộ cấu hình gợi ý sẵn:
-      * *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp, tắt phí dịch vụ, trừ kho theo lon/chai.
-      * *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp, bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
-      * *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP theo giờ, kiểm soát ca nghiêm ngặt, in nhiệt dự phòng.
+      * *Gói Nhà Hàng Bình Dân / Gia Đình*: Tắt đặt bàn, tắt KDS, bật in nhiệt bếp (in nhiệt là kênh chính khi tắt KDS), tắt phí dịch vụ, trừ kho theo lon/chai.
+      * *Gói Tiêu Chuẩn (Casual Dining)*: Bật KDS Bar, bật KDS Bếp (KDS-first, `AutoPrintOnFire: false` per `OQ-02`), bật đặt bàn cơ bản, phí dịch vụ 5%, VAT 8%.
+      * *Gói VIP Fine Dining*: Bật toàn bộ phân hệ, phụ phí phòng VIP (tỷ lệ % hoặc số tiền cố định theo lượt per `REV-06`; không hỗ trợ tính theo giờ trong MVP), kiểm soát ca nghiêm ngặt, in nhiệt dự phòng (`AutoPrintOnFire: false` per `OQ-02`, in nhiệt làm dự phòng phần cứng).
     - Các gói Presets này hoàn toàn mang tính gợi ý, không áp đặt cứng. Quản lý có thể tùy chỉnh lại từng tham số bất kỳ lúc nào.
 16. **Trạng thái phê duyệt**: **`OWNER-CONFIRMED (PHƯƠNG ÁN A)`** (Phê duyệt chính thức tại Workshop Task 02.8.5).
 
@@ -483,13 +484,13 @@ Bảng dưới đây là **Phiếu Biểu Quyết Chính Thức** đã được 
 
 ```
 ================================================================================
-FINAL GOVERNANCE GATE DECLARATION:
-STAGE 1 PRODUCT REQUIREMENTS & DECISION WORKSHOP: 100% OFFICIALLY SIGNED OFF
+FINAL GOVERNANCE GATE DECLARATION (GOVERNANCE CORRECTION APPLIED — 2026-11-06):
+STAGE 1 PRODUCT REQUIREMENTS & DECISION WORKSHOP: 100% OWNER-APPROVED
 ALL 8 DECISION BRIEFS + 14 MODULE CLASSIFICATIONS: FULLY CONFIRMED & SEALED
 OPEN QUESTIONS & OWNER DECISIONS REMAINING: ZERO (0)
-STAGE 2 TRANSITION GATE: UNLOCKED & AUTHORIZED FOR EXECUTION
-APPROVED NEXT TASK: TASK-03 (MODULAR MONOLITH ARCHITECTURE, ERD & SIGNALR MESH)
+STAGE 2 TRANSITION GATE: NOT AUTHORIZED / LOCKED
+NEXT TASK STATUS: TASK-03 IS LOCKED — AWAITING EXPLICIT WRITTEN OWNER AUTHORIZATION
 ================================================================================
 ```
 
-Toàn bộ các quyết định chính sách và khung kiến trúc của Chủ Dự Án đã được ghi nhận đầy đủ, làm căn cứ pháp lý mở khóa triển khai **Giai đoạn 2 (TASK-03)**.
+Toàn bộ các quyết định chính sách và khung kiến trúc của Chủ Dự Án đã được ghi nhận đầy đủ làm căn cứ nghiệm thu Giai đoạn 1. Quyết định phê duyệt nghiệm thu Stage 1 KHÔNG PHẢI là ủy quyền bắt đầu Stage 2. Toàn bộ hệ thống duy trì chế độ chờ nghiêm ngặt (STRICT STANDBY); Cổng Giai đoạn 2 được niêm phong ở trạng thái **`NOT AUTHORIZED / LOCKED`**. Nghiêm cấm khởi động **Giai đoạn 2 (TASK-03)** khi chưa có văn bản chỉ thị riêng của Chủ Dự Án.

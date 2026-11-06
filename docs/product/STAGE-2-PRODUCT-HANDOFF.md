@@ -72,6 +72,7 @@ Các yêu cầu phi chức năng được trích xuất từ tài liệu NFR hi�
 | **Tính Sẵn Sàng (Availability)** | Chịu lỗi khi mạng Wi-Fi bị gián đoạn tạm thời | Đệm dữ liệu thao tác trong `LocalStorage`; tự động bắt tay đồng bộ hóa khi có mạng lại, không sinh trùng thẻ. |
 | **An Toàn & Bảo Mật (Security)** | Kiểm soát gian lận tiền mặt & phân quyền | RBAC 6 vai trò; đăng nhập nhanh bằng PIN 4 số; lưu vết kiểm toán bất biến cho mọi thao tác duyệt PIN. |
 | **Bản Địa Hóa (Localization)** | Trải nghiệm 100% Tiếng Việt bản địa chuẩn | Giao diện tiếng Việt; format VNĐ `#,,### ₫`; ngày tháng `dd/MM/yyyy`; in nhiệt tiếng Việt ESC/POS CodePage 1258. |
+| **Kiểm Thử Tải Cao Điểm (F-03 Resolution)** | Tải áp lực giờ cao điểm (`NFR-PERF-05`) | **Chỉ tiêu kiểm thử áp lực (Stress-Test)**: Chịu tải đồng thời 50 đơn gọi món / 200 bàn hoạt động; Solution Architect xây dựng kịch bản kiểm thử tải (k6/NBomber) trong Stage 2 để xác định cấu hình phần cứng tối ưu, tránh over-engineering. |
 
 ---
 
@@ -83,13 +84,14 @@ Kiến trúc sư giải pháp trong Stage 2 **bắt buộc phải tuân thủ tu
 3. **`D3`**: Webhook VietQR đến muộn tự động đi vào Sổ Treo `SuspenseLedger`; không ghi nhận trùng; không tự ý hoàn tiền.
 4. **`D4`**: Hỗ trợ nhiều hóa đơn con trên một phiên bàn; tách bill không khóa bàn; khách tiếp tục gọi thêm món vào hóa đơn chưa thanh toán.
 5. **`D5`**: MVP chỉ quản lý tồn kho món đếm được; định lượng nguyên liệu thô BOM gram/ml hoãn sang v1.1.
-6. **`OD-13 Option 2`**: Bàn `BillingRequested` vẫn cho phép chỉnh sửa hoặc gọi thêm món; bàn giải phóng khi 100% hóa đơn con đã thanh toán.
-7. **`OD-14 Option A`**: Hóa đơn đã thanh toán (`IsSettled = true`) là bất biến tuyệt đối trong CSDL; sai lệch quỹ két ghi vào `ShiftClosingVarianceLog` tại thời điểm kiểm tiền mù cuối ca; bút toán số hóa `CreditNote` hoãn sang v1.1.
+6. **`PDR-009 (BillingRequested Option 2) / D4`**: Bàn `BillingRequested` vẫn cho phép chỉnh sửa hoặc gọi thêm món; bàn giải phóng khi 100% hóa đơn con đã thanh toán; hóa đơn đã thanh toán là bất biến theo `OD-13`.
+7. **`OD-14 Option A` (kết hợp `OD-13`)**: Hóa đơn đã thanh toán (`IsSettled = true`) là bất biến tuyệt đối trong CSDL (`OD-13`); sai lệch quỹ két ghi vào `ShiftClosingVarianceLog` tại thời điểm kiểm tiền mù cuối ca; bút toán số hóa `CreditNote` hoãn sang v1.1.
 8. **`OD-15 Option A`**: Phân hệ Đặt bàn trước `MOD-06` là `MVP Optional`, thiết kế khớp nối lỏng qua `TableId` có thể null.
 9. **`OD-16 Option A`**: 3 Onboarding Presets (Gia đình, Tiêu chuẩn, VIP) là gợi ý cấu hình không ràng buộc.
 10. **`OD-17 Option A`**: Chính sách Graceful Drain khi tắt module; 100% dữ liệu lịch sử bảo toàn Read-Only.
 11. **`OQ-02 Option A`**: Mặc định ưu tiên KDS điện tử `AutoPrintOnFire: false`; máy in nhiệt ESC/POS làm dự phòng.
 12. **`OQ-06 Option A`**: Thuế VAT mặc định tính trên cả phí dịch vụ `IsServiceChargeTaxable: true`.
+13. **`OQ-07 Option A`**: Bàn ăn mở kéo dài hơn 24 giờ qua mốc cắt ca vẫn giữ nguyên `BusinessDate` ban đầu theo `D1`, hiển thị banner cam cảnh báo cho Quản lý; không tự động cưỡng bức đóng bàn.
 
 ---
 
@@ -120,17 +122,17 @@ Kiến trúc sư giải pháp trong Stage 2 **bắt buộc phải tuân thủ tu
 - **Nội dung điều tra**: Thiết kế webhook controller nhận thông báo thanh toán VietQR Napas 24/7.
 - **Câu hỏi kỹ thuật**: Cơ chế xác thực chữ ký số HMAC/SHA256 của ngân hàng; thuật toán điều chuyển giao dịch quá hạn vào `SuspenseLedger` và cơ chế phát chuông báo thu ngân.
 
-### 5.6. Tính Nhất Quán Tồn Kho & Điểm Kích Hoạt Khấu Trừ (Inventory Consistency & Deduction Trigger)
-- **Nội dung điều tra**: Triển khai khóa tồn kho hai pha (`Available = Physical - Reserved`).
-- **Câu hỏi kỹ thuật quan trọng**: Điểm kích hoạt (Trigger Point) chính xác để chuyển từ `ReservedStock` sang `ConsumedStock` là gì? (Khi KDS bấm ReadyToServe, hay khi phục vụ bấm Served, hay khi quyết toán hóa đơn? Cần đánh giá ưu/nhược điểm vận hành).
+### 5.6. Tính Nhất Quán Tồn Kho & Điểm Kích Hoạt Khấu Trừ (Inventory Consistency & Deduction Trigger — F-04 Resolution)
+- **Nội dung điều tra**: Triển khai khóa tồn kho hai pha (`Available = Physical - Reserved`). Công thức tính tồn khả dụng là quyết định của Chủ Dự Án (`D2/D5`).
+- **Câu hỏi kỹ thuật quan trọng**: Điểm kích hoạt (Trigger Point) chính xác để chuyển từ `ReservedStock` sang `ConsumedStock` được Chủ Dự Án chính thức ủy quyền cho Solution Architect quyết định trong Stage 2 (Khi KDS bấm ReadyToServe, hay khi phục vụ bấm Served, hay khi quyết toán hóa đơn? Cần đánh giá ưu/nhược điểm vận hành và tính toàn vẹn dữ liệu).
 
 ### 5.7. Vòng Đời Module & Cơ Chế Thoát Êm Dịu (Module Lifecycle & Graceful Drain — OD-17)
 - **Nội dung điều tra**: Cơ chế kích hoạt/hạ cấp module khi chạy mà không phải khởi động lại máy chủ (Zero downtime).
 - **Phương án cần đánh giá**: ASP.NET Core Middleware kiểm tra cờ tính năng trong bộ nhớ đệm `IMemoryCache` vs Custom Action Filter `[RequireModule]` vs Feature Flags framework.
 
-### 5.8. Khả Năng Mở Rộng Đa Chi Nhánh Trong Lược Đồ Dữ Liệu (Multi-Branch Extensibility)
-- **Nội dung điều tra**: Thiết kế lược đồ Entity Framework Core hỗ trợ `OrganizationId` và `BranchId`.
-- **Phương án cần đánh giá**: Sử dụng EF Core Global Query Filters vs Composite Primary Keys (`BranchId, Id`) để bảo đảm hiệu năng cao nhất trên điểm bán đơn lẻ trong MVP.
+### 5.8. Khả Năng Mở Rộng Đa Chi Nhánh Trong Lược Đồ Dữ Liệu (Multi-Branch Extensibility — F-01 Resolution)
+- **Nội dung điều tra**: Thiết kế cấu trúc CSDL sẵn sàng cho khả năng mở rộng đa chi nhánh trong tương lai (`OD-01`).
+- **Ranh giới quản trị & Nội dung đánh giá Stage 2**: Căn cứ quyết định của Chủ Dự Án `OD-01`, MVP phục vụ một nhà hàng độc lập tại một địa điểm duy nhất. Không có yêu cầu bắt buộc mọi database entity phải chứa cả hai trường `OrganizationId` và `BranchId`. Việc phân vùng dữ liệu, quyền sở hữu (ownership) và cơ chế cô lập dữ liệu (Global Query Filters vs Composite Keys) theo từng nhóm entity là nội dung kỹ thuật giao cho Solution Architect đánh giá và quyết định trong Stage 2. Tuyệt đối không đưa ra quyết định database architecture sớm trong tài liệu sản phẩm Stage 1.
 
 ### 5.9. Kiến Trúc Bảo Mật & Xác Thực Mã PIN (Security & Authentication Architecture)
 - **Nội dung điều tra**: Cơ chế xác thực người dùng kết hợp giữa JWT Token (cho phiên đăng nhập) và xác thực mã PIN 4 số nhanh (cho tablet dùng chung tại bàn).
