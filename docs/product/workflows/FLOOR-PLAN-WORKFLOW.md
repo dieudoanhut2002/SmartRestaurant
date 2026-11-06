@@ -1,132 +1,139 @@
-# Floor Plan & Table Management Workflow — SmartRestaurant
+# Quy Trình Sơ Đồ Mặt Bằng & Quản Lý Bàn Ăn — SmartRestaurant
+## (Floor Plan & Table Management Workflow)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `PROPOSED`
-- **Related Documents**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `PROPOSED`
+- **Tài Liệu Liên Quan**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
 
 ---
 
-## 1. Table Operational Lifecycle & State Transitions
+## 1. Vòng Đời Vận Hành Bàn Ăn & Các Bước Chuyển Trạng Thái (Table Operational Lifecycle)
 
-The table lifecycle is the foundational anchor for all front-of-house operations. Tables transition through mutually exclusive operational states with strict validation gates.
+Vòng đời của bàn ăn là điểm neo nền tảng cho toàn bộ hoạt động tiền sảnh của nhà hàng. Các bàn ăn chuyển đổi giữa các trạng thái vận hành loại trừ lẫn nhau với các cổng kiểm soát xác thực nghiêm ngặt.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Available: Floor Plan Published / Table Sanitized
+    [*] --> Available: Xuất bản sơ đồ bàn / Bàn đã được dọn sạch
 
-    Available --> Reserved: Advance Booking Logged
-    Available --> Occupied: Walk-in Party Seated
+    Available --> Reserved: Ghi nhận lịch hẹn đặt bàn trước
+    Available --> Occupied: Xếp khách vãng lai vào bàn
 
-    Reserved --> Occupied: Reserved Party Arrives & Seated
-    Reserved --> Available: Reservation Cancelled / No-Show
+    Reserved --> Occupied: Khách đặt trước đến nơi & Vào bàn
+    Reserved --> Available: Hủy đặt bàn / Khách không đến (No-Show)
 
-    Occupied --> Occupied: Additional Order Round Added
-    Occupied --> Occupied: Tables Merged / Moved
-    Occupied --> BillingRequested: Server Prints Pre-Bill
+    Occupied --> Occupied: Gọi thêm các đợt món mới
+    Occupied --> Occupied: Gộp bàn / Chuyển bàn
+    Occupied --> BillingRequested: Phục vụ in phiếu tạm tính
 
-    BillingRequested --> BillingRequested: Server Appends Items / Modifies Unpaid Bill (PDR-009)
-    BillingRequested --> Occupied: Session Re-opened / Split Cancelled
-    BillingRequested --> CleaningNeeded: Cashier Confirms Full Payment (All Bills Settled)
+    BillingRequested --> BillingRequested: Phục vụ gọi thêm món / Sửa hóa đơn chưa thanh toán (PDR-009)
+    BillingRequested --> Occupied: Mở lại phiên bàn / Hủy yêu cầu tính tiền
+    BillingRequested --> CleaningNeeded: Thu ngân xác nhận thanh toán đủ 100% (Tất cả hóa đơn đã trả)
 
-    CleaningNeeded --> Available: Busser Sanitizes Table & Clears
+    CleaningNeeded --> Available: Nhân viên dọn bàn dọn dẹp & Xác nhận sạch sẽ
 
-    Available --> OutOfService: Maintenance / Broken
-    OutOfService --> Available: Maintenance Resolved
+    Available --> OutOfService: Bàn hỏng / Khu vực bảo trì
+    OutOfService --> Available: Hoàn tất bảo trì & Mở lại phục vụ
 ```
-
-### Table State Operational Matrix
-
-| Table State | Color Badge | System Behaviors & Restrictions | Authorized Roles |
-| :--- | :--- | :--- | :--- |
-| **Available** | Green / Neutral | Unoccupied table; ready for immediate walk-in or reservation assignment. | Host, Waiter, Manager |
-| **Reserved** | Blue | Table locked for upcoming guest party; shows guest name and arrival countdown. | Host, Manager |
-| **Occupied** | Amber / Yellow | Guests seated; active `DiningSession` bound; touch ordering unlocked. | Waiter, Host, Cashier |
-| **BillingRequested**| Purple | Pre-bill printed; checkout underway; unpaid bills remain editable (PDR-009 / BR-RULE-06); new orders default to open bill or new sub-bill. | Cashier, Waiter |
-| **CleaningNeeded** | Orange | Invoice fully settled; guests departed; busser notification triggered. | Busser, Waiter, Cashier |
-| **OutOfService** | Gray | Physical defect or closed dining section; ordering disabled. | Manager |
 
 ---
 
-## 2. Interactive Floor Plan Designer Workflow
+### Ma Trận Vận Hành Các Trạng Thái Bàn
+
+| Trạng Thái Bàn | Huy Hiệu Màu Sắc | Hành Vi Hệ Thống & Ràng Buộc Vận Hành | Vai Trò Được Phép |
+| :--- | :--- | :--- | :--- |
+| **Trống (Available)** | Xanh lá / Trung tính | Bàn sạch sẽ, không có khách; sẵn sàng đón khách vãng lai hoặc gán lịch đặt bàn trước. | Tiếp tân, Phục vụ, Quản lý |
+| **Đã đặt trước (Reserved)** | Xanh dương | Bàn bị khóa chờ đón đoàn khách hẹn trước; hiển thị tên khách và đồng hồ đếm ngược giờ đến. | Tiếp tân, Quản lý |
+| **Có khách (Occupied)** | Vàng hổ phách | Khách đang ngồi ăn; liên kết phiên ăn uống `DiningSession`; mở khóa giao diện gọi món. | Phục vụ, Tiếp tân, Thu ngân |
+| **Đang thanh toán (BillingRequested)**| Màu tím | Đã in phiếu tạm tính; quầy đang thu tiền; hóa đơn chưa thanh toán vẫn cho phép chỉnh sửa (PDR-009 / BR-RULE-06); món mới gọi thêm mặc định vào hóa đơn mở hoặc tạo hóa đơn con mới. | Thu ngân, Phục vụ |
+| **Cần dọn dẹp (CleaningNeeded)** | Màu cam | Hóa đơn đã quyết toán 100%; khách đã rời đi; phát thông báo chuông cho nhân viên dọn bàn. | Nhân viên dọn bàn, Phục vụ, Thu ngân |
+| **Ngừng phục vụ (OutOfService)** | Màu xám | Bàn bị hỏng cơ học hoặc khu vực đóng cửa bảo trì; vô hiệu hóa chức năng gọi món. | Quản lý nhà hàng |
+
+---
+
+## 2. Quy Trình Vận Hành Trình Thiết Kế Sơ Đồ Mặt Bằng Tương Tác (Floor Plan Designer)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Mgr as Restaurant Manager
-    participant UI as Konva.js Visual Canvas
-    participant Svc as Floor Plan Service
+    actor Mgr as Quản Lý Nhà Hàng
+    participant UI as Canvas Đồ Họa Konva.js
+    participant Svc as Dịch Vụ Sơ Đồ Mặt Bằng (Floor Plan Service)
     participant Hub as SignalR TableHub
-    participant POS as All FOH & Cashier Terminals
+    participant POS as Toàn Bộ Tablet POS & Thu Ngân
 
-    Mgr->>UI: Select Area (e.g., "Ground Floor Indoor")
-    Mgr->>UI: Drag & Drop Table Nodes (Rectangular, Round, Booth)
-    Mgr->>UI: Position Architectural Obstacles (Pillars, Walls, Cashier Desk)
-    Mgr->>UI: Set Table Properties: Number ("T01"), Capacity (4 seats), VIP Room ("VIP 1")
-    Mgr->>UI: Align to Grid (Snapping: 10px), Rotate, and Zoom
-    Mgr->>UI: Click "Save & Publish"
-    UI->>Svc: Validate Layout (No overlapping table IDs, positive coordinates)
-    Svc->>Svc: Persist Coordinates (X, Y, Width, Height, Rotation, Shape)
-    Svc->>Hub: Broadcast "FloorPlanPublished" event
-    Hub-->>POS: Refresh visual layout canvas across all active tablets
-    Svc-->>UI: Success Notification: Layout Published
+    Mgr->>UI: Chọn khu vực (Ví dụ: "Tầng 1 Trong Nhà")
+    Mgr->>UI: Kéo & Thả các điểm bàn (Bàn chữ nhật, Bàn tròn, Bàn sofa)
+    Mgr->>UI: Định vị các vật cản kiến trúc (Cột nhà, Tường ngăn, Quầy thu ngân)
+    Mgr->>UI: Thiết lập thuộc tính bàn: Số bàn ("T01"), Số ghế (4 chỗ), Phòng VIP ("VIP 1")
+    Mgr->>UI: Căn chỉnh theo lưới (Bắt dính: 10px), Xoay và Thu phóng
+    Mgr->>UI: Bấm "Lưu & Xuất bản sơ đồ"
+    UI->>Svc: Xác thực sơ đồ (Không trùng lặp số bàn, tọa độ dương hợp lệ)
+    Svc->>Svc: Lưu trữ tọa độ (X, Y, Width, Height, Rotation, Shape)
+    Svc->>Hub: Phát sóng sự kiện "FloorPlanPublished"
+    Hub-->>POS: Tự động làm mới sơ đồ trên toàn bộ tablet đang kết nối
+    Svc-->>UI: Thông báo thành công: Sơ đồ mặt bằng đã được xuất bản
 ```
 
 ---
 
-## 3. Advanced Table Operations
+## 3. Các Thao Tác Nghiệp Vụ Bàn Nâng Cao (Advanced Table Operations)
 
-### 3.1. Operation A: Table Move (Chuyển Bàn)
-- **Business Context**: Guests request to move from Table 04 (indoor) to Table 15 (outdoor garden) mid-meal.
-- **Workflow**:
-  1. Waiter taps Table 04 on tablet $\rightarrow$ selects **"Move Table"**.
-  2. System highlights all currently `Available` tables. Table 15 is selected.
-  3. **Validation Guard**: Target Table 15 must be `Available`. If Table 15 has an active session, the operation is blocked.
-  4. System executes atomic database update:
-     - Updates `DiningSession.CurrentTableId = Table 15`.
-     - Updates all active KDS tickets: `TableLocation = Table 15`.
-     - Sets Table 04 $\rightarrow$ `Available` (or `CleaningNeeded`).
-     - Sets Table 15 $\rightarrow$ `Occupied`.
-  5. SignalR broadcasts `TableMovedEvent(From: T04, To: T15)` to all POS terminals and KDS screens.
-
-### 3.2. Operation B: Table Merge & Unmerge (Gộp & Hủy Gộp Bàn)
-- **Business Context**: Two separate parties (or a large walk-in group) sit across Table 08 and Table 09 and wish to dine together under a single check.
-- **Workflow**:
-  1. Waiter taps Table 08 $\rightarrow$ selects **"Merge Tables"**.
-  2. Waiter taps Table 09.
-  3. System prompts: "Merge Table 09 into Table 08 (Primary Table)?".
-  4. Upon confirmation:
-     - Table 08 becomes the `PrimaryTable`. Table 09 becomes a `LinkedChildTable`.
-     - If Table 09 already had open order items, they are moved to Table 08's active order.
-     - Both Table 08 and Table 09 display a visual **"Linked" chain icon** on the floor plan.
-     - Table 09 cannot be separately billed or assigned to walk-in guests until unmerged.
-  5. Master bill settlement on Table 08 automatically releases both Table 08 and Table 09 to `CleaningNeeded`.
-
-#### 3.2.1. Table Unmerge Workflow (Hủy Gộp Bàn - PDR-010):
-- **Trigger**: Party at Table 09 decides to depart early or staff made an accidental merge.
-- **Rules & Execution**:
-  1. Cashier or Manager selects Table 08 $\rightarrow$ taps **"Hủy gộp bàn" (Unmerge)** $\rightarrow$ selects Table 09 to detach.
-  2. If orders have already been placed under the merged session:
-     - UI presents line item selector: Manager checks dishes belonging to Table 09.
-     - System migrates selected items into a new, independent `TableSession` for Table 09.
-     - **Preserve Kitchen History**: Unmerging NEVER re-fires tickets or duplicates KDS orders. All item preparation states (`Cooking`, `ReadyToServe`, `Served`) are strictly preserved.
-  3. If no dishes had been ordered: Table 09 detaches immediately back to `Available`.
-  4. Table 09 can now be independently billed, settled, and released without affecting Table 08.
-
-### 3.3. Operation C: Whole Room / Area Booking & Shared Room Lifecycle (PDR-013)
-- **Business Context**: A VIP customer books "VIP Suite 1" (which contains Table V1, Table V2, Table V3) for a private banquet, or multiple unrelated parties share tables in the same dining hall.
-- **Workflow & Rules**:
-  1. **Default State**: Tables inside a shared room function completely independently by default with their own guest sessions.
-  2. **Entire Room Booking ("Bao Trọn Phòng")**: Manager selects "VIP Suite 1" $\rightarrow$ **"Book Entire Room"**.
-     - System locks all child tables simultaneously (`Reserved` or `Occupied`) under the master booking.
-     - External walk-in seating is strictly blocked for all tables in that room.
-  3. **Release Lifecycle**: When the banquet concludes, individual tables within the room must have 100% of their bills settled and all ordered items served before being synchronously released to `CleaningNeeded` and subsequently `Available`.
+### 3.1. Thao Tác A: Chuyển Bàn (Table Move)
+- **Bối cảnh nghiệp vụ**: Khách yêu cầu chuyển từ Bàn 04 (trong nhà) sang Bàn 15 (sân vườn ngoài trời) giữa bữa ăn.
+- **Quy trình vận hành**:
+  1. Phục vụ chạm chọn Bàn 04 trên máy tính bảng $\rightarrow$ chọn thao tác **"Chuyển bàn"**.
+  2. Hệ thống làm nổi bật toàn bộ các bàn đang ở trạng thái `Trống` (Available). Bàn 15 được chọn.
+  3. **Cổng kiểm soát xác thực**: Bàn đích (Bàn 15) bắt buộc phải đang ở trạng thái `Trống`. Nếu Bàn 15 đang có khách, thao tác bị chặn đứng ngay lập tức.
+  4. Hệ thống thực thi giao dịch cập nhật cơ sở dữ liệu nguyên tử:
+     - Cập nhật `DiningSession.CurrentTableId = Bàn 15`.
+     - Cập nhật vị trí số bàn trên toàn bộ các thẻ KDS đang hoạt động: `TableLocation = Bàn 15`.
+     - Chuyển Bàn 04 $\rightarrow$ `Trống` (hoặc `Cần dọn dẹp`).
+     - Chuyển Bàn 15 $\rightarrow$ `Có khách`.
+  5. SignalR phát sóng sự kiện `TableMovedEvent(From: T04, To: T15)` tới toàn bộ các thiết bị POS và màn hình KDS.
 
 ---
 
-## 4. Concurrency & Consistency Risk Mitigation
+### 3.2. Thao Tác B: Gộp Bàn & Hủy Gộp Bàn (Table Merge & Unmerge)
+- **Bối cảnh nghiệp vụ**: Hai đoàn khách riêng biệt (hoặc một nhóm khách đông) ngồi ghép giữa Bàn 08 và Bàn 09 và muốn dùng chung một đơn tính tiền.
+- **Quy trình vận hành**:
+  1. Phục vụ chạm chọn Bàn 08 $\rightarrow$ chọn thao tác **"Gộp bàn"**.
+  2. Phục vụ chạm chọn Bàn 09.
+  3. Hệ thống hiển thị hộp thoại xác nhận: "Gộp Bàn 09 vào Bàn 08 (Bàn chính)?".
+  4. Sau khi xác nhận:
+     - Bàn 08 trở thành **Bàn chính (Primary Table)**. Bàn 09 trở thành **Bàn phụ / Bàn ghép (Linked Child Table)**.
+     - Nếu Bàn 09 trước đó đã có món, các món được gom chuyển vào đơn chung của Bàn 08.
+     - Cả Bàn 08 và Bàn 09 hiển thị biểu tượng **"Mắt xích liên kết"** trên sơ đồ bàn.
+     - Bàn 09 không thể bị thanh toán riêng lẻ hoặc xếp khách mới cho đến khi thực hiện thao tác hủy gộp.
+  5. Khi thanh toán hóa đơn tổng trên Bàn 08, cả Bàn 08 và Bàn 09 tự động giải phóng sang trạng thái `Cần dọn dẹp`.
 
-| Risk Scenario | Technical & Operational Mitigation |
+#### 3.2.1. Quy Trình Hủy Gộp Bàn (Table Unmerge — PDR-010):
+- **Điều kiện kích hoạt**: Khách tại Bàn 09 muốn về trước hoặc nhân viên bấm nhầm gộp bàn.
+- **Quy tắc & Thực thi**:
+  1. Thu ngân hoặc Quản lý chọn Bàn 08 $\rightarrow$ bấm **"Hủy gộp bàn" (Unmerge)** $\rightarrow$ chọn Bàn 09 để tách ra.
+  2. Nếu đơn gộp đã có món ăn:
+     - Giao diện hiển thị danh sách món: Quản lý tích chọn các món thuộc về Bàn 09.
+     - Hệ thống chuyển các món đã chọn sang một `TableSession` độc lập mới cho Bàn 09.
+     - **Bảo toàn lịch sử bếp**: Hủy gộp bàn TUYỆT ĐỐI KHÔNG BẮN LẠI ĐƠN XUỐNG BẾP. Toàn bộ trạng thái chế biến (`Đang nấu`, `Đã xong - Chờ bưng`, `Đã phục vụ`) được bảo toàn nguyên vẹn.
+  3. Nếu chưa gọi món nào: Bàn 09 tách ra và trở về trạng thái `Trống` ngay lập tức.
+  4. Bàn 09 lúc này có thể được tính tiền, quyết toán và giải phóng độc lập mà không ảnh hưởng tới Bàn 08.
+
+---
+
+### 3.3. Thao Tác C: Đặt Bao Trọn Phòng Ăn & Vòng Đời Phòng Chung (Whole Room Booking — PDR-013)
+- **Bối cảnh nghiệp vụ**: Khách VIP đặt trọn "Phòng VIP 1" (chứa các Bàn V1, V2, V3) để tổ chức tiệc riêng tư, hoặc nhiều đoàn khách vãng lai ngồi chung các bàn lẻ trong cùng một sảnh tiệc.
+- **Quy trình & Các quy tắc bắt buộc**:
+  1. **Trạng thái mặc định**: Các bàn ăn bên trong một phòng chung hoạt động hoàn toàn độc lập với các phiên phục vụ riêng biệt.
+  2. **Bao trọn phòng ("Book Entire Room")**: Quản lý chọn "Phòng VIP 1" $\rightarrow$ **"Bao trọn phòng"**.
+     - Hệ thống đồng thời khóa toàn bộ các bàn con bên trong (`Đã đặt trước` hoặc `Có khách`) theo đơn đặt tiệc chính.
+     - Khách vãng lai từ bên ngoài bị chặn hoàn toàn không thể xếp chỗ vào các bàn trong phòng này.
+  3. **Vòng đời giải phóng**: Khi tiệc kết thúc, toàn bộ các bàn con trong phòng phải được thanh toán 100% hóa đơn và phục vụ xong toàn bộ món trước khi được đồng bộ giải phóng sang `Cần dọn dẹp` và sau đó trở về `Trống`.
+
+---
+
+## 4. Kiểm Soát Xung Đột Đồng Thời & Giảm Thiểu Rủi Ro (Concurrency Risk Mitigation)
+
+| Tình Huống Xung Đột Rủi Ro | Giải Pháp Kỹ Thuật & Nghiệp Vụ Chuẩn Hóa |
 | :--- | :--- |
-| **Simultaneous Table Seating**: Two hostesses attempt to seat different walk-in parties at Table 04 at the exact same second. | **Optimistic Concurrency Control (`RowVersion`)**: The first transaction succeeds and transitions the table to `Occupied`. The second transaction fails with `TableAlreadyOccupiedException`, prompting the second hostess: "Table 04 was just seated by Hostess Sarah. Please choose another table." |
-| **Table Move during Active Kitchen Fire**: Waiter moves Table 04 to Table 15 at the exact instant the kitchen marks a dish `ReadyToServe`. | **Atomic Transaction Boundary**: The table move updates the session record in a single transaction. The KDS event references `DiningSessionId`. Even if the runner looks at the physical chit, the KDS screen and runner tablet dynamically reflect the updated Table 15 location. |
-| **Premature Seating on Dirty Table**: Hostess seats guests on a table before bussers finish sanitizing. | **Business Rule Block**: Tables in `CleaningNeeded` status cannot be opened for a new session until a busser or server taps "Mark Cleaned", transitioning the node back to `Available` (Green). |
+| **Hai Tiếp Tân Cùng Xếp Bàn Cùng Lúc**: Hai nhân viên tiếp tân cùng xếp hai đoàn khách khác nhau vào Bàn 04 tại đúng một tích tắc. | **Kiểm Soát Đồng Thời Lạc Quan (`RowVersion`)**: Giao dịch thứ nhất thành công và chuyển bàn sang `Occupied`. Giao dịch thứ hai thất bại với lỗi `TableAlreadyOccupiedException`, hiển thị thông báo: "Bàn 04 vừa được Tiếp tân Lan xếp chỗ. Vui lòng chọn bàn khác." |
+| **Chuyển Bàn Khi Bếp Vừa Bấm Xong Món**: Phục vụ chuyển Bàn 04 sang Bàn 15 đúng thời điểm đầu bếp bấm `ReadyToServe` trên KDS. | **Ranh Giới Giao Dịch Nguyên Tử**: Thao tác chuyển bàn cập nhật bản ghi phiên bàn trong một giao dịch duy nhất. Sự kiện KDS tham chiếu theo `DiningSessionId`. Dù nhân viên tiếp thực nhìn vào phiếu giấy cũ thì trên màn hình KDS và tablet tiếp thực đã cập nhật tức thì vị trí mới tại Bàn 15. |
+| **Xếp Khách Vào Bàn Chưa Dọn Dẹp**: Tiếp tân xếp khách mới vào bàn khi nhân viên dọn bàn chưa vệ sinh xong. | **Chặn Bằng Quy Tắc Nghiệp Vụ**: Bàn đang ở trạng thái `CleaningNeeded` không thể mở phiên phục vụ mới cho đến khi nhân viên dọn bàn chạm xác nhận "Đã dọn xong", đưa điểm bàn trở về màu xanh lá (`Available`). |

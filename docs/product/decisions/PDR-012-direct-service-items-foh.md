@@ -1,34 +1,34 @@
-# Product Decision Record: PDR-012 — Direct Front-of-House Service Items Policy
+# Biên Bản Quyết Định Sản Phẩm: PDR-012 — Mặt Hàng Phục Vụ Trực Tiếp Tại Sảnh
 
-- **Decision ID**: PDR-012
-- **Title**: Routing Policy for Direct Front-of-House Service Items Bypassing Kitchen Display Systems
-- **Status**: `CONFIRMED` (Business Requirements Approved; Routing Engine Mechanics: `PROPOSED`)
-- **Date**: 2026-11-02
-- **Author**: Senior Product Architect & Business Analyst
-
----
-
-## 1. Context
-Packaged cold drinks (canned beer, bottled water, soft drinks) or pre-packaged grab-and-go items are stored directly in dining floor refrigerators and fetched immediately by front-of-house (FOH) servers. Routing these simple items to the Bar or Kitchen KDS clutters prep station screens with unnecessary tickets and delays service.
+- **Mã định danh quyết định (Decision ID)**: PDR-012
+- **Tiêu đề**: Chính sách điều phối đối với các mặt hàng phục vụ trực tiếp tại sảnh bỏ qua màn hình bếp (KDS)
+- **Trạng thái**: `CONFIRMED` (Yêu cầu nghiệp vụ đã được phê duyệt; Cơ chế kỹ thuật công cụ điều phối: `PROPOSED`)
+- **Ngày lập**: 2026-11-02
+- **Tác giả**: Kiến trúc sư trưởng giải pháp & Chuyên viên phân tích nghiệp vụ
 
 ---
 
-## 2. Decision & Operational Rules (Approved by Project Owner)
-
-### 2.1. Direct Service Configuration:
-- Menu items or item categories can be configured with the routing property: `ServiceRouting = DirectFOHPick` (Phục vụ trực tiếp tại sảnh) vs `StationRouting` (Gửi trạm chế biến Bếp/Bar KDS).
-
-### 2.2. Operational & Financial Safeguards:
-- **No KDS Routing**: When a server fires an order containing direct service items, these items bypass the Bar KDS preparation queue entirely.
-- **Immediate State Transition**: Direct items transition directly to `ReadyToServe / Dispensed` upon order confirmation. If floor printing is configured, an item pick slip prints at the local floor service station.
-- **Strict Financial & Inventory Inclusion**: Bypassing KDS preparation DOES NOT bypass billing or inventory control. Direct service items are strictly included in order calculation, customer invoices, revenue reporting, and standard inventory reservation/deduction rules.
+## 1. Bối Cảnh Nghiệp Vụ (Context)
+Các loại đồ uống đóng chai/lon ướp lạnh (bia lon, nước suối đóng chai, nước ngọt) hoặc các mặt hàng đóng gói sẵn mang đi thường được lưu trữ trực tiếp trong tủ lạnh tại sảnh ăn và được nhân viên phục vụ sảnh (FOH) lấy ra phục vụ khách ngay lập tức. Việc điều phối các mặt hàng đơn giản này xuống màn hình KDS Quầy Bar hay Bếp sẽ làm tắc nghẽn màn hình của nhân viên chế biến bằng các phiếu không cần thiết và làm chậm tốc độ phục vụ.
 
 ---
 
-## 3. Consequences
-- **Positive**: De-clutters Bar KDS screens; significantly speeds up beverage service during rush hours.
-- **Negative**: Requires servers to be disciplined in fetching items promptly without relying on KDS ready notifications.
+## 2. Quyết Định & Quy Tắc Vận Hành (Được Chủ Nhà Hàng Phê Duyệt)
 
-> [!NOTE] Scope Classification & Confirmation Boundaries
-> - **Confirmed Business Requirements**: Per Owner decision OD-08 (REV-08), direct front-of-house pickup for canned/bottled beverages bypassing Bar KDS while maintaining full billing and inventory deduction is **CONFIRMED**.
-> - **Technical Proposal**: The specific routing enumeration schema, floor printer spooler integration, and station dispatch interfaces are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.
+### 2.1. Cấu Hình Phục Vụ Trực Tiếp (Direct Service Configuration):
+- Các món ăn hoặc danh mục món trong thực đơn có thể được cấu hình thuộc tính tuyến phục vụ: `ServiceRouting = DirectFOHPick` (Phục vụ trực tiếp tại sảnh) so với `StationRouting` (Gửi trạm chế biến Bếp/Bar KDS).
+
+### 2.2. Hàng Rào Vận Hành & Bảo Vệ Tài Chính:
+- **Không gửi phiếu xuống KDS**: Khi nhân viên báo bếp một đơn gọi món có chứa mặt hàng phục vụ trực tiếp, các mặt hàng này sẽ bỏ qua hoàn toàn hàng đợi chế biến của KDS Quầy Bar.
+- **Chuyển đổi trạng thái tức thì**: Các mặt hàng phục vụ trực tiếp lập tức chuyển sang trạng thái `ReadyToServe / Dispensed` ngay khi xác nhận đơn. Nếu có cấu hình máy in tại sảnh, một phiếu lấy hàng nhỏ có thể in tại trạm phục vụ sảnh cục bộ.
+- **Bảo đảm hạch toán tài chính & trừ kho nghiêm ngặt**: Việc bỏ qua khâu chế biến trên KDS TUYỆT ĐỐI KHÔNG làm bỏ qua khâu tính tiền hay kiểm soát kho hàng. Các mặt hàng phục vụ trực tiếp vẫn được tính đủ trong hóa đơn khách hàng, báo cáo doanh thu, và tuân thủ chặt chẽ các quy tắc tạm giữ/khấu trừ tồn kho tiêu chuẩn.
+
+---
+
+## 3. Hệ Quả Nghiệp Vụ & Kỹ Thuật (Consequences)
+- **Tích cực**: Giải phóng màn hình KDS Quầy Bar khỏi sự quá tải; đẩy nhanh tốc độ phục vụ đồ uống cho khách trong giờ cao điểm.
+- **Tiêu cực**: Đòi hỏi nhân viên phục vụ phải có ý thức tự giác lấy đồ uống kịp thời cho khách mà không phụ thuộc vào chuông báo hoàn thành của KDS.
+
+> [!NOTE] Phân Định Ranh Giới & Thẩm Quyền Phê Duyệt
+> - **Yêu cầu nghiệp vụ đã xác nhận**: Căn cứ theo quyết định của Chủ nhà hàng OD-08 (REV-08), việc phục vụ trực tiếp tại sảnh đối với đồ uống đóng lon/chai bỏ qua KDS Quầy Bar trong khi vẫn bảo đảm đầy đủ tính tiền và trừ kho đã ở trạng thái **CONFIRMED**.
+> - **Đề xuất kỹ thuật**: Lược đồ kiểu liệt kê (enum) phân tuyến cụ thể, tích hợp bộ đệm máy in sảnh và giao diện điều phối trạm là các thiết kế kỹ thuật thuộc diện **PROPOSED**, chờ thẩm định của Kiến trúc sư giải pháp trong Stage 2.

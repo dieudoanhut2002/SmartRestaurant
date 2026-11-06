@@ -1,42 +1,42 @@
-# Product Decision Record: PDR-007 — Business Date for Overnight Shift Management
+# Biên Bản Quyết Định Sản Phẩm: PDR-007 — Quản Lý Ngày Kinh Doanh Cho Ca Làm Việc Qua Đêm
 
-- **Decision ID**: PDR-007
-- **Title**: Adoption of Configurable Business Date (Ngày Kinh Doanh) for Overnight Shifts and Financial Accounting
-- **Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Date**: 2026-11-02
-- **Author**: Senior Product Architect & Business Analyst
-
----
-
-## 1. Context
-Restaurants, bars, beer clubs, and late-night dining venues in Vietnam frequently operate past midnight (e.g., 17:00 to 02:00 or 04:00 AM). Binding operational records directly to calendar dates (`DateTime.UtcNow` converted to `dd/MM/yyyy`) splits overnight shifts at 00:00 midnight, fragmenting revenue, category sales, staff shift blind balancing, and inventory consumption across two disconnected calendar days.
+- **Mã định danh quyết định (Decision ID)**: PDR-007
+- **Tiêu đề**: Ứng dụng Ngày Kinh Doanh (Business Date) có thể cấu hình cho các ca làm việc qua đêm và hạch toán tài chính
+- **Trạng thái**: `CONFIRMED` (Quy tắc nghiệp vụ đã được Chủ nhà hàng phê duyệt theo D1; Cơ chế kỹ thuật triển khai: `PROPOSED`)
+- **Ngày lập**: 2026-11-02
+- **Tác giả**: Kiến trúc sư trưởng giải pháp & Chuyên viên phân tích nghiệp vụ
 
 ---
 
-## 2. Decision & Operational Rules (Approved by Project Owner)
-
-### 2.1. Configurable Branch-Level Cutoff Time:
-- Each branch has an independently configurable cutoff time property: `BusinessDayCutoffTime` (default: `06:00:00` AM).
-- Operating cycle for Business Date $T$ spans from `CutoffTime` on day $T$ to `CutoffTime - 1 second` on day $T+1$ (e.g., `06:00:00` 10/10/2026 to `05:59:59` 11/10/2026).
-
-### 2.2. Immutable Order Business Date Binding:
-- When a dining session or order is initialized, the system evaluates the branch's current `BusinessDate` at creation time and binds it statically to the `Order` record.
-- **Orders spanning cutoff**: An order opened before cutoff (e.g., 23:30) and settled after cutoff (e.g., 06:45 AM) remains strictly attributed to the `BusinessDate` assigned at creation.
-- **Audit Timestamp Distinction**: The system rigorously separates financial partition date (`BusinessDate: DateOnly`) from physical UTC timestamps (`CreatedAt: DateTimeOffset`, `PaidAt: DateTimeOffset`).
-- **Configuration Change Immutability**: If a manager modifies `BusinessDayCutoffTime`, existing orders, settled invoices, and closed shifts NEVER change their assigned `BusinessDate` retrospectively.
-
-### 2.3. Shift & Financial Alignment:
-- Staff shifts (`ShiftSession`) capture blind cash drawers against all transactions sharing the shift's operational boundary.
-- Daily financial reporting and Z-Reports aggregate strictly by `BusinessDate`.
+## 1. Bối Cảnh Nghiệp Vụ (Context)
+Các nhà hàng, quán bar, câu lạc bộ bia và tụ điểm ẩm thực đêm tại Việt Nam thường xuyên hoạt động kéo dài qua nửa đêm (ví dụ: từ 17:00 chiều đến 02:00 hoặc 04:00 sáng hôm sau). Nếu gắn các bản ghi vận hành trực tiếp vào ngày dương lịch tự nhiên (`DateTime.UtcNow` chuyển đổi sang `dd/MM/yyyy`), ca làm việc qua đêm sẽ bị xẻ đôi tại mốc 00:00 nửa đêm, làm phân mảnh doanh thu, doanh số theo nhóm món, việc kiểm kê tiền mù chốt ca của nhân viên và tiêu hao kho thành 2 ngày lịch rời rạc.
 
 ---
 
-## 3. Open Operational Scenarios & Architectural Notes
-- **Multi-day / continuous dining sessions (> 24 hours)**: In the rare event a table session remains open across multiple cutoff transitions, it retains its original creation `BusinessDate`, but generates an operational alert for manager review to prevent stale session accumulation.
-- **Architectural Impact**: Database indexes on `Orders`, `Payments`, and `ShiftSessions` must include `(BranchId, BusinessDate)` to optimize daily operational queries.
+## 2. Quyết Định & Quy Tắc Vận Hành (Được Chủ Nhà Hàng Phê Duyệt)
+
+### 2.1. Giờ Chốt Ngày Kinh Doanh Cấu Hình Theo Chi Nhánh:
+- Mỗi chi nhánh có một thuộc tính giờ chốt ngày có thể cấu hình độc lập: `BusinessDayCutoffTime` (mặc định: `06:00:00` sáng).
+- Một chu kỳ vận hành của Ngày Kinh Doanh $T$ kéo dài từ `CutoffTime` của ngày $T$ đến `CutoffTime - 1 giây` của ngày $T+1$ (ví dụ: từ `06:00:00` ngày 10/10/2026 đến `05:59:59` ngày 11/10/2026).
+
+### 2.2. Gắn Cố Định Ngày Kinh Doanh Khi Tạo Đơn Hàng:
+- Khi một phiên dùng bữa hoặc một đơn gọi món được khởi tạo, hệ thống tính toán Ngày Kinh Doanh (`BusinessDate`) hiện hành của chi nhánh tại đúng thời điểm đó và gắn cố định bất biến vào bản ghi `Order`.
+- **Đơn hàng kéo dài qua mốc chốt ca**: Đơn hàng mở trước giờ chốt ngày (ví dụ: 23:30 đêm) và thanh toán sau giờ chốt ngày (ví dụ: 06:45 sáng) vẫn được ghi nhận chặt chẽ vào đúng `BusinessDate` đã được gán tại thời điểm tạo đơn ban đầu.
+- **Phân định ranh giới dấu vết kiểm toán**: Hệ thống phân định rạch ròi giữa ngày phân vùng tài chính (`BusinessDate: DateOnly`) và mốc thời gian UTC vật lý (`CreatedAt: DateTimeOffset`, `PaidAt: DateTimeOffset`).
+- **Tính bất biến khi thay đổi cấu hình**: Nếu người quản lý điều chỉnh `BusinessDayCutoffTime`, các đơn hàng đã tạo, hóa đơn đã quyết toán và ca làm việc đã đóng TUYỆT ĐỐI KHÔNG BAO GIỜ bị thay đổi hồi tố `BusinessDate`.
+
+### 2.3. Khớp Nối Ca Làm Việc & Báo Cáo Tài Chính:
+- Ca làm việc của nhân viên (`ShiftSession`) kiểm kê tiền két mù dựa trên toàn bộ các giao dịch nằm trong ranh giới vận hành của ca đó.
+- Báo cáo tài chính hàng ngày và báo cáo chốt ca Z-Report được tổng hợp thống nhất tuyệt đối theo `BusinessDate`.
 
 ---
 
-## 4. Consequences
-- **Positive**: 100% accurate financial reporting for late-night venues; flawless cash drawer balancing without calendar cutoff friction.
-- **Negative**: Requires reporting queries to aggregate by `BusinessDate` instead of SQL `CAST(CreatedAt AS DATE)`.
+## 3. Các Tình Huống Vận Hành & Ghi Chú Kiến Trúc
+- **Phiên bàn kéo dài nhiều ngày liên tục (> 24 giờ)**: Trong trường hợp hy hữu một phiên bàn vẫn mở qua nhiều lần chốt ngày, bàn ăn đó vẫn giữ nguyên `BusinessDate` ban đầu khi tạo, nhưng hệ thống sẽ phát cảnh báo vận hành để quản lý can thiệp xử lý, tránh để tồn đọng phiên bàn ảo.
+- **Tác động kiến trúc**: Các chỉ mục cơ sở dữ liệu trên các bảng `Orders`, `Payments`, và `ShiftSessions` bắt buộc phải bao gồm cặp khóa `(BranchId, BusinessDate)` để tối ưu hóa hiệu năng các truy vấn vận hành hàng ngày.
+
+---
+
+## 4. Hệ Quả Nghiệp Vụ & Kỹ Thuật (Consequences)
+- **Tích cực**: Báo cáo tài chính chính xác 100% cho các mô hình hoạt động về đêm; chốt két và cân bằng tiền ca làm việc hoàn hảo mà không bị chia cắt bởi ngày dương lịch.
+- **Tiêu cực**: Đòi hỏi các câu truy vấn báo cáo phải nhóm dữ liệu theo `BusinessDate` thay vì dùng hàm SQL `CAST(CreatedAt AS DATE)`.

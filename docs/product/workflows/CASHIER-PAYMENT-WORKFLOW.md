@@ -1,131 +1,132 @@
-# Cashier, Billing & Payment Workflow — SmartRestaurant
+# Quy Trình Vận Hành Thu Ngân, Tính Tiền & Thanh Toán — SmartRestaurant
+## (Cashier, Billing & Payment Workflow)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `PROPOSED`
-- **Related Documents**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `PROPOSED`
+- **Tài Liệu Liên Quan**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
 
 ---
 
-## 1. End-to-End Billing & Payment Flow
+## 1. Luồng Tính Tiền & Thanh Toán Toàn Trình (End-to-End Billing & Payment Flow)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Guest as Customer
-    actor Waiter as Waiter
-    actor Cashier as Cashier
-    participant POS as Cashier Terminal
-    participant Calc as Billing Engine
-    participant Gateway as VietQR / Bank Gateway
+    actor Guest as Khách Hàng
+    actor Waiter as Phục Vụ
+    actor Cashier as Thu Ngân
+    participant POS as Thiết Bị Thu Ngân
+    participant Calc as Engine Tính Tiền
+    participant Gateway as Cổng Thanh Toán VietQR / Ngân Hàng
     participant Hub as SignalR TableHub
 
-    Guest->>Waiter: Request Bill
-    Waiter->>POS: Table 04 -> "Generate Pre-Bill"
-    Calc-->>POS: Compute Subtotal, Discount, Svc Charge (5%), VAT (8%)
-    POS-->>Waiter: Print Pre-Bill (Table state -> "BillingRequested" [Purple])
-    Waiter->>Guest: Present Pre-Bill for Verification
-    Guest->>Cashier: Settle Bill (Splits 50% Cash, 50% VietQR)
-    Cashier->>POS: Open Table 04 Checkout Modal
-    Cashier->>POS: Tender 1: CASH -> Received 500,000 VND (Change: 0)
-    Cashier->>POS: Tender 2: VietQR -> Amount 500,000 VND
-    POS->>Gateway: Request Dynamic VietQR Payload
-    Gateway-->>POS: Render QR Code with Bank BIN, Acc No, Exact Amount & Order Ref
-    Guest->>Gateway: Scan QR with Mobile Banking App -> Transfer Completed
-    Gateway->>POS: Webhook / Polling: Payment Confirmed (Ref #SR-104-QR)
-    POS->>POS: Finalize Invoice (Status = "Paid")
-    POS-->>Cashier: Print Final VAT Invoice & Pop Cash Drawer
-    POS->>Hub: Broadcast Table 04 State = "CleaningNeeded" (Orange)
-    Hub-->>Waiter: Visual Floor Plan Alert: Table 04 ready for busser
+    Guest->>Waiter: Yêu cầu tính tiền
+    Waiter->>POS: Bàn 04 -> "In Phiếu Tạm Tính"
+    Calc-->>POS: Tính Tiền món tạm tính, Giảm giá, Phí dịch vụ (5%), Thuế GTGT (8%)
+    POS-->>Waiter: In phiếu tạm tính (Bàn chuyển trạng thái -> "BillingRequested" [Màu Tím])
+    Waiter->>Guest: Đưa phiếu tạm tính cho khách kiểm tra danh sách món
+    Guest->>Cashier: Thanh toán (Khách trả 50% Tiền mặt, 50% Chuyển khoản VietQR)
+    Cashier->>POS: Mở giao diện thanh toán Bàn 04
+    Cashier->>POS: Hình thức 1: TIỀN MẶT -> Đã nhận 500.000 ₫ (Tiền thối: 0 ₫)
+    Cashier->>POS: Hình thức 2: VietQR -> Số tiền 500.000 ₫
+    POS->>Gateway: Yêu cầu sinh mã VietQR động
+    Gateway-->>POS: Render mã QR hiển thị BIN ngân hàng, Số tài khoản, Số tiền chính xác & Mã đơn
+    Guest->>Gateway: Quét mã QR bằng App Ngân hàng -> Chuyển khoản thành công
+    Gateway->>POS: Webhook / Polling: Xác nhận giao dịch thành công (Mã GD #SR-104-QR)
+    POS->>POS: Quyết toán hóa đơn (Trạng thái = "Paid")
+    POS-->>Cashier: In Hóa đơn thanh toán chính thức & Tự động bật ngăn kéo đựng tiền
+    POS->>Hub: Phát sóng trạng thái Bàn 04 = "CleaningNeeded" (Màu Cam)
+    Hub-->>Waiter: Cảnh báo thị giác trên sơ đồ bàn: Bàn 04 sẵn sàng để dọn dẹp
 ```
 
 ---
 
-## 2. Advanced Bill Splitting Operations
+## 2. Các Nghiệp Vụ Tách Hóa Đơn Nâng Cao (Advanced Bill Splitting Operations)
 
-SmartRestaurant supports two operational bill splitting modes designed to eliminate cashier math errors during peak checkout rushes.
+SmartRestaurant hỗ trợ 2 chế độ tách hóa đơn vận hành thực tế nhằm triệt tiêu hoàn toàn các lỗi tính nhẩm của thu ngân trong giờ cao điểm thanh toán.
 
 ```mermaid
 flowchart TD
-    M[Master Order Total: 1,200,000 VND] --> SplitChoice{Select Splitting Mode}
+    M["Tổng Hóa Đơn Chính: 1.200.000 ₫"] --> SplitChoice{"Lựa Chọn Chế Độ Tách Hóa Đơn"}
 
-    SplitChoice -->|Mode 1: Split by Items| ByItems[Item Selection Matrix]
-    ByItems --> BillA[Sub-Bill A: 2x Steaks + 2x Beers = 750,000 VND]
-    ByItems --> BillB[Sub-Bill B: 1x Salad + 1x Pasta = 450,000 VND]
-    BillA --> PayA[Guest A Pays via Card]
-    BillB --> PayB[Guest B Pays via VietQR]
+    SplitChoice -->|"Chế Độ 1: Tách Theo Món"| ByItems["Ma Trận Chọn Từng Món"]
+    ByItems --> BillA["Hóa Đơn Con A: 2x Bít tết + 2x Bia = 750.000 ₫"]
+    ByItems --> BillB["Hóa Đơn Con B: 1x Salad + 1x Mì Ý = 450.000 ₫"]
+    BillA --> PayA["Khách A Thanh Toán Bằng Thẻ"]
+    BillB --> PayB["Khách B Thanh Toán Bằng VietQR"]
 
-    SplitChoice -->|Mode 2: Split Evenly| ByEqual[Equal Division: Total / N]
-    ByEqual --> Sub1[Bill 1: 300,000 VND]
-    ByEqual --> Sub2[Bill 2: 300,000 VND]
-    ByEqual --> Sub3[Bill 3: 300,000 VND]
-    ByEqual --> Sub4[Bill 4: 300,000 VND]
-    Sub1 & Sub2 & Sub3 & Sub4 --> CloseAll[Master Table Released when All Sub-Bills Paid]
+    SplitChoice -->|"Chế Độ 2: Chia Đều"| ByEqual["Chia Đều: Tổng Tiền / N Khách"]
+    ByEqual --> Sub1["Hóa Đơn 1: 300.000 ₫"]
+    ByEqual --> Sub2["Hóa Đơn 2: 300.000 ₫"]
+    ByEqual --> Sub3["Hóa Đơn 3: 300.000 ₫"]
+    ByEqual --> Sub4["Hóa Đơn 4: 300.000 ₫"]
+    Sub1 & Sub2 & Sub3 & Sub4 --> CloseAll["Bàn Chính Giải Phóng Khi Toàn Bộ Hóa Đơn Con Đã Thu Đủ 100%"]
 ```
 
-### 2.1. Mode A: Split by Selected Items (Tách Bill Theo Món)
-1. Cashier selects **"Split by Items"** on the active table.
-2. A dual-pane interface displays all line items on the left.
-3. Cashier creates Sub-Bill 1 and moves selected items (e.g., 2x Steaks, 2x Beers) to Sub-Bill 1.
-4. Remaining items stay on Sub-Bill 2 (or Sub-Bill 3).
-5. The billing engine recalculates item-level discounts, order vouchers, service charges, and VAT independently and proportionally across each sub-bill.
-6. Each sub-bill prints an independent invoice receipt and can be settled using different tenders.
+### 2.1. Chế Độ A: Tách Hóa Đơn Theo Từng Món Được Chọn (Split by Selected Items)
+1. Thu ngân chọn chức năng **"Tách theo món"** trên bàn đang phục vụ.
+2. Giao diện hai khung hiển thị danh sách toàn bộ món ăn của bàn bên trái.
+3. Thu ngân tạo Hóa đơn con 1 và chuyển các món được chỉ định (ví dụ: 2x Bít tết, 2x Bia) sang Hóa đơn con 1.
+4. Các món còn lại nằm trên Hóa đơn con 2 (hoặc tiếp tục tạo Hóa đơn con 3).
+5. Engine tính tiền tự động phân bổ và tính toán lại chiết khấu theo món, voucher toàn đơn, phí dịch vụ và thuế GTGT một cách độc lập và tương ứng theo tỷ lệ trên từng hóa đơn con.
+6. Mỗi hóa đơn con in ra một phiếu thanh toán riêng và có thể được quyết toán bằng các hình thức thanh toán khác nhau.
 
-### 2.2. Mode B: Split Evenly (Tách Bill Đều $1/N$)
-1. Cashier selects **"Split Evenly"** and inputs guest count $N$ (e.g., 4 guests).
-2. The system calculates:
-   $$\text{Sub-Bill Amount} = \frac{\text{Total Payable Amount}}{N}$$
-3. Any 1-Dong or 1,000-VND rounding remainder is absorbed into the final sub-bill to guarantee that the sum of sub-bills matches the master invoice total exactly:
-   $$\sum_{i=1}^{N} \text{SubBill}_i = \text{MasterTotal}$$
-4. The cashier collects payment for each portion sequentially until the master balance reaches zero.
+### 2.2. Chế Độ B: Chia Đều Hóa Đơn Theo Đầu Người ($1/N$) (Split Evenly)
+1. Thu ngân chọn chức năng **"Chia đều (1/N)"** và nhập số lượng người $N$ (ví dụ: 4 khách).
+2. Hệ thống tính toán:
+   $$\text{Số tiền mỗi hóa đơn con} = \frac{\text{Tổng tiền thanh toán}}{N}$$
+3. Mọi phần lẻ phát sinh do làm tròn 1 đồng hoặc 1.000 đồng được dồn vào hóa đơn con cuối cùng để đảm bảo tổng số tiền các hóa đơn con bằng chính xác 100% tổng tiền hóa đơn gốc:
+   $$\sum_{i=1}^{N} \text{HóaĐơnCon}_i = \text{TổngHóaĐơnGốc}$$
+4. Thu ngân lần lượt thu tiền cho từng phần chia cho đến khi số dư hóa đơn tổng về đúng 0 ₫.
 
-### 2.3. Operational Guard: Multi-Bill Sessions Without Table Freezing (PDR-009)
-- Splitting a bill distributes line items across multiple sub-bills without locking the table.
-- Waiters can continue adding dishes or firing rounds to the active table session. Newly added items must be explicitly assigned to an open, unpaid sub-bill (or a newly created sub-bill); the system never assigns items arbitrarily.
-- **Cancellation of Split**: Cashier can cancel the split and re-consolidate items only if NO sub-bill has incurred any payment.
-- **Table Release**: The physical table is released to `CleaningNeeded` only when 100% of sub-bills are settled (`Paid`) and all items have reached terminal service states (`Served` or cancelled with waste audit).
+### 2.3. Quy Tắc Vận Hành: Phiên Bàn Đa Hóa Đơn Không Đóng Băng Bàn (PDR-009)
+- Thao tác tách hóa đơn phân bổ các dòng món vào nhiều hóa đơn con mà không khóa chặn phiên bàn.
+- Nhân viên phục vụ tiếp tục gọi thêm món ăn hoặc đồ uống vào phiên bàn đang hoạt động. Món mới gọi thêm bắt buộc phải được chỉ định rõ vào một hóa đơn con chưa thanh toán đang mở (hoặc tạo một hóa đơn con mới); hệ thống tuyệt đối không tự ý gán món tùy tiện.
+- **Hủy tách hóa đơn**: Thu ngân chỉ có thể hủy thao tác tách và gom các món lại thành một hóa đơn tổng duy nhất nếu CHƯA CÓ bất kỳ hóa đơn con nào phát sinh thanh toán.
+- **Giải phóng bàn**: Bàn vật lý chỉ được giải phóng sang trạng thái `Cần dọn dẹp` khi 100% hóa đơn con đã được thanh toán hoàn tất (`Paid`) và toàn bộ món ăn đã đạt trạng thái phục vụ cuối cùng (`Đã phục vụ` hoặc đã hủy có ghi sổ hao phí).
 
-### 2.4. Room & Area Surcharge Calculation (PDR-011)
-- When tables are in a private VIP room or specific area with configured surcharges:
-  - System applies configured percentage (% of subtotal) or flat fee as a distinct, transparent line item on provisional checks and invoices.
-  - Surcharge values are snapshotted at bill creation; transferring tables does not recalculate surcharges retroactively for previously ordered items.
-- Note on Corporate Accounts: Full corporate credit/receivables (Ký nợ / Công nợ B2B) is deferred to v1.2+; MVP enforces complete settlement via Cash, Card, or VietQR.
+### 2.4. Tính Toán Phụ Thu Phòng VIP & Khu Vực (PDR-011)
+- Khi bàn ăn nằm trong phòng VIP riêng hoặc khu vực có cấu hình phụ thu:
+  - Hệ thống áp dụng tỷ lệ % cấu hình (% tiền món) hoặc số tiền cố định thành một dòng phụ thu riêng biệt, minh bạch trên phiếu tạm tính và hóa đơn.
+  - Giá trị phụ thu được chốt số liệu tại thời điểm tạo hóa đơn; thao tác chuyển bàn không tính toán lại hồi tố các món đã dùng trước đó.
+- Lưu ý về Ký nợ: Tính năng quản lý công nợ khách hàng doanh nghiệp (Ký nợ / Công nợ B2B) được hoãn sang phiên bản v1.2+; MVP bắt buộc thanh toán dứt điểm qua Tiền mặt, Thẻ ngân hàng hoặc Chuyển khoản VietQR.
 
 ---
 
-## 3. Shift Management & Cash Drawer Balancing Workflow
+## 3. Vận Hành Ca Kíp & Quy Trình Cân Đối Két Tiền Mặt (Shift Management & Cash Drawer)
 
-To prevent employee theft, cash shortages, and accounting errors, SmartRestaurant enforces a rigorous shift control lifecycle.
+Nhằm ngăn chặn thất thoát tiền mặt, nhầm lẫn tiền thối và sai sót kế toán, SmartRestaurant áp dụng chu trình kiểm soát ca kíp chặt chẽ.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ShiftClosed: Previous Shift Finalized
+    [*] --> ShiftClosed: Ca làm việc trước đã hoàn tất
 
-    ShiftClosed --> ShiftOpen: Cashier Enters Opening Float (e.g., 2,000,000 VND)
-    ShiftOpen --> ActiveShift: Drawer Unlocked; Ready for Service
+    ShiftClosed --> ShiftOpen: Thu ngân nhập Tiền mặt đầu ca (Ví dụ: 2.000.000 ₫)
+    ShiftOpen --> ActiveShift: Mở két tiền; Sẵn sàng phục vụ
 
-    ActiveShift --> ActiveShift: Cash Sales Added to Drawer
-    ActiveShift --> ActiveShift: Mid-Shift Cash Drop to Manager Safe
+    ActiveShift --> ActiveShift: Tiền bán hàng mặt tích lũy vào két
+    ActiveShift --> ActiveShift: Rút bớt tiền giữa ca nộp két an toàn quản lý
 
-    ActiveShift --> ShiftClosing: Cashier Initiates "Close Shift"
-    ShiftClosing --> BlindCount: Cashier Performs Blind Cash Count (Notes)
-    BlindCount --> DiscrepancyReview: System Reveals Variance (Expected vs Actual)
+    ActiveShift --> ShiftClosing: Thu ngân kích hoạt "Chốt ca"
+    ShiftClosing --> BlindCount: Thu ngân thực hiện kiểm tiền mù (Đếm số tờ từng mệnh giá)
+    BlindCount --> DiscrepancyReview: Hệ thống đối soát hiển thị chênh lệch (Thực tế vs Máy tính)
 
-    DiscrepancyReview --> ShiftClosed: Manager Enters PIN to Authorize & Print Z-Report
+    DiscrepancyReview --> ShiftClosed: Quản lý nhập mã PIN duyệt & In báo cáo Z-Report
 ```
 
-### Shift Operational Rules:
-1. **Blind Drop Count**: When closing a shift, the cashier is never shown the system's expected cash total. The cashier must physically count and input the quantity of each currency denomination (500k, 200k, 100k, 50k, 20k, 10k).
-2. **Discrepancy Calculation**:
-   $$\text{Discrepancy} = \text{Actual Cash Counted} - (\text{Opening Float} + \text{Cash Sales} - \text{Cash Drops})$$
-3. **Manager Approval**: Any variance exceeding a configurable threshold (e.g., $\pm 20,000$ VND) requires an explanatory note from the cashier and mandatory approval from the Restaurant Manager via PIN override before the Z-Report prints and the drawer locks.
+### Các Quy Tắc Vận Hành Ca Kíp:
+1. **Kiểm Tiền Mù (Blind Drop Count)**: Khi chốt ca, thu ngân hoàn toàn không được biết số tiền mặt hệ thống đang tính toán là bao nhiêu. Thu ngân bắt buộc phải đếm thực tế và nhập chi tiết số lượng tờ của từng mệnh giá tiền (500k, 200k, 100k, 50k, 20k, 10k).
+2. **Công Thức Tính Chênh Lệch Tiền Mặt**:
+   $$\text{Chênh lệch tiền mặt} = \text{Tiền thực tế đếm được} - (\text{Tiền mặt đầu ca} + \text{Doanh thu tiền mặt trong ca} - \text{Tiền rút giữa ca})$$
+3. **Phê Duyệt Của Quản Lý**: Mọi khoản sai lệch vượt quá ngưỡng cho phép cấu hình (ví dụ: $\pm 20.000$ ₫) đều bắt buộc thu ngân phải nhập ghi chú giải trình và Quản lý Nhà Hàng phải nhập mã PIN ủy quyền phê duyệt trước khi báo cáo Z-Report được in ra và két tiền được khóa.
 
 ---
 
-## 4. Concurrency & Payment Exception Scenarios
+## 4. Xử Lý Tình Huống Xung Đột Đồng Thời & Ngoại Lệ Thanh Toán
 
-| Exception Scenario | Risk Description | System Resolution & Safeguards |
+| Tình Huống Ngoại Lệ | Mô Tả Rủi Ro | Giải Pháp Hệ Thống & Cơ Chế Bảo Vệ |
 | :--- | :--- | :--- |
-| **Concurrent Settlement & Item Fire (PDR-009)**: Cashier processes checkout / pre-bill while a server fires another round of drinks/desserts from Table 04. | Risk of unpaid items or blocking active guest service. | **Editable Unpaid Bill & Default Append**: When a table is in `BillingRequested`, the unpaid bill remains editable. Newly fired items default to being appended to the existing unpaid bill (recalculating the total dynamically with full audit logging), or the server may explicitly create a new sub-bill. Direct alteration of paid bills remains strictly prohibited. |
-| **Double QR / Delayed Webhook (PDR-008)**: Customer pays Cash because QR timed out, then bank webhook arrives 3 minutes later. | Customer double-charged (Cash + Bank Transfer). | **Suspense Ledger & Anti-Duplicate Match**: Switching tender to Cash cancels the active QR token. When the late webhook arrives, funds route to a "Giao dịch treo đối soát" (Suspense Queue) with instant alerts to Cashier and Manager. Bank transaction ID and payment ref prevent duplicate crediting. No automatic unverified refunds; governed manual reconciliation workflow applies. |
-| **Partial Tender Failure**: Guest pays 500k Cash, but their credit card is declined for the remaining 700k balance. | Incomplete transaction state. | **Multi-Tender Ledger**: Cashier records 500,000 VND Cash as confirmed. Outstanding balance reflects 700,000 VND. The invoice remains open (`PartiallyPaid`). The guest can provide an alternate card or switch to VietQR transfer to settle the remaining balance. The initial 500,000 VND remains locked in the cash ledger. |
-| **Invoice Void After Settlement**: Cashier accidentally bills Table 04 instead of Table 05 and notices the mistake after closing the check. | Corrupted sales and tax reports. | **Paid Bill Immutability & Open Policy (OD-14 / OQ-09)**: Paid bills are strictly immutable in the POS; direct modification or re-opening is prohibited. The formal policy for voiding, correcting, or refunding settled invoices remains an OPEN QUESTION pending explicit Owner confirmation. For MVP, any post-settlement discrepancies are logged off-system during blind shift close reconciliation. |
+| **Bắn Món Cùng Lúc Thu Ngân Đang Quyết Toán (PDR-009)**: Thu ngân đang xử lý thanh toán / phiếu tạm tính trong khi phục vụ bắn thêm đồ uống/tráng miệng từ Bàn 04. | Nguy cơ thất thoát món mới gọi hoặc làm tê liệt phục vụ bàn. | **Hóa Đơn Chưa Thanh Toán Cho Phép Sửa & Mặc Định Nối Tiếp**: Khi bàn ở trạng thái `BillingRequested`, hóa đơn chưa thanh toán vẫn ở chế độ cho phép sửa. Món mới bắn bếp mặc định nối tiếp vào hóa đơn chưa thanh toán (tính lại tổng tiền động kèm lưu vết kiểm toán đầy đủ), hoặc phục vụ có thể chọn tách hẳn sang một hóa đơn con mới. Nghiêm cấm tuyệt đối việc sửa đổi trực tiếp các hóa đơn đã thu tiền xong. |
+| **Thu Tiền Mặt Trùng Lặp Khi Webhook QR Đến Muộn (PDR-008)**: Khách vội trả tiền mặt vì quét mã QR bị timeout, sau đó 3 phút webhook ngân hàng báo tiền đã vào tài khoản. | Khách bị thu tiền 2 lần (Vừa trả Tiền mặt vừa bị trừ tiền Ngân hàng). | **Hàng Đợi Tiền Treo Đối Soát & Chống Trùng Lặp**: Khi chuyển phương thức sang Tiền mặt, mã QR đang mở bị hủy hiệu lực. Khi webhook ngân hàng về muộn, số tiền được điều hướng tự động vào "Giao dịch treo đối soát" (Suspense Queue) kèm chuông báo thị giác/âm thanh tức thì cho Thu ngân và Quản lý. Mã giao dịch ngân hàng và mã tham chiếu ngăn chặn việc ghi có 2 lần. Không tự ý hoàn tiền khi chưa kiểm chứng; áp dụng quy trình đối soát thủ công có thẩm quyền. |
+| **Lỗi Thanh Toán Từng Phần Trong Multi-Tender**: Khách trả trước 500.000 ₫ tiền mặt, nhưng quẹt thẻ ngân hàng cho số tiền 700.000 ₫ còn lại bị từ chối thẻ. | Trạng thái giao dịch bị dở dang, rủi ro hạch toán. | **Sổ Cái Thanh Toán Đa Kênh**: Thu ngân xác nhận số tiền 500.000 ₫ tiền mặt đã vào két. Dư nợ còn lại hiển thị 700.000 ₫. Hóa đơn vẫn ở trạng thái mở (`PartiallyPaid` - Thanh toán một phần). Khách có thể đổi thẻ khác hoặc chuyển sang quét mã VietQR để hoàn tất số tiền còn lại. Số tiền 500.000 ₫ tiền mặt thu trước đó bị khóa cứng an toàn trong sổ quỹ. |
+| **Khiếu Nại Hóa Đơn Sau Khi Đã Thanh Toán**: Thu ngân tính nhầm tiền Bàn 04 sang Bàn 05 và phát hiện sai sót sau khi đã bấm hoàn tất hóa đơn. | Sai lệch báo cáo doanh thu và thuế kế toán. | **Tính Bất Biến Của Hóa Đơn Đã Thanh Toán & Chính Sách Mở (OD-14 / OQ-09)**: Hóa đơn đã thanh toán là bất biến trên POS; nghiêm cấm việc trực tiếp sửa đổi hoặc mở lại hóa đơn đã đóng. Chính sách chính thức về việc hủy, điều chỉnh hay hoàn tiền hóa đơn đã quyết toán hiện là CÂU HỎI MỞ đang chờ Chủ Dự Án phê duyệt. Đối với MVP, mọi sai lệch sau thanh toán được xử lý thủ tục giấy tờ ngoài hệ thống và đối soát như một khoản chênh lệch tiền mặt khi chốt ca kiểm tiền mù. |

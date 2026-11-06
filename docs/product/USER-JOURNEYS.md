@@ -1,208 +1,208 @@
-# Comprehensive User Journeys — SmartRestaurant
+# Hành Trình Người Dùng Toàn Diện (User Journeys) — SmartRestaurant
 
-- **Document Version**: 1.0.0
-- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Related Documents**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [Workflows/](./workflows/)
+- **Phiên bản tài liệu**: 1.0.0
+- **Trạng thái tài liệu**: `CONFIRMED` (Đã được Chủ nhà hàng phê duyệt rõ ràng tại Task 02.6)
+- **Tài liệu liên quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [Workflows/](./workflows/)
 
 ---
 
-## Journey 01: Initial Restaurant Setup & Multi-Branch Configuration
+## Hành Trình 01 (UJ-01): Thiết Lập Nhà Hàng Ban Đầu & Cấu Hình Đa Chi Nhánh
 
-- **Primary Persona**: System Admin / Franchise Owner
-- **Goal**: Configure an independent restaurant branch with operating policies, tax profiles, and user accounts.
+- **Đối tượng chính (Persona)**: Quản trị viên hệ thống / Chủ chuỗi nhà hàng (System Admin / Franchise Owner)
+- **Mục tiêu**: Cấu hình một chi nhánh nhà hàng độc lập với đầy đủ chính sách vận hành, hồ sơ thuế và tài khoản nhân sự.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as System Admin
-    participant Web as Web Admin Portal
-    participant Core as System Core Service
+    actor Admin as Quản trị viên hệ thống
+    participant Web as Cổng Web Quản trị
+    participant Core as Dịch vụ Lõi Hệ thống
 
-    Admin->>Web: Log in with System Admin credentials
-    Admin->>Web: Create Branch "SmartRestaurant - Hoan Kiem Central"
-    Admin->>Web: Set Operating Currency (VND), VAT (8%), Default Service Charge (5%)
-    Admin->>Web: Define Staff Accounts (Manager, Cashier, Waiter, Chef)
-    Web->>Core: Persist Branch and Tenant Config
-    Core-->>Web: Confirmation; Branch Ready for Floor Plan Design
+    Admin->>Web: Đăng nhập bằng tài khoản Quản trị viên hệ thống
+    Admin->>Web: Tạo Chi nhánh "SmartRestaurant - Hoàn Kiếm Central"
+    Admin->>Web: Thiết lập Tiền tệ vận hành (VND), VAT (8%), Phí dịch vụ mặc định (5%)
+    Admin->>Web: Khởi tạo Tài khoản Nhân sự (Quản lý, Thu ngân, Phục vụ, Bếp)
+    Web->>Core: Lưu cấu hình Chi nhánh và Tenant
+    Core-->>Web: Xác nhận thành công; Chi nhánh sẵn sàng thiết kế sơ đồ mặt bằng
 ```
 
-1. **Access Management**: Admin accesses the Web Admin portal and authenticates.
-2. **Branch Creation**: Admin inputs branch metadata: Name, Physical Address, Phone, Operating Hours, Tax Code, and Receipt Header/Footer.
-3. **Fiscal Configuration**: Configures local tax rates (VAT 8% or 10%), currency display formatting, and default service charge percentage (e.g., 5%).
-4. **Staff Provisioning**: Admin registers key staff roles, assigns temporary login credentials, and establishes manager authorization PINs.
+1. **Quản lý quyền truy cập**: Quản trị viên truy cập cổng thông tin Web Admin và tiến hành xác thực danh tính.
+2. **Khởi tạo chi nhánh**: Quản trị viên nhập thông tin chi nhánh: Tên, Địa chỉ thực tế, Số điện thoại, Giờ hoạt động, Mã số thuế, cùng Tiêu đề/Chân trang trên hóa đơn.
+3. **Cấu hình tài chính**: Thiết lập thuế suất địa phương (VAT 8% hoặc 10%), định dạng hiển thị tiền tệ, và tỷ lệ phí phục vụ mặc định (ví dụ: 5%).
+4. **Cấp phát tài khoản nhân sự**: Quản trị viên đăng ký các vai trò nhân viên cốt lõi, gán thông tin đăng nhập tạm thời và thiết lập mã PIN ủy quyền của cấp quản lý.
 
 ---
 
-## Journey 02: Visual Floor Plan & Room/Table Designer
+## Hành Trình 02 (UJ-02): Thiết Kế Mặt Bằng & Phòng/Bàn Trực Quan
 
-- **Primary Persona**: Restaurant Manager
-- **Goal**: Visually map the physical layout of the restaurant into areas, rooms, VIP suites, tables, and architectural obstacles.
+- **Đối tượng chính (Persona)**: Quản lý nhà hàng (Restaurant Manager)
+- **Mục tiêu**: Mô hình hóa trực quan bố cục không gian nhà hàng thành các khu vực, phòng ăn, phòng VIP, bàn ăn và các chướng ngại vật kiến trúc.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Mgr as Restaurant Manager
-    participant Canvas as Konva.js Floor Designer
-    participant Core as Floor Plan Service
+    actor Mgr as Quản lý nhà hàng
+    participant Canvas as Trình thiết kế Sơ đồ Konva.js
+    participant Core as Dịch vụ Sơ đồ Mặt bằng
 
-    Mgr->>Canvas: Open Visual Floor Plan Designer
-    Mgr->>Canvas: Create Dining Areas: "Indoor Ground", "Garden Terrace", "VIP Floor"
-    Mgr->>Canvas: Drag & Drop VIP Room Enclosure (VIP 1, VIP 2)
-    Mgr->>Canvas: Place Rectangular & Round Tables with seating capacities
-    Mgr->>Canvas: Add Architectural Obstacles (Pillars, Main Entry, Service Station)
-    Mgr->>Canvas: Align nodes to grid, adjust zoom & rotation
-    Mgr->>Canvas: Click "Publish Floor Plan"
-    Canvas->>Core: Persist Canvas JSON Coordinates (X, Y, Width, Height, Rotation)
-    Core-->>Canvas: Floor Plan Published & Activated across all POS Terminals
+    Mgr->>Canvas: Mở Trình thiết kế Sơ đồ Mặt bằng trực quan
+    Mgr->>Canvas: Tạo các Khu vực ăn uống: "Tầng 1 Trong nhà", "Sân Vườn Ngoài trời", "Tầng 2 VIP"
+    Mgr->>Canvas: Kéo & Thả khuôn viên Phòng VIP (VIP 1, VIP 2)
+    Mgr->>Canvas: Đặt các bàn chữ nhật & bàn tròn cùng sức chứa chỗ ngồi
+    Mgr->>Canvas: Thêm chướng ngại vật kiến trúc (Cột nhà, Cửa chính, Trạm phục vụ)
+    Mgr->>Canvas: Căn chỉnh lưới (grid snap), điều chỉnh thu phóng & xoay góc
+    Mgr->>Canvas: Nhấn "Xuất bản Sơ đồ Mặt bằng"
+    Canvas->>Core: Lưu tọa độ Canvas JSON (X, Y, Chiều rộng, Chiều cao, Góc xoay)
+    Core-->>Canvas: Sơ đồ mặt bằng đã xuất bản & kích hoạt trên toàn bộ máy POS
 ```
 
-1. **Area Definition**: Manager creates macro areas: *Indoor Ground Floor*, *Outdoor Garden*, and *2nd Floor VIP*.
-2. **Visual Geometry**: Manager drags table shapes onto the Konva.js canvas:
-   - Tables 01 to 08: 4-seater rectangular tables.
-   - Tables 09 to 12: 6-seater circular hotpot tables.
-   - VIP 1: Private enclosed room with a 12-seater executive banquet table.
-3. **Spatial Precision**: Manager adds walls, pillars, and walkways to ensure the digital map represents actual physical walking paths.
-4. **Activation**: Manager clicks "Publish Floor Plan". The coordinates are saved and immediately reflected on all waiter tablets and cashier screens via SignalR.
+1. **Xác định khu vực**: Quản lý tạo các khu vực tổng thể: *Tầng 1 Trong nhà*, *Sân Vườn Ngoài trời*, và *Tầng 2 VIP*.
+2. **Hình học trực quan**: Quản lý kéo thả các hình khối bàn ăn lên khung vẽ Konva.js:
+   - Bàn 01 đến 08: Bàn chữ nhật 4 chỗ ngồi.
+   - Bàn 09 đến 12: Bàn lẩu tròn 6 chỗ ngồi.
+   - VIP 1: Phòng riêng khép kín với bàn tiệc cao cấp 12 chỗ ngồi.
+3. **Độ chính xác không gian**: Quản lý thêm tường ngăn, cột trụ và lối đi để đảm bảo bản đồ kỹ thuật số phản ánh chính xác lối đi thực tế.
+4. **Kích hoạt vận hành**: Quản lý nhấn "Xuất bản Sơ đồ Mặt bằng". Tọa độ được lưu trữ và phản ánh ngay lập tức trên máy tính bảng của nhân viên phục vụ cùng màn hình thu ngân qua SignalR.
 
 ---
 
-## Journey 03: Table Assignment, Walk-In Seating & Reservations
+## Hành Trình 03 (UJ-03): Điều Phối Bàn, Xếp Khách Vãng Lai & Quản Lý Đặt Bàn
 
-- **Primary Persona**: Floor Captain / Waiter
-- **Goal**: Greet guests, check table availability, manage advance bookings, and seat walk-in customers.
+- **Đối tượng chính (Persona)**: Trưởng ca / Nhân viên phục vụ (Floor Captain / Waiter)
+- **Mục tiêu**: Đón tiếp khách hàng, kiểm tra tình trạng bàn trống, quản lý đặt chỗ trước và xếp chỗ cho khách vãng lai (walk-in).
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Host as Floor Captain
-    actor Guest as Customer Party
-    participant POS as Waiter Tablet POS
+    actor Host as Trưởng ca đón khách
+    actor Guest as Đoàn khách
+    participant POS as Tablet POS Phục vụ
     participant Hub as SignalR Real-Time Hub
 
-    Guest->>Host: Walk-in: Party of 4 requesting indoor seating
-    Host->>POS: Open Visual Floor Plan view
-    POS-->>Host: Table 04 is "Trống" (Available - Green)
-    Host->>POS: Tap Table 04 -> "Xếp khách" (Headcount: 4, Server: Alex)
-    POS->>Hub: Broadcast Table 04 State = "Có khách" (Occupied - Amber)
-    Hub-->>POS: Update all FOH & Cashier screens instantly
-    Host->>Guest: Escort party to Table 04
+    Guest->>Host: Khách vãng lai: Nhóm 4 người yêu cầu ngồi trong nhà
+    Host->>POS: Mở giao diện Sơ đồ Mặt bằng trực quan
+    POS-->>Host: Bàn 04 đang "Trống" (Available - Xanh lá)
+    Host->>POS: Chạm Bàn 04 -> "Xếp khách" (Số lượng khách: 4, Phục vụ: Alex)
+    POS->>Hub: Phát tín hiệu Bàn 04 chuyển trạng thái = "Có khách" (Occupied - Vàng hổ phách)
+    Hub-->>POS: Cập nhật tức thì trên tất cả màn hình Phục vụ & Thu ngân
+    Host->>Guest: Hướng dẫn đoàn khách vào vị trí Bàn 04
 ```
 
-1. **Guest Arrival**: Floor Captain greets a party of 4 guests.
-2. **Status Inspection**: Captain opens the visual floor plan. Table 04 is glowing Green (`Trống`).
-3. **Session Seating**: Captain taps Table 04, selects "Xếp khách", inputs guest count (4 pax), and assigns server Alex.
-4. **Instant Synchronization**: Table 04 transitions to Amber (`Có khách`). The timer starts counting active dining duration.
+1. **Đón tiếp khách hàng**: Trưởng ca chào đón đoàn gồm 4 khách.
+2. **Kiểm tra trạng thái**: Trưởng ca mở sơ đồ mặt bằng trực quan. Bàn 04 đang hiển thị màu Xanh lá (`Trống`).
+3. **Mở phiên phục vụ**: Trưởng ca chạm vào Bàn 04, chọn "Xếp khách", nhập số lượng khách (4 người) và gán nhân viên phục vụ Alex.
+4. **Đồng bộ thời gian thực**: Bàn 04 lập tức chuyển sang màu Vàng hổ phách (`Có khách`). Đồng hồ bắt đầu đếm thời gian dùng bữa thực tế của phiên bàn.
 
 ---
 
-## Journey 04: Order Capture with Modifiers & Kitchen Firing
+## Hành Trình 04 (UJ-04): Ghi Nhận Món Ăn Kèm Tùy Chọn & Báo Bếp
 
-- **Primary Persona**: Waiter (Alex)
-- **Goal**: Rapidly compose customer order with complex modifiers, cooking preferences, and fire to the kitchen using Vietnamese interface.
+- **Đối tượng chính (Persona)**: Nhân viên phục vụ (Alex)
+- **Mục tiêu**: Nhanh chóng tạo đơn gọi món cho khách với các nhóm tùy chọn (modifiers) phức tạp, ghi chú chế biến, và gửi lệnh xuống bếp qua giao diện tiếng Việt.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Waiter as Waiter (Alex)
-    participant POS as Waiter Tablet POS
-    participant API as Order Service
-    participant KDS as Kitchen Display System (SignalR)
+    actor Waiter as Nhân viên phục vụ (Alex)
+    participant POS as Tablet POS Phục vụ
+    participant API as Dịch vụ Gọi món (Order Service)
+    participant KDS as Hệ thống Màn hình Bếp KDS (SignalR)
 
-    Waiter->>POS: Select Table 04 ("Có khách")
-    Waiter->>POS: Select "Lẩu Riêu Cua Bắp Bò" -> Size "Nồi lớn"
+    Waiter->>POS: Chọn Bàn 04 ("Có khách")
+    Waiter->>POS: Chọn món "Lẩu Riêu Cua Bắp Bò" -> Quy cách "Nồi lớn"
     Waiter->>POS: Nhóm tùy chọn: "Độ cay: Cay vừa", "Nước lẩu: Chua cay Thái", "Gọi thêm: Đĩa bắp bò (+50.000 ₫)"
-    Waiter->>POS: Select "Bia Tiger Bạc" (Qty: 4, Ghi chú: "Mang bia lạnh trước")
-    Waiter->>POS: Review Draft Cart -> Tap "Báo bếp" (Fire)
-    POS->>API: Submit Order (Atomic Database Transaction)
-    API->>KDS: Dispatch decomposed tickets via SignalR
-    KDS-->>Waiter: Visual Checkmark: "Đã chuyển 2 món xuống Bếp Nóng & Quầy Bar"
+    Waiter->>POS: Chọn món "Bia Tiger Bạc" (SL: 4, Ghi chú: "Mang bia lạnh trước")
+    Waiter->>POS: Rà soát giỏ hàng tạm -> Nhấn "Báo bếp" (Fire)
+    POS->>API: Gửi đơn gọi món (Giao dịch cơ sở dữ liệu nguyên tử - Atomic Transaction)
+    API->>KDS: Phân tách và gửi các phiếu chế biến qua SignalR
+    KDS-->>Waiter: Dấu kiểm trực quan: "Đã chuyển 2 món xuống Bếp Nóng & Quầy Bar"
 ```
 
-1. **Order Initiation**: Server taps Table 04 on their tablet to open the touch order matrix in Vietnamese.
-2. **Item & Modifier Selection**:
-   - Taps "Lẩu Riêu Cua Bắp Bò": selects size "Nồi lớn", Độ cay "Cay vừa", Nước lẩu Thái.
-   - Adds 1x Đĩa bắp bò (+50.000 ₫).
-   - Taps "Đồ uống" category: adds 4x Bia Tiger Bạc with note "Mang bia lạnh trước".
-3. **Review & Fire**: Server reviews draft items with the guest and taps **"Báo bếp"**.
-4. **Decomposition & Dispatch**: The backend atomicity commits the order and splits items into specialized kitchen tickets via SignalR.
+1. **Khởi tạo đơn gọi món**: Nhân viên phục vụ chạm vào Bàn 04 trên máy tính bảng để mở lưới gọi món cảm ứng bằng tiếng Việt.
+2. **Lựa chọn món ăn & Tùy chọn đi kèm**:
+   - Chạm vào món "Lẩu Riêu Cua Bắp Bò": chọn kích cỡ "Nồi lớn", Độ cay "Cay vừa", Nước lẩu Thái.
+   - Thêm 1x Đĩa bắp bò (+50.000 ₫).
+   - Chạm danh mục "Đồ uống": thêm 4x Bia Tiger Bạc cùng ghi chú "Mang bia lạnh trước".
+3. **Rà soát & Báo bếp**: Nhân viên xác nhận lại danh sách món với thực khách và nhấn **"Báo bếp"**.
+4. **Phân tách & Điều phối**: Hệ thống lưu giao dịch nguyên tử vào cơ sở dữ liệu và tự động phân tách các món thành từng phiếu chế biến riêng biệt gửi đến màn hình KDS tương ứng qua SignalR.
 
-> [!NOTE] Kitchen Routing vs. Direct Front-of-House Service (DirectFOHPick)
-> Per PDR-012, drinks and ready-to-serve items are configured with distinct fulfillment routes:
-> - **Bar Station Routing**: Complex mixed beverages, draft beers requiring tapping, or specialty cocktails route directly to the Bar KDS display.
-> - **Direct FOH Service (DirectFOHPick)**: Pre-packaged beverages (e.g. bottled water, canned sodas, or grab-and-go beers stored in dining floor coolers) can be flagged as `DirectFOHPick`. These items are billed immediately to the table session but bypass kitchen/bar KDS routing entirely, allowing waitstaff to serve them directly without creating redundant tickets on kitchen screens.
+> [!NOTE] Điều Phối Xuống Bếp So Với Phục Vụ Trực Tiếp Tại Sảnh (DirectFOHPick)
+> Theo PDR-012, đồ uống và các mặt hàng chế biến sẵn được cấu hình tuyến phục vụ riêng biệt:
+> - **Điều phối trạm quầy Bar**: Các loại đồ uống pha chế phức tạp, bia tươi cần rót từ vòi hoặc cocktail đặc biệt được gửi trực tiếp đến màn hình KDS Quầy Bar.
+> - **Phục vụ trực tiếp tại sảnh (DirectFOHPick)**: Các đồ uống đóng chai/lon đóng gói sẵn (ví dụ: nước lọc đóng chai, nước ngọt lon, hoặc bia ướp lạnh sẵn trong tủ mát tại khu vực ăn) có thể gắn nhãn cờ `DirectFOHPick`. Các món này được ghi nhận ngay vào hóa đơn bàn ăn nhưng bỏ qua hoàn toàn quy trình chuyển phiếu xuống KDS Bếp/Bar, giúp nhân viên phục vụ lấy ngay tại tủ phục vụ khách mà không gây tắc nghẽn màn hình của thợ pha chế.
 
 ---
 
-## Journey 05: Kitchen Preparation & Multi-Station Coordination
+## Hành Trình 05 (UJ-05): Chế Biến Tại Bếp & Phối Hợp Đa Trạm Chế Biến
 
-- **Primary Persona**: Line Cook (Bếp Nóng) & Bartender (Quầy Bar)
-- **Goal**: Receive split tickets, cook items according to SLA timers, and coordinate dish completion.
+- **Đối tượng chính (Persona)**: Đầu bếp Bếp Nóng & Nhân viên Pha chế Quầy Bar
+- **Mục tiêu**: Nhận các phiếu chế biến đã phân tách, chế biến món theo đồng hồ SLA kiểm soát thời gian, và điều phối hoàn thành món ăn.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Bar as Quầy Bar KDS
-    participant Hot as Bếp Nóng KDS
-    participant Exp as Bàn Ra Món (Expediter KDS)
+    participant Bar as KDS Quầy Bar
+    participant Hot as KDS Bếp Nóng
+    participant Exp as KDS Bàn Ra Món (Expediter)
     actor Cook as Đầu Bếp Nóng
     actor Barista as Nhân Viên Bar
 
-    Note over Bar,Hot: SignalR delivers split tickets simultaneously
+    Note over Bar,Hot: SignalR chuyển các phiếu phân tách cùng thời điểm
     Bar-->>Barista: Phiếu #104-B: 4x Bia Tiger Bạc (Đồng hồ: 00:00)
     Hot-->>Cook: Phiếu #104-H: 1x Lẩu Riêu Bắp Bò + Đĩa Bò (Đồng hồ: 00:00)
-    Barista->>Bar: Tap "Đã xong (Chờ bưng)" (Elapsed: 02:15 - Green)
+    Barista->>Bar: Chạm "Đã xong (Chờ bưng)" (Thời gian trôi: 02:15 - Xanh lá)
     Bar-->>Exp: Đồ uống chuyển trạng thái "Đã xong"
-    Cook->>Hot: Tap "Đang nấu" (Elapsed: 05:00 - Green)
-    Cook->>Hot: Nấu xong -> Tap "Đã xong (Chờ bưng)" (Elapsed: 12:30 - Yellow)
+    Cook->>Hot: Chạm "Đang nấu" (Thời gian trôi: 05:00 - Xanh lá)
+    Cook->>Hot: Nấu xong -> Chạm "Đã xong (Chờ bưng)" (Thời gian trôi: 12:30 - Vàng)
     Hot-->>Exp: Lẩu riêu chuyển trạng thái "Đã xong"
     Exp-->>Exp: Toàn bộ món Bàn 04 đã xong! Chuông báo Tiếp thực.
 ```
 
-1. **Ticket Arrival**: The Bar screen beeps and shows Phiếu #104-B (4 bia). The Bếp Nóng screen beeps and displays Phiếu #104-H (Lẩu & Bò).
-2. **Bar Fulfillment**: Bartender pours 4 cold draught beers, taps the card on screen, moving it to **"Đã xong (Chờ bưng)"**.
-3. **Hot Kitchen Execution**: The cook taps the hotpot ticket to mark **"Đang nấu"**. The timer turns yellow at 10 minutes. At 12:30, the cook plates the beef and taps **"Đã xong (Chờ bưng)"**.
-4. **Expediter Window**: The Master Expediter screen flashes green: "Bàn 04 Đã Xong Đủ Món". Runner alert triggers.
+1. **Phiếu chế biến xuất hiện**: Màn hình Quầy Bar phát âm báo ting và hiện Phiếu #104-B (4 bia). Màn hình Bếp Nóng phát âm báo và hiển thị Phiếu #104-H (Lẩu & Bò).
+2. **Xử lý tại quầy Bar**: Nhân viên pha chế lấy 4 ly bia ướp lạnh, chạm vào thẻ món trên màn hình để chuyển sang **"Đã xong (Chờ bưng)"**.
+3. **Chế biến tại Bếp Nóng**: Đầu bếp chạm vào phiếu lẩu để đánh dấu **"Đang nấu"**. Đồng hồ hiển thị màu vàng khi chạm mốc 10 phút. Vào phút 12:30, đầu bếp hoàn thiện đĩa thịt bò và chạm **"Đã xong (Chờ bưng)"**.
+4. **Cửa sổ Bàn Ra Món tổng thể (Expediter)**: Màn hình Bàn Ra Món nhấp nháy xanh lá: "Bàn 04 Đã Xong Đủ Món". Chuông thông báo nhân viên tiếp thực (runner) được kích hoạt.
 
 ---
 
-## Journey 06: Dish Serving & Runner Coordination
+## Hành Trình 06 (UJ-06): Bưng Món Ra Bàn & Điều Phối Tiếp Thực
 
-- **Primary Persona**: Runner / Waiter (Nhân viên tiếp thực)
-- **Goal**: Pick up completed dishes from the kitchen pass and deliver them to Table 04.
+- **Đối tượng chính (Persona)**: Nhân viên tiếp thực / Phục vụ bàn (Runner / Waiter)
+- **Mục tiêu**: Nhận món ăn đã chế biến hoàn tất từ bàn ra món của bếp và bưng phục vụ tại Bàn 04.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Runner as Nhân Viên Tiếp Thực
-    participant Exp as Bàn Ra Món KDS
-    participant POS as Waiter Tablet POS
-    actor Guest as Customer Table 04
+    participant Exp as KDS Bàn Ra Món
+    participant POS as Tablet POS Phục vụ
+    actor Guest as Khách Hàng Bàn 04
 
     Exp-->>Runner: Bàn 04 Lẩu & Bắp bò đã sẵn sàng tại Bàn Ra Món
-    Runner->>Exp: Tap "Bắt đầu bưng" (Runner picks up tray)
-    Runner->>Guest: Phục vụ lẩu và bếp cồn tại Bàn 04
-    Runner->>POS: Tap "Đã phục vụ"
-    POS-->>Exp: Trạng thái món = "Đã phục vụ" (Phiếu đóng)
+    Runner->>Exp: Chạm "Bắt đầu bưng" (Tiếp thực nhận khay món)
+    Runner->>Guest: Phục vụ nồi lẩu và bếp cồn tại Bàn 04
+    Runner->>POS: Chạm "Đã phục vụ"
+    POS-->>Exp: Trạng thái món = "Đã phục vụ" (Phiếu đóng lại)
 ```
 
-1. **Runner Notification**: Runner notices the table 04 alert at Bàn Ra Món.
-2. **Tray Pickup**: Runner inspects ticket #104-H, ensures broth and beef match guest modifications (Nước lẩu Thái, Cay vừa).
-3. **Table Handover**: Runner serves hotpot to guests at Table 04, greeting them courteously: *"Em chúc quý khách dùng bữa ngon miệng!"*.
-4. **Status Completion**: Server taps **"Đã phục vụ"** on the tablet; ticket moves to archived history.
+1. **Thông báo tiếp thực**: Nhân viên tiếp thực nhận tín hiệu cảnh báo Bàn 04 tại Bàn Ra Món.
+2. **Nhận khay món**: Nhân viên kiểm tra phiếu #104-H, đảm bảo nước dùng và thịt bò đúng theo tùy chọn khách yêu cầu (Nước lẩu Thái, Cay vừa).
+3. **Bàn giao tại bàn**: Nhân viên phục vụ lẩu cho thực khách tại Bàn 04 kèm lời chào lịch sự: *"Em chúc quý khách dùng bữa ngon miệng!"*.
+4. **Hoàn tất trạng thái**: Nhân viên phục vụ chạm **"Đã phục vụ"** trên máy tính bảng; phiếu chuyển vào lịch sử lưu trữ của phiên bàn.
 
 ---
 
-## Journey 07: Additional Ordering & Mid-Meal Table Move
+## Hành Trình 07 (UJ-07): Gọi Bổ Sung Món & Chuyển Bàn Giữa Bữa Ăn
 
-- **Primary Persona**: Waiter (Alex)
-- **Goal**: Handle customer request to add food and relocate to the outdoor terrace due to smoking preferences.
+- **Đối tượng chính (Persona)**: Nhân viên phục vụ (Alex)
+- **Mục tiêu**: Xử lý yêu cầu gọi thêm món và hỗ trợ khách đổi sang bàn ngoài sân vườn theo nguyện vọng hút thuốc.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Guest as Customer Party
-    actor Waiter as Waiter (Alex)
-    participant POS as Waiter Tablet POS
+    actor Guest as Khách Hàng
+    actor Waiter as Nhân Viên Phục Vụ (Alex)
+    participant POS as Tablet POS Phục Vụ
     participant Hub as SignalR Hub
 
     Guest->>Waiter: Yêu cầu chuyển ra Bàn 15 (Sân Vườn) + gọi thêm 2 bia
@@ -213,31 +213,31 @@ sequenceDiagram
     Hub-->>POS: Toàn bộ máy POS & KDS cập nhật vị trí Bàn 15
 ```
 
-1. **Move Request**: Guest asks to move from Indoor Table 04 to Garden Table 15.
-2. **Table Relocation**: Server selects **"Chuyển bàn"** on Table 04, taps destination Table 15 (`Trống`).
-3. **Atomic Session Transfer**: The active dining session, all unbilled items, and KDS tickets transfer to Table 15. Table 04 resets to `Trống` (or `Cần dọn dẹp`).
-4. **Incremental Ordering**: Server adds 2x Tiger Beers (Đợt 2) to Table 15 and taps **"Báo bếp"** directly to the bar.
+1. **Yêu cầu chuyển bàn**: Thực khách đề nghị chuyển từ Bàn trong nhà 04 sang Bàn sân vườn 15.
+2. **Thao tác chuyển vị trí**: Nhân viên chọn **"Chuyển bàn"** trên Bàn 04, chạm bàn đích là Bàn 15 (`Trống`).
+3. **Chuyển giao phiên nguyên tử**: Toàn bộ phiên dùng bữa hiện hành, danh sách món chưa thanh toán và các phiếu KDS liên quan tự động chuyển sang Bàn 15. Bàn 04 đặt lại trạng thái về `Trống` (hoặc `Cần dọn dẹp`).
+4. **Gọi bổ sung món**: Nhân viên thêm 2x Bia Tiger Bạc (Đợt 2) cho Bàn 15 và nhấn **"Báo bếp"** trực tiếp xuống quầy Bar.
 
-### Operational Scenario: Table Unmerge (Hủy gộp bàn)
-In accordance with PDR-010, when a previously merged group of tables (e.g., Table 04 and Table 05 merged for a large party) needs to be separated:
-1. Floor Captain or Cashier selects the merged table group and initiates **"Hủy gộp bàn" (Unmerge Tables)**.
-2. The system prompts staff to allocate existing active order items and unpaid sub-bills between the constituent tables (Table 04 and Table 05).
-3. Upon confirmation, Table 05 is restored to its independent session (or `Trống` if vacated), while kitchen tickets and bill audit logs retain complete operational traceability without data loss.
+### Kịch Bản Vận Hành: Hủy Gộp Bàn (Table Unmerge)
+Căn cứ theo PDR-010, khi một cụm bàn trước đó đã gộp (ví dụ: Bàn 04 và Bàn 05 gộp lại phục vụ đoàn khách lớn) cần được tách riêng:
+1. Trưởng ca hoặc Thu ngân chọn cụm bàn đã gộp và bắt đầu quy trình **"Hủy gộp bàn" (Unmerge Tables)**.
+2. Hệ thống yêu cầu nhân viên phân bổ các món đang phục vụ và các hóa đơn con chưa thanh toán về từng bàn thành phần (Bàn 04 và Bàn 05).
+3. Sau khi xác nhận, Bàn 05 được khôi phục thành phiên bàn độc lập (hoặc về trạng thái `Trống` nếu khách đã về), đồng thời toàn bộ phiếu bếp và nhật ký kiểm toán hóa đơn vẫn duy trì đầy đủ tính truy vết mà không làm mất mát dữ liệu.
 
 ---
 
-## Journey 08: Pre-Bill, Bill Splitting & Multi-Channel Payment
+## Hành Trình 08 (UJ-08): In Phiếu Tạm Tính, Tách Hóa Đơn & Thanh Toán Đa Kênh
 
-- **Primary Persona**: Cashier & Waiter
-- **Goal**: Present pre-bill to customer, split check between two guests, and process payment via Cash and VietQR.
+- **Đối tượng chính (Persona)**: Thu ngân & Nhân viên phục vụ (Cashier & Waiter)
+- **Mục tiêu**: Cung cấp phiếu tạm tính cho khách kiểm tra, tách hóa đơn cho 2 thực khách trả riêng, và xử lý thanh toán kết hợp Tiền mặt cùng VietQR.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Guest as Customer Party
-    actor Waiter as Waiter
-    actor Cashier as Cashier (Thu Ngân)
-    participant Term as Cashier Terminal
+    actor Guest as Khách Hàng
+    actor Waiter as Nhân Viên Phục Vụ
+    actor Cashier as Thu Ngân
+    participant Term as Máy Thu Ngân (POS)
     participant QR as Cổng VietQR Napas 24/7
 
     Guest->>Waiter: Yêu cầu thanh toán
@@ -254,49 +254,49 @@ sequenceDiagram
     Term-->>Waiter: Bàn 15 đổi màu Cam ("Cần dọn dẹp")
 ```
 
-1. **Pre-bill Generation & Unpaid Bill Editability**: Server triggers **"In phiếu tạm tính"**. Table 15 status shifts to Purple (`Đang thanh toán`). In accordance with PDR-009, the unpaid bill remains fully editable; if guests order additional drinks or desserts while the pre-bill is out, waitstaff can append items directly to the open bill (default behavior) or explicitly open a new sub-bill, preserving complete audit trails without freezing the table.
-2. **Split Check Request**: Guests approach the cashier counter requesting an equal 50/50 split of the 1,200,000 ₫ total.
-3. **System Splitting**: Cashier taps **"Chia đều (1/N)" $\div$ 2**, creating Phần 1 (600.000 ₫) and Phần 2 (600.000 ₫) with taxes and service charges apportioned accurately.
-4. **Payment Processing**:
-   - Guest A pays 600,000 ₫ in Cash. Cashier inputs cash received; drawer pops open.
-   - Guest B scans the dynamic on-screen VietQR code for 600,000 ₫ using their banking app.
-5. **Reconciliation & Table Release**: Once payment confirms, the final VAT invoice prints, and Table 15 switches to Orange (`Cần dọn dẹp`).
+1. **Khởi tạo tạm tính & Tính khả biên tập của hóa đơn chưa thu tiền**: Nhân viên kích hoạt **"In phiếu tạm tính"**. Bàn 15 chuyển sang màu Tím (`Đang thanh toán` / `BillingRequested`). Căn cứ theo PDR-009, hóa đơn chưa thanh toán vẫn hoàn toàn có thể chỉnh sửa; nếu khách gọi thêm đồ uống hoặc món tráng miệng trong lúc đang cầm phiếu tạm tính, nhân viên phục vụ vẫn có thể gọi thêm trực tiếp vào hóa đơn mở hiện tại (hành vi mặc định) hoặc chủ động mở một hóa đơn con mới, bảo toàn đầy đủ vết kiểm toán mà không hề khóa cứng phiên bàn.
+2. **Yêu cầu tách hóa đơn**: Khách tiến tới quầy thu ngân đề nghị chia đôi 50/50 tổng số tiền 1.200.000 ₫.
+3. **Thao tác tách trên hệ thống**: Thu ngân chạm **"Chia đều (1/N)" $\div$ 2**, tạo Phần 1 (600.000 ₫) và Phần 2 (600.000 ₫) kèm phân bổ tiền thuế và phí phục vụ tương ứng chính xác.
+4. **Xử lý thu tiền**:
+   - Khách A trả 600.000 ₫ Tiền mặt. Thu ngân nhập số tiền nhận; ngăn kéo đựng tiền tự động bật mở.
+   - Khách B quét mã VietQR động hiển thị trên màn hình với số tiền 600.000 ₫ bằng ứng dụng ngân hàng.
+5. **Đối soát & Giải phóng bàn**: Ngay khi thanh toán được hệ thống xác nhận, hóa đơn tài chính cuối cùng được in ra và Bàn 15 chuyển sang màu Cam (`Cần dọn dẹp`).
 
-### Operational Scenario: Additional Ordering with Split Bills / Multiple Unpaid Bills
-In accordance with PDR-009, BR-RULE-06, and Owner Decision OD-13:
-1. Table 15 has an active dining session with multiple sub-bills (e.g., Sub-Bill 1 for Guest A, Sub-Bill 2 for Guest B).
-2. Guest A settles Sub-Bill 1 (600,000 ₫) in Cash. Sub-Bill 1 transitions to `Paid` and prints an individual receipt. In accordance with strict financial immutability rules, **Sub-Bill 1 is permanently locked against direct editing**.
-3. While Sub-Bill 2 remains open and unpaid, guests decide to order an additional round of drinks (2x Bia Tiger Bạc).
-4. Waiter Alex opens Table 15 on their tablet. The table is **NOT locked**. By default, newly fired items are automatically appended to the open, unpaid Sub-Bill 2, recalculating its subtotal and taxes dynamically.
-5. Alternatively, Alex may explicitly choose to open a new **Sub-Bill 3** if guests request separate billing for the new round.
-6. Table 15 remains in `Occupied` / `BillingRequested` status and is **blocked from table release** until all sub-bills (Sub-Bill 2 and any newly created Sub-Bill 3) are completely paid and all drinks are marked `Served`.
-7. All actions preserve an immutable audit trail linking items, timestamps, waitstaff ID, and sub-bill allocations.
+### Kịch Bản Vận Hành: Gọi Bổ Sung Món Khi Đang Có Nhiều Hóa Đơn Con / Hóa Đơn Chưa Thu Tiền
+Căn cứ theo PDR-009, BR-RULE-06 và Quyết định của Chủ nhà hàng OD-13:
+1. Bàn 15 đang trong một phiên phục vụ có nhiều hóa đơn con (ví dụ: Hóa đơn con 1 cho Khách A, Hóa đơn con 2 cho Khách B).
+2. Khách A thanh toán Hóa đơn con 1 (600.000 ₫) bằng Tiền mặt. Hóa đơn con 1 chuyển sang trạng thái `Paid` và in biên lai riêng. Theo nguyên tắc bất biến tài chính nghiêm ngặt, **Hóa đơn con 1 đã thanh toán bị khóa vĩnh viễn, không được phép chỉnh sửa trực tiếp**.
+3. Trong khi Hóa đơn con 2 vẫn đang mở và chưa thanh toán, thực khách quyết định gọi thêm 1 lượt đồ uống (2x Bia Tiger Bạc).
+4. Phục vụ Alex mở Bàn 15 trên máy tính bảng. Phiên bàn **KHÔNG bị khóa**. Theo mặc định, các món gọi thêm mới được tự động gắn vào Hóa đơn con 2 đang mở, tự động tính toán lại tổng tiền và thuế tương ứng.
+5. Ngoài ra, Alex có thể chủ động chọn mở một **Hóa đơn con 3** riêng biệt nếu khách yêu cầu tính tiền riêng cho lượt gọi đồ uống phát sinh này.
+6. Bàn 15 tiếp tục duy trì trạng thái `Occupied` / `BillingRequested` và **bị chặn giải phóng bàn** cho đến khi tất cả các hóa đơn con (Hóa đơn con 2 và Hóa đơn con 3 nếu có) đã hoàn tất thanh toán và toàn bộ đồ uống đã được xác nhận `Served`.
+7. Mọi thao tác đều lưu lại nhật ký kiểm toán bất biến gắn liền mã món, mốc thời gian, mã nhân viên phục vụ và việc phân bổ hóa đơn con.
 
-### Operational Scenario: Delayed VietQR Payment & Suspense Queue Reconciliation
-In accordance with PDR-008 and Owner Decision OD-04:
-1. Guest B attempts to settle their 600,000 ₫ bill via dynamic VietQR.
-2. Due to banking switch latency (Napas 24/7) or mobile network congestion, the webhook confirmation does not arrive within the configured timeout threshold (e.g., 2 minutes).
-3. In accordance with PDR-008, the cashier is permitted to switch the tender to **Cash Fallback**. Cashier accepts 600,000 ₫ in cash, marks the bill `Paid`, prints the invoice, and releases the guest. The pending VietQR payment request transitions to `CancelledByCashier / CashFallback`.
-4. Three minutes later, the delayed bank webhook arrives, signaling a successful transfer of 600,000 ₫ for the cancelled QR transaction.
-5. **Anti-Duplicate & Suspense Routing**: The system detects that the invoice has already been settled via Cash. The incoming 600,000 ₫ is strictly prevented from double-crediting the invoice. Instead, it is routed to the **"Giao dịch treo đối soát" (Suspense Reconciliation Queue)**.
-6. **Immediate Audio-Visual Alert**: Cashier and Manager screens receive a high-priority alert notifying them of the delayed transfer.
-7. **Governed Reconciliation (No Automatic Refund)**: In accordance with confirmed security policies, the system **NEVER initiates an automatic unverified refund**. The transaction remains held in the Suspense Ledger. The Restaurant Manager manually investigates the transaction against bank reference IDs and executes an authorized manual resolution workflow with mandatory reason documentation.
+### Kịch Bản Vận Hành: Xử Lý VietQR Đến Muộn & Đưa Vào Hàng Đợi Treo Đối Soát
+Căn cứ theo PDR-008 và Quyết định của Chủ nhà hàng OD-04:
+1. Khách B quét mã VietQR động để thanh toán hóa đơn 600.000 ₫.
+2. Do độ trễ từ cổng chuyển mạch ngân hàng (Napas 24/7) hoặc nghẽn mạng viễn thông, webhook xác nhận thanh toán không đến trước hạn định cấu hình timeout (ví dụ: 2 phút).
+3. Căn cứ PDR-008, thu ngân được phép chuyển phương thức sang **Dự phòng Tiền mặt (Cash Fallback)**. Thu ngân nhận 600.000 ₫ tiền mặt từ khách, đánh dấu hóa đơn là `Paid`, in biên lai và để khách rời đi. Yêu cầu thanh toán VietQR đang chờ xử lý được đánh dấu `CancelledByCashier / CashFallback`.
+4. Ba phút sau, webhook ngân hàng gửi đến trễ, báo chuyển khoản thành công 600.000 ₫ cho giao dịch QR trước đó đã bị hủy.
+5. **Chống trùng lặp & Điều chuyển vào sổ treo**: Hệ thống phát hiện hóa đơn liên quan đã được quyết toán xong bằng Tiền mặt. Số tiền 600.000 ₫ đến muộn bị nghiêm cấm ghi có trùng lặp vào hóa đơn. Thay vào đó, giao dịch được chuyển ngay vào **"Sổ Treo Đối Soát" (Suspense Reconciliation Queue)**.
+6. **Cảnh báo âm thanh & hình ảnh tức thì**: Màn hình của Thu ngân và Quản lý lập tức nhận cảnh báo mức độ ưu tiên cao về giao dịch chuyển khoản muộn.
+7. **Đối soát có kiểm soát (Nghiêm cấm tự động hoàn tiền)**: Căn cứ chính sách an toàn đã được xác nhận, hệ thống **TUYỆT ĐỐI KHÔNG tự động thực hiện hoàn tiền ngân hàng khi chưa có xác minh**. Giao dịch duy trì trạng thái treo trong Sổ Đối Soát. Quản lý nhà hàng đối chiếu thủ công thông tin chuyển khoản với mã tham chiếu ngân hàng và thực hiện quy trình xử lý thủ công theo thẩm quyền kèm ghi chú nguyên nhân bắt buộc.
 
 ---
 
-## Journey 09: Item Cancellation Post-Fire with Manager Override
+## Hành Trình 09 (UJ-09): Hủy Món Sau Khi Đã Báo Bếp Kèm Phê Duyệt Của Quản Lý
 
-- **Primary Persona**: Waiter & Restaurant Manager (Quản lý)
-- **Goal**: Cancel a dish after it was already sent to the kitchen due to customer mistake, logging waste accurately.
+- **Đối tượng chính (Persona)**: Nhân viên phục vụ & Quản lý nhà hàng (Waiter & Restaurant Manager)
+- **Mục tiêu**: Hủy một món ăn sau khi đã gửi lệnh chế biến xuống bếp do khách nhầm lẫn, đồng thời ghi nhận hao hụt/hủy hỏng chính xác vào sổ theo dõi.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Waiter as Waiter
-    actor Mgr as Restaurant Manager (Quản lý)
-    participant POS as Tablet POS
-    participant KDS as Bếp Nóng KDS
-    participant Core as Audit & Inventory Service
+    actor Waiter as Nhân viên phục vụ
+    actor Mgr as Quản lý nhà hàng
+    participant POS as Tablet POS Phục vụ
+    participant KDS as KDS Bếp Nóng
+    participant Core as Dịch vụ Kiểm toán & Kho (Audit & Inventory)
 
     Waiter->>POS: Bàn 15 -> Chọn "Thăn bò Úc" -> Nhấn "Hủy món"
     POS-->>Waiter: Cảnh báo: "Món đang nấu! Cần mã PIN Quản lý để hủy."
@@ -307,34 +307,34 @@ sequenceDiagram
     Core-->>POS: Cập nhật hóa đơn thành công; Lưu nhật ký giám sát
 ```
 
-1. **Cancellation Trigger**: Guest realizes they cannot eat red meat after the order was already sent to the kitchen.
-2. **Security Shield**: Waiter attempts cancellation. System detects item is already `Đang nấu` and prompts for Manager PIN.
-3. **Manager Intervention**: Manager arrives, verifies the situation, inputs their secure 4-digit PIN, and selects mandatory reason "Khách đổi ý sau khi báo bếp".
-4. **Kitchen Alert**: The Bếp Nóng KDS flashes red with an alert chime. Cook removes the pan from the stove.
-5. **Loss Accounting**: Item is removed from the guest's payable total, but raw ingredients are registered to the restaurant's daily `WasteLog` (Sổ theo dõi hủy/hỏng).
+1. **Khởi phát yêu cầu hủy món**: Khách hàng phát hiện không ăn được thịt đỏ sau khi món ăn đã được gửi lệnh xuống bếp.
+2. **Hàng rào bảo vệ an toàn**: Phục vụ thao tác hủy món. Hệ thống phát hiện món đã ở trạng thái `Đang nấu` và yêu cầu mã PIN ủy quyền của Quản lý.
+3. **Can thiệp của Quản lý**: Quản lý có mặt xác thực tình hình, nhập mã PIN 4 số bảo mật và chọn lý do bắt buộc "Khách đổi ý sau khi báo bếp".
+4. **Cảnh báo phía bếp**: Màn hình KDS Bếp Nóng nhấp nháy màu đỏ kèm âm thanh cảnh báo. Đầu bếp dỡ chảo khỏi bếp nấu.
+5. **Hạch toán tổn thất**: Món ăn được xóa khỏi tổng tiền phải thanh toán của khách, nhưng nguyên vật liệu liên quan được ghi nhận vào `WasteLog` (Sổ theo dõi hủy/hỏng) của ca làm việc.
 
-### Operational Scenario: Dish Remake Workflow (Làm lại món do lỗi bếp)
-In accordance with PDR-015 and Owner Decision OD-12:
-1. When a prepared dish is rejected at the kitchen pass or returned by a customer due to kitchen preparation error (e.g., incorrect doneness, incorrect broth spice, or cold food), floor staff or manager initiates **"Làm lại món" (Remake Dish)**.
-2. The system dispatches an expedited remake ticket to the target kitchen station KDS with highest preparation priority.
-3. The customer bill is protected—no double-charge or additional fee is added to the table session.
-4. The rejected item is registered to `ScrapLoss` (Hao hụt hủy hỏng nội bộ) with mandatory root-cause tracking and manager PIN approval.
-5. *UI Note*: The visual appearance (e.g. purple card styling or special banner indicator on KDS screens) is an AI UI proposal and will be refined during frontend design; the core business rules and financial protection remain authoritative.
+### Kịch Bản Vận Hành: Quy Trình Làm Lại Món (Remake Dish Do Lỗi Bếp)
+Căn cứ theo PDR-015 và Quyết định của Chủ nhà hàng OD-12:
+1. Khi một món đã nấu xong bị từ chối tại bàn ra món hoặc bị khách trả lại do lỗi chế biến của bếp (ví dụ: làm sai độ chín, nhầm vị nước lẩu, hoặc thức ăn bị nguội), nhân viên phục vụ hoặc quản lý kích hoạt thao tác **"Làm lại món" (Remake Dish)**.
+2. Hệ thống gửi ngay phiếu làm lại ưu tiên cao nhất đến màn hình KDS của trạm chế biến chịu trách nhiệm.
+3. Hóa đơn của khách được bảo vệ an toàn—tuyệt đối không thu tiền hai lần hoặc tính thêm phụ phí vào phiên bàn của khách.
+4. Món ăn bị trả lại được ghi nhận vào `ScrapLoss` (Hao hụt hủy hỏng nội bộ) kèm bắt buộc theo dõi nguyên nhân gốc và phê duyệt mã PIN của quản lý.
+5. *Ghi chú giao diện (UI)*: Giao diện hiển thị trực quan (ví dụ: thẻ màu tím hoặc biểu tượng nhãn riêng trên màn hình KDS) là đề xuất giao diện của AI và sẽ được hoàn thiện trong quá trình thiết kế frontend; các quy tắc nghiệp vụ cốt lõi và nguyên tắc bảo vệ tài chính vẫn là chuẩn mực pháp quy tối cao.
 
 ---
 
-## Journey 10: Cashier Shift Closing & Cash Drawer Balancing
+## Hành Trình 10 (UJ-10): Chốt Ca Làm Việc Của Thu Ngân & Cân Bằng Ngăn Kéo Tiền
 
-- **Primary Persona**: Cashier & Restaurant Manager (Thu Ngân & Quản lý)
-- **Goal**: Reconcile register receipts against physical cash, detect discrepancies, and generate the daily Z-Report.
+- **Đối tượng chính (Persona)**: Thu ngân & Quản lý nhà hàng (Cashier & Restaurant Manager)
+- **Mục tiêu**: Đối soát các chứng từ doanh thu thực tế so với tiền mặt trong két, phát hiện chênh lệch và lập Báo cáo chốt ca (Z-Report).
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Cashier as Cashier (Thu Ngân)
-    actor Mgr as Restaurant Manager (Quản lý)
-    participant Term as Cashier Terminal
-    participant Core as Financial Reporting Service
+    actor Cashier as Thu Ngân
+    actor Mgr as Quản lý nhà hàng
+    participant Term as Máy Thu Ngân (POS)
+    participant Core as Dịch vụ Báo cáo Tài chính
 
     Cashier->>Term: Chọn "Chốt ca làm việc"
     Term-->>Cashier: Yêu cầu Kiểm kê tiền mù (Nhập số tờ từng mệnh giá)
@@ -347,8 +347,8 @@ sequenceDiagram
     Term-->>Cashier: In Báo cáo chốt ca Z-Report (Tiền mặt, Thẻ, VietQR, Chênh lệch)
 ```
 
-1. **Initiate Close**: Cashier concludes their 8-hour shift and taps **"Chốt ca làm việc"**.
-2. **Blind Drop Counting**: Cashier counts physical notes in the drawer (500k, 200k, 100k, 50k, 20k, 10k) without seeing the system's expected balance.
-3. **Variance Analysis**: System reveals expected cash: 14.400.000 ₫; actual cash: 14.350.000 ₫; variance: -50.000 ₫ (Thiếu).
-4. **Approval & Z-Report**: Cashier enters an explanatory note. Manager reviews card slips, VietQR transactions, and cash totals, then authorizes the closing with their PIN.
-5. **Final Settlement**: The Z-Report prints in Vietnamese, archiving the shift financial records permanently.
+1. **Bắt đầu đóng ca**: Thu ngân kết thúc ca làm việc 8 tiếng và nhấn **"Chốt ca làm việc"**.
+2. **Kiểm kê tiền mù (Blind Drop Counting)**: Thu ngân đếm số tờ tiền mặt thực tế trong két theo từng mệnh giá (500k, 200k, 100k, 50k, 20k, 10k) mà không được xem trước số dư kỳ vọng trên hệ thống.
+3. **Phân tích chênh lệch**: Hệ thống đối chiếu và công bố số tiền kỳ vọng: 14.400.000 ₫; tiền mặt thực đếm: 14.350.000 ₫; chênh lệch: -50.000 ₫ (Thiếu).
+4. **Phê duyệt & Xuất Báo cáo Z**: Thu ngân nhập nội dung giải trình chênh lệch. Quản lý kiểm tra đối chiếu các cuống biên nhận thẻ ngân hàng, giao dịch VietQR và tiền mặt, sau đó xác nhận đóng ca bằng mã PIN.
+5. **Quyết toán hoàn tất**: Báo cáo Z-Report được in bằng tiếng Việt, lưu trữ vĩnh viễn hồ sơ tài chính của ca làm việc vào hệ thống.

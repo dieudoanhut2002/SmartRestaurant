@@ -23,13 +23,21 @@ Following user review and formal approval of the Stage 1 Product Requirements Su
 
 ## 3. Required Inputs
 - Approved [Product Requirements Document Suite](../docs/product/).
-- User confirmation on open questions (`OQ-01`, `OQ-02`, `OQ-03`).
+- Certified [Final Governance Traceability & Approval Boundary Audit](../docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md).
+- [Module Configuration & Business Feature Management Analysis](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md).
+- Certified [Module Governance & Business Rule Reconciliation Audit](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md).
+- Approved [Owner Decision Dossier & Stage 2 Readiness Assessment](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md).
+- Certified [Final Evidence Reconciliation & Governance Boundary Verification](../docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md).
+- User confirmation on open questions (`OD-14`..`OD-17`, `OQ-01`..`OQ-07`).
 - Architectural guidelines established in [GEMINI.md](../GEMINI.md) and [AGENTS.md](../AGENTS.md).
 
 ---
 
 ## 4. Relevant Documentation
 - [docs/00-index.md](../docs/00-index.md)
+- [docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md](../docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md)
+- [docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md)
+- [docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md)
 - [docs/product/PRD.md](../docs/product/PRD.md)
 - [docs/product/MODULE-OVERVIEW.md](../docs/product/MODULE-OVERVIEW.md)
 - [docs/product/decisions/](../docs/product/decisions/)
@@ -54,4 +62,4 @@ Following user review and formal approval of the Stage 1 Product Requirements Su
 ---
 
 ## 7. Approval Requirements
-- **Gatekeeper Requirement**: Explicit user review and sign-off on Stage 1 Product Specifications before proceeding with Stage 2.
+- **Gatekeeper Requirement**: Certified Stage 1 Sign-Off via Task 02.7.5 Final Audit (`FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md`) satisfied. Ready for immediate owner authorization to execute.

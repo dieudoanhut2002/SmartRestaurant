@@ -1,41 +1,42 @@
-# Business Module Overview & Proposed Boundaries — SmartRestaurant
+# Tổng Quan Các Phân Hệ Nghiệp Vụ & Ranh Giới Đề Xuất — SmartRestaurant
+## (Business Module Overview & Proposed Boundaries)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Related Documents**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MVP-SCOPE.md](./MVP-SCOPE.md)
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `CONFIRMED` (Chủ Dự án đã phê duyệt chính thức trong Task 02.6)
+- **Tài Liệu Liên Quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MVP-SCOPE.md](./MVP-SCOPE.md)
 
 ---
 
-## 1. Modular Monolith Business Boundary Map
+## 1. Sơ Đồ Ranh Giới Phân Hệ Kiến Trúc Modular Monolith (Modular Monolith Business Boundary Map)
 
-SmartRestaurant is structured as a cohesive **Modular Monolith**. Business logic is partitioned into distinct, high-cohesion business modules. Inter-module communication is restricted to explicit service interfaces and in-process domain events, preventing tight database cross-joins.
+SmartRestaurant được cấu trúc theo mô hình **Modular Monolith** gắn kết chặt chẽ. Logic nghiệp vụ được phân tách thành các phân hệ độc lập có tính kết dính cao. Giao tiếp giữa các phân hệ được giới hạn thông qua các giao diện dịch vụ (Service Interfaces) tường minh và các sự kiện miền nội bộ (In-Process Domain Events), ngăn chặn việc truy vấn chéo trực tiếp (Cross-join) làm phụ thuộc cơ sở dữ liệu.
 
 ```mermaid
 flowchart TD
-    subgraph IdentityAdmin["Identity & Administration"]
-        M01[01. Organization & Branch]
-        M02[02. User & Access Management]
-        M03[03. Restaurant Configuration]
+    subgraph IdentityAdmin["Định Danh & Quản Trị Hệ Thống"]
+        M01["01. Doanh Nghiệp & Chi Nhánh"]
+        M02["02. Người Dùng & Phân Quyền"]
+        M03["03. Cấu Hình Nhà Hàng & Thuế"]
     end
 
-    subgraph CoreOperations["Front & Back of House Operations"]
-        M04[04. Areas, Rooms, Tables & Floor Plan]
-        M05[05. Menu, Catalog & Recipe BOM]
-        M06[06. Reservation Management]
-        M07[07. POS & Order Management]
-        M08[08. Kitchen Routing Engine]
-        M09[09. Kitchen Display System - KDS]
+    subgraph CoreOperations["Vận Hành Tiền Sảnh & Hậu Sảnh Bếp"]
+        M04["04. Khu Vực, Phòng, Bàn & Sơ Đồ Mặt Bằng"]
+        M05["05. Thực Đơn, Món Ăn & Định Lượng BOM"]
+        M06["06. Quản Lý Đặt Bàn Trước"]
+        M07["07. POS & Tiếp Nhận Đơn Gọi Món"]
+        M08["08. Engine Điều Phối Phân Tuyến Bếp"]
+        M09["09. Màn Hình Bếp Số (KDS) & Quầy Bar"]
     end
 
-    subgraph FinancialsSupply["Settlement & Inventory"]
-        M10[10. Cashier, Billing & Settlement]
-        M11[11. Payment Management & VietQR]
-        M12[12. Inventory & Waste Management]
+    subgraph FinancialsSupply["Thanh Toán & Quản Lý Tồn Kho"]
+        M10["10. Thu Ngân, Tính Tiền & Quyết Toán"]
+        M11["11. Quản Lý Thanh Toán & VietQR"]
+        M12["12. Quản Lý Tồn Kho & Hao Phí"]
     end
 
-    subgraph Intelligence["Cross-Cutting & Analytics"]
-        M13[13. Reporting & Analytics]
-        M14[14. Real-Time Notification Mesh]
+    subgraph Intelligence["Phân Tích Báo Cáo & Đồng Bộ Thời Gian Thực"]
+        M13["13. Báo Cáo Doanh Thu & Vận Hành"]
+        M14["14. Trục Thông Điệp Thời Gian Thực (SignalR)"]
     end
 
     M01 --> M02 & M03
@@ -50,169 +51,169 @@ flowchart TD
 
 ---
 
-## 2. Module Specifications
+## 2. Đặc Tả Chi Tiết 14 Phân Hệ Nghiệp Vụ (Module Specifications)
 
-### Module 01: Organization & Branch Management
-- **Main Responsibilities**: Enforces multi-tenant data isolation and multi-branch organizational hierarchy.
-- **Key Business Capabilities**:
-  - Global tenant configuration (`Organization`).
-  - Branch provisioning with operating hours, tax identifiers, and contact details.
-  - Multi-location data isolation enforcement (`OrganizationId`, `BranchId`).
-- **Main Entities / Business Concepts**: `Organization`, `Branch`, `OperatingHours`, `BranchTaxProfile`.
-- **Dependencies**: None (Top-level organizational root).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 01: Quản Trị Doanh Nghiệp & Chi Nhánh (Organization & Branch Management)
+- **Trách nhiệm chính**: Thực thi phân lập dữ liệu đa khách thuê và cấu trúc phân cấp tổ chức đa chi nhánh.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Cấu hình tổ chức cấp cao nhất (`Organization`).
+  - Thiết lập chi nhánh với giờ hoạt động, mã số thuế và thông tin liên hệ.
+  - Thực thi phân vùng dữ liệu đa địa điểm (`OrganizationId`, `BranchId`).
+- **Thực thể dữ liệu / Khái niệm chính**: `Organization`, `Branch`, `OperatingHours`, `BranchTaxProfile`.
+- **Phụ thuộc**: Không có (Phân hệ gốc của tổ chức).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 02: User & Access Management (RBAC)
-- **Main Responsibilities**: Manages staff accounts, authentication, role assignments, and manager authorization overrides.
-- **Key Business Capabilities**:
-  - Staff onboarding and role assignment (`Admin`, `Manager`, `Cashier`, `Waiter`, `Chef`, `Stockkeeper`).
-  - Secure PIN code authentication for quick waiter/cashier terminal switching.
-  - Manager override PIN authorization for high-risk operations (voids, post-fire dish cancellations).
-  - Activity audit logging for sensitive actions.
-- **Main Entities / Business Concepts**: `StaffUser`, `Role`, `PermissionClaim`, `ManagerPinOverride`, `AuditLog`.
-- **Dependencies**: Module 01 (`Organization & Branch`).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 02: Quản Lý Người Dùng & Phân Quyền (User & Access Management — RBAC)
+- **Trách nhiệm chính**: Quản lý tài khoản nhân viên, xác thực, gán vai trò và ủy quyền bằng mã PIN của quản lý.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Khởi tạo nhân viên và gán vai trò (`Admin`, `Manager`, `Cashier`, `Waiter`, `Chef`, `Stockkeeper`).
+  - Xác thực nhanh bằng mã PIN bảo mật để chuyển đổi tài khoản tức thì trên màn hình cảm ứng phục vụ/thu ngân.
+  - Ủy quyền bằng mã PIN Quản lý cho các thao tác rủi ro cao (hủy hóa đơn, hủy món sau khi đã bắn bếp).
+  - Ghi nhật ký kiểm toán bất biến cho các hành động nhạy cảm.
+- **Thực thể dữ liệu / Khái niệm chính**: `StaffUser`, `Role`, `PermissionClaim`, `ManagerPinOverride`, `AuditLog`.
+- **Phụ thuộc**: Phân hệ 01 (`Organization & Branch`).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 03: Restaurant Configuration
-- **Main Responsibilities**: Manages operational parameters, localized tax rules, service charges, and receipt styling.
-- **Key Business Capabilities**:
-  - Configurable VAT rate profiles (e.g., 8%, 10%).
-  - Configurable service charge rates (e.g., 0%, 5%, 10%) and taxability rules.
-  - Thermal printer templates (receipt header, footer, promotional text, QR code).
-  - Currency display rules (VND standard formatting).
-- **Main Entities / Business Concepts**: `RestaurantPolicy`, `TaxProfile`, `PrinterConfig`, `ReceiptTemplate`.
-- **Dependencies**: Module 01 (`Organization & Branch`).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 03: Cấu Hình Vận Hành Nhà Hàng (Restaurant Configuration)
+- **Trách nhiệm chính**: Quản lý các tham số vận hành, quy tắc thuế bản địa, phí dịch vụ và mẫu in nhiệt hóa đơn.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Cấu hình các mức thuế suất GTGT (ví dụ: 8%, 10%).
+  - Cấu hình phí dịch vụ (ví dụ: 0%, 5%, 10%) và quy tắc tính thuế trên phí dịch vụ.
+  - Mẫu in máy in nhiệt (tiêu đề, chân trang, lời cảm ơn, mã QR chuyển khoản).
+  - Quy chuẩn hiển thị tiền tệ (định dạng chuẩn VNĐ).
+- **Thực thể dữ liệu / Khái niệm chính**: `RestaurantPolicy`, `TaxProfile`, `PrinterConfig`, `ReceiptTemplate`.
+- **Phụ thuộc**: Phân hệ 01 (`Organization & Branch`).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 04: Areas, Rooms, Tables & Floor Plan Designer
-- **Main Responsibilities**: Manages physical restaurant layouts, 2D visual canvas designer, and table operational lifecycles.
-- **Key Business Capabilities**:
-  - Multi-area partitioning (Indoor, Terrace, Rooftop, Garden).
-  - Enclosed rooms and private VIP suites (VIP 1, VIP 2).
-  - Interactive 2D drag-and-drop floor plan designer (Konva.js) with grid alignment, zooming, and rotation.
-  - Table geometric properties (Round, Rectangular, Booth) and seating capacities.
-  - Architectural obstacles (pillars, walls, service stations, entryways).
-  - Real-time table status lifecycle (`Available`, `Reserved`, `Occupied`, `BillingRequested`, `CleaningNeeded`, `OutOfService`).
-  - Table operations: Move table, merge tables, split table.
-- **Main Entities / Business Concepts**: `DiningArea`, `Room`, `VipSuite`, `Table`, `TableNodeCoordinates`, `Obstacle`, `TableState`.
-- **Dependencies**: Module 01, Module 14 (`Real-Time Notification`).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 04: Khu Vực, Phòng Ăn, Bàn & Trình Thiết Kế Mặt Bằng (Areas, Rooms, Tables & Floor Plan)
+- **Trách nhiệm chính**: Quản lý bố cục không gian vật lý của nhà hàng, trình thiết kế canvas trực quan 2D và vòng đời vận hành bàn.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Phân vùng đa khu vực (Trong nhà, Sân vườn, Tầng thượng, Sảnh chung).
+  - Quản lý các phòng ăn độc lập và phòng VIP riêng biệt (VIP 1, VIP 2).
+  - Trình thiết kế mặt bằng kéo thả tương tác 2D (Konva.js) hỗ trợ căn lưới, phóng to thu nhỏ và xoay bàn.
+  - Thuộc tính hình học bàn (Tròn, Chữ nhật, Sofa) và số lượng chỗ ngồi.
+  - Định vị các vật cản kiến trúc (cột nhà, vách ngăn, trạm tiếp nhận, cửa ra vào).
+  - Vòng đời trạng thái bàn thời gian thực (`Available`, `Reserved`, `Occupied`, `BillingRequested`, `CleaningNeeded`, `OutOfService`).
+  - Các thao tác nghiệp vụ bàn: Chuyển bàn, gộp bàn, tách bàn, hủy gộp bàn.
+- **Thực thể dữ liệu / Khái niệm chính**: `DiningArea`, `Room`, `VipSuite`, `Table`, `TableNodeCoordinates`, `Obstacle`, `TableState`.
+- **Phụ thuộc**: Phân hệ 01, Phân hệ 14 (`Real-Time Notification`).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 05: Menu, Catalog & Recipe BOM Management
-- **Main Responsibilities**: Master catalog of culinary offerings, portion variants, modifier groups, and raw material recipes.
-- **Key Business Capabilities**:
-  - Category and subcategory management with visual icons.
-  - Menu item creation with base pricing and portion size variants (S, M, L).
-  - Required and optional modifier groups (single-choice, multi-choice, min/max limits).
-  - Special preparation preferences (sugar, ice, spicy levels).
-  - Temporary dish unavailability (86-ing).
-  - Recipe formulation (v1.1): Mapping dishes and variants to exact raw ingredient BOM quantities.
-- **Main Entities / Business Concepts**: `Category`, `MenuItem`, `ItemVariant`, `ModifierGroup`, `ModifierOption`, `SaleableInventoryItem` (MVP); `RecipeBOM`, `Ingredient` (v1.1).
-- **Dependencies**: Module 01, Module 08 (`Kitchen Routing`).
-- **Release Target**: **v1.0 MVP** (Menu Catalog & Modifiers; Recipe BOM deferred to **v1.1**).
+### Phân Hệ 05: Thực Đơn, Danh Mục & Quản Lý Định Lượng BOM (Menu, Catalog & Recipe BOM)
+- **Trách nhiệm chính**: Danh mục sản phẩm ẩm thực tổng thể, biến thể định lượng, nhóm tùy chọn món và công thức nguyên vật liệu.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Quản lý danh mục lớn và danh mục con kèm biểu tượng trực quan.
+  - Tạo món ăn kèm giá bán cơ bản và các kích cỡ (Nhỏ, Vừa, Lớn).
+  - Các nhóm tùy chọn bắt buộc hoặc tự chọn (chọn 1, chọn nhiều, giới hạn số lượng).
+  - Thuộc tính chế biến riêng (mức đường, mức đá, độ cay).
+  - Báo tạm hết món (86-ing / Out-of-Stock).
+  - Công thức định lượng (v1.1): Ánh xạ món ăn và biến thể với định lượng nguyên vật liệu BOM chi tiết.
+- **Thực thể dữ liệu / Khái niệm chính**: `Category`, `MenuItem`, `ItemVariant`, `ModifierGroup`, `ModifierOption`, `SaleableInventoryItem` (MVP); `RecipeBOM`, `Ingredient` (v1.1).
+- **Phụ thuộc**: Phân hệ 01, Phân hệ 08 (`Kitchen Routing`).
+- **Phiên bản mục tiêu**: **v1.0 MVP** (Danh mục thực đơn & Tùy chọn; Định lượng BOM nguyên liệu thô hoãn sang **v1.1**).
 
-### Module 06: Reservation & Guest Management
-- **Main Responsibilities**: Advance table bookings, guest headcount, deposit management, and walk-in waitlisting.
-- **Key Business Capabilities**:
-  - Booking creation with party size, arrival time, special requests, and contact details.
-  - Room or specific table pre-assignment.
-  - Automatic reservation arrival countdown and visual floor plan alerts.
-  - Reservation status transitions (`Confirmed`, `Seated`, `Cancelled`, `NoShow`).
-- **Main Entities / Business Concepts**: `Reservation`, `GuestProfile`, `DepositRecord`.
-- **Dependencies**: Module 04 (`Tables & Areas`).
-- **Release Target**: **v1.0 MVP** (Core reservations); Advanced CRM in v1.2.
+### Phân Hệ 06: Quản Lý Đặt Bàn Trước (Reservation & Guest Management)
+- **Trách nhiệm chính**: Tiếp nhận lịch đặt bàn trước, số lượng khách, tiền đặt cọc và xếp bàn chờ cho khách vãng lai.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Tạo lịch đặt bàn với số lượng khách, giờ đến hẹn, yêu cầu đặc biệt và thông tin liên hệ.
+  - Gán trước phòng hoặc bàn ăn cụ thể.
+  - Đồng hồ đếm ngược giờ khách đến và cảnh báo tự động trên sơ đồ bàn.
+  - Các bước chuyển trạng thái đặt bàn (`Confirmed` - Đã xác nhận, `Seated` - Đã vào bàn, `Cancelled` - Đã hủy, `NoShow` - Khách không đến).
+- **Thực thể dữ liệu / Khái niệm chính**: `Reservation`, `GuestProfile`, `DepositRecord`.
+- **Phụ thuộc**: Phân hệ 04 (`Tables & Areas`).
+- **Phiên bản mục tiêu**: **v1.0 MVP** (Quản lý đặt bàn cốt lõi; CRM nâng cao trong v1.2) *(Chờ Chủ dự án quyết định OD-15)*.
 
-### Module 07: POS & Order Management
-- **Main Responsibilities**: Front-of-house order capture, tablet touch interface, order round management, and table session tracking.
-- **Key Business Capabilities**:
-  - Active dining session creation upon guest seating.
-  - Touch-optimized order entry with fast item search and quick modifier selection.
-  - Incremental order round management (Round 1, Round 2, Round 3).
-  - Order firing to kitchen with atomic database transaction commit.
-  - Order amendments (adding items, item-level discounts, customer notes).
-  - Post-fire dish cancellation with manager PIN override and mandatory cancellation reason.
-  - Order types: `DineIn`, `Takeaway`, `Delivery`.
-- **Main Entities / Business Concepts**: `DiningSession`, `Order`, `OrderRound`, `OrderItem`, `OrderItemModifier`, `OrderType`.
-- **Dependencies**: Module 02, Module 04, Module 05, Module 08, Module 14.
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 07: POS & Quản Lý Đơn Gọi Món (POS & Order Management)
+- **Trách nhiệm chính**: Tiếp nhận gọi món tiền sảnh, giao diện cảm ứng máy tính bảng, quản lý đợt gọi món và theo dõi phiên ăn uống.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Khởi tạo lượt khách ăn uống ngay khi xếp khách vào bàn trống.
+  - Giao diện nhập đơn cảm ứng tốc độ cao kèm tìm kiếm nhanh và chọn tùy chọn 1 chạm.
+  - Quản lý các đợt gọi thêm món tăng dần (Đợt 1, Đợt 2, Đợt 3).
+  - Bắn đơn xuống bếp được thực thi trong giao dịch cơ sở dữ liệu nguyên tử.
+  - Điều chỉnh đơn (thêm món, giảm giá theo món, ghi chú của khách).
+  - Hủy món sau khi đã bắn bếp với sự phê duyệt qua mã PIN Quản lý và lý do hủy bắt buộc.
+  - Hỗ trợ các loại hình đơn: Ăn tại chỗ (`DineIn`), Mang đi (`Takeaway`), Giao hàng (`Delivery`).
+- **Thực thể dữ liệu / Khái niệm chính**: `DiningSession`, `Order`, `OrderRound`, `OrderItem`, `OrderItemModifier`, `OrderType`.
+- **Phụ thuộc**: Phân hệ 02, Phân hệ 04, Phân hệ 05, Phân hệ 08, Phân hệ 14.
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 08: Kitchen Routing Engine
-- **Main Responsibilities**: Evaluates ordered items and decomposes single orders into station-specific kitchen tickets based on business rules.
-- **Key Business Capabilities**:
-  - Configurable station mapping per dish and variant.
-  - Multi-station decomposition (e.g., splitting steaks to Hot Kitchen, salads to Cold Kitchen, cocktails to Bar).
-  - Master expediter ticket consolidation.
-  - Course sequencing and "Hold / Fire" instructions (e.g., hold desserts).
-- **Main Entities / Business Concepts**: `KitchenStation`, `RoutingRule`, `TicketDecomposer`.
-- **Dependencies**: Module 05 (`Menu Catalog`), Module 07 (`Order Management`).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 08: Engine Điều Phối Phân Tuyến Bếp (Kitchen Routing Engine)
+- **Trách nhiệm chính**: Phân tích các món trong đơn và tự động bóc tách thành các phiếu chế biến gửi đến các trạm bếp chuyên trách.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Cấu hình ánh xạ trạm chế biến theo từng món ăn và biến thể.
+  - Bóc tách đơn đa trạm (món nướng gửi Bếp Nóng, món gỏi gửi Bếp Nguội, đồ uống gửi Quầy Bar).
+  - Tổng hợp toàn bộ phiếu món tại màn hình Trưởng Bếp Tiếp Thực (Master Expediter).
+  - Điều phối thứ tự ra món và lệnh "Tạm giữ món / Báo nấu món giữ" (ví dụ: tạm giữ món tráng miệng).
+- **Thực thể dữ liệu / Khái niệm chính**: `KitchenStation`, `RoutingRule`, `TicketDecomposer`.
+- **Phụ thuộc**: Phân hệ 05 (`Menu Catalog`), Phân hệ 07 (`Order Management`).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 09: Kitchen Display System (KDS) & Bar Operations
-- **Main Responsibilities**: Back-of-house digital ticket queue, touch-based status progression, and SLA wait-time monitoring.
-- **Key Business Capabilities**:
-  - High-visibility touchscreen cards sorted by arrival FIFO.
-  - Line-item and ticket-level state progression (`Pending` $\rightarrow$ `Cooking` $\rightarrow$ `ReadyToServe` $\rightarrow$ `Served`).
-  - Color-coded SLA timers: Green (<10m), Yellow (10–20m), Flashing Red (>20m).
-  - Master Expediter window showing whole-table completion readiness.
-  - Audio chimes for new tickets, rush priority tickets, and item cancellations.
-- **Main Entities / Business Concepts**: `KitchenTicket`, `TicketItem`, `StationQueue`, `SlaTimerConfig`.
-- **Dependencies**: Module 08, Module 12 (`Inventory Deduction`), Module 14.
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 09: Màn Hình Bếp Số (KDS) & Quầy Pha Chế (Kitchen Display System & Bar Operations)
+- **Trách nhiệm chính**: Hàng đợi thẻ món kỹ thuật số nhà bếp, chuyển trạng thái 1 chạm và giám sát thời gian cam kết SLA.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Các thẻ món trực quan độ tương phản cao sắp xếp theo thứ tự thời gian vào trước làm trước (FIFO).
+  - Chuyển trạng thái từng món hoặc cả phiếu (`Chờ chế biến` $\rightarrow$ `Đang nấu` $\rightarrow$ `Đã xong - Chờ bưng` $\rightarrow$ `Đã phục vụ`).
+  - Đồng hồ cảnh báo SLA theo mã màu: Xanh lá (<10p), Vàng (10–20p), Đỏ nhấp nháy (>20p).
+  - Cửa sổ Bàn Ra Món hiển thị mức độ hoàn thành đồng bộ của toàn bộ bàn ăn.
+  - Âm thanh chuông báo khi có thẻ món mới, món ưu tiên gấp và món bị hủy.
+- **Thực thể dữ liệu / Khái niệm chính**: `KitchenTicket`, `TicketItem`, `StationQueue`, `SlaTimerConfig`.
+- **Phụ thuộc**: Phân hệ 08, Phân hệ 12 (`Inventory Deduction`), Phân hệ 14.
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 10: Cashier, Billing & Settlement
-- **Main Responsibilities**: Accurate invoice generation, tax and service charge calculations, discount vouchers, and split/merge checks.
-- **Key Business Capabilities**:
-  - Pre-bill preview printing for guest review.
-  - Mathematical calculation of subtotal, item discounts, order vouchers, service charge, and VAT.
-  - Bill splitting: *Split by selected items* and *Split evenly ($1/N$)*.
-  - Combining multiple tables/orders into a single consolidated checkout.
-  - Cash drawer shift operations: opening float, cash drops, shift close, blind drop reconciliation, and Z-Reports.
-- **Main Entities / Business Concepts**: `Invoice`, `InvoiceLineItem`, `SplitInvoice`, `Voucher`, `ShiftSession`, `CashDrawerTransaction`.
-- **Dependencies**: Module 03, Module 04, Module 07, Module 11.
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 10: Thu Ngân, Tính Tiền & Quyết Toán (Cashier, Billing & Settlement)
+- **Trách nhiệm chính**: Xuất hóa đơn chính xác, tính thuế GTGT và phí dịch vụ, áp dụng voucher giảm giá và tách/gộp phiếu tính tiền.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - In phiếu tạm tính để khách kiểm tra danh sách món trước khi trả tiền.
+  - Công thức tính toán chuẩn mực: tiền món tạm tính, giảm giá món, voucher toàn đơn, phí dịch vụ và thuế GTGT.
+  - Tách hóa đơn: *Tách theo từng món được chọn* và *Chia đều hóa đơn ($1/N$)*.
+  - Gộp nhiều bàn/đơn vào một lượt thanh toán tổng duy nhất.
+  - Vận hành két tiền ca làm việc: nhập tiền mặt đầu ca, nộp tiền giữa ca, chốt ca, kiểm tiền mù đối soát chênh lệch và in báo cáo Z-Report.
+- **Thực thể dữ liệu / Khái niệm chính**: `Invoice`, `InvoiceLineItem`, `SplitInvoice`, `Voucher`, `ShiftSession`, `CashDrawerTransaction`.
+- **Phụ thuộc**: Phân hệ 03, Phân hệ 04, Phân hệ 07, Phân hệ 11.
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 11: Payment Management & VietQR Integration
-- **Main Responsibilities**: Multi-channel payment recording, gateway integrations, and automated transaction reconciliation.
-- **Key Business Capabilities**:
-  - Multi-tender payment recording on a single invoice (Cash, Card, Bank Transfer).
-  - Dynamic VietQR (Napas 24/7) on-screen QR generation with embedded exact payable amount and unique reference code.
-  - Automated payment verification via gateway webhook or polling confirmation.
-  - Payment refund and void handling with manager authorization.
-- **Main Entities / Business Concepts**: `Payment`, `PaymentMethod`, `VietQrTransaction`, `RefundRecord`.
-- **Dependencies**: Module 10 (`Cashier & Billing`).
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 11: Quản Lý Thanh Toán & Tích Hợp VietQR (Payment Management & VietQR Integration)
+- **Trách nhiệm chính**: Ghi nhận thanh toán đa kênh, tích hợp cổng thanh toán và tự động đối soát giao dịch.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Ghi nhận thanh toán kết hợp nhiều hình thức trên một hóa đơn (Tiền mặt, Thẻ ngân hàng, Chuyển khoản VietQR).
+  - Sinh mã VietQR động (Napas 24/7) hiển thị trên màn hình với số tiền thanh toán chính xác và mã đối soát duy nhất.
+  - Tự động xác nhận giao dịch thành công qua webhook cổng thanh toán hoặc cơ chế polling đối soát.
+  - Xử lý hoàn tiền và hủy thanh toán với sự phê duyệt qua mã PIN Quản lý.
+- **Thực thể dữ liệu / Khái niệm chính**: `Payment`, `PaymentMethod`, `VietQrTransaction`, `RefundRecord`.
+- **Phụ thuộc**: Phân hệ 10 (`Cashier & Billing`).
+- **Phiên bản mục tiêu**: **v1.0 MVP**.
 
-### Module 12: Inventory & Waste Management
-- **Main Responsibilities**: Direct finished portion stock tracking (portions, bottles, cans) with Two-Phase Lock in MVP; raw ingredient stock tracking, unit conversions, and automatic recipe BOM consumption in v1.1.
-- **Key Business Capabilities**:
-  - Direct saleable item stock management with Two-Phase Inventory Lock (`Available = Physical - Reserved`).
-  - Waste and spoilage logging with mandatory root-cause categories (Burnt, Spilled, Expired, Customer Cancelled Post-Fire, Remake).
-  - Low-stock threshold alerts and automatic 86-ing when available stock reaches zero.
-  - Inward inventory receipts and supplier management for direct items.
-  - Sub-gram raw ingredient inventory, unit conversions, and BOM recipe deduction (v1.1+).
-- **Main Entities / Business Concepts**: `StockLevel`, `ReservedStock`, `WasteLog`, `PurchaseOrder` (MVP); `Ingredient`, `UnitConversion`, `BOMDeductionRule` (v1.1).
-- **Dependencies**: Module 05, Module 09 (`KDS Readiness`).
-- **Release Target**: **v1.0 MVP** (Direct Saleable Item Inventory & Waste Logging; Raw Material BOM deferred to **v1.1**).
+### Phân Hệ 12: Quản Lý Tồn Kho & Hao Phí (Inventory & Waste Management)
+- **Trách nhiệm chính**: Theo dõi tồn kho thành phẩm đếm được (suất ăn, chai, lon) theo cơ chế Khóa Hai Pha trong MVP; theo dõi tồn kho nguyên vật liệu thô, chuyển đổi đơn vị tính và trừ kho công thức BOM trong v1.1.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Quản lý tồn kho hàng bán trực tiếp với cơ chế Khóa Hai Pha (`Tồn khả dụng = Tồn thực tế - Tồn tạm giữ`).
+  - Sổ ghi nhận hao phí và hủy hỏng với phân loại nguyên nhân bắt buộc (Cháy khét, Đổ vỡ, Hết hạn, Khách hủy sau khi đã nấu, Làm lại món lỗi).
+  - Cảnh báo chạm ngưỡng tồn thấp và tự động báo hết món (86) khi số lượng khả dụng về 0.
+  - Phiếu nhập kho mua sắm và quản lý nhà cung cấp cho các mặt hàng thành phẩm.
+  - Quản lý tồn kho nguyên vật liệu chi tiết nhỏ (gram, ml), bảng chuyển đổi đơn vị và trừ kho BOM (từ v1.1+).
+- **Thực thể dữ liệu / Khái niệm chính**: `StockLevel`, `ReservedStock`, `WasteLog`, `PurchaseOrder` (MVP); `Ingredient`, `UnitConversion`, `BOMDeductionRule` (v1.1).
+- **Phụ thuộc**: Phân hệ 05, Phân hệ 09 (`KDS Readiness`).
+- **Phiên bản mục tiêu**: **v1.0 MVP** (Quản lý tồn kho hàng bán trực tiếp & Sổ hao phí; BOM nguyên liệu hoãn sang **v1.1**).
 
-### Module 13: Reporting & Business Analytics
-- **Main Responsibilities**: Real-time sales dashboards, historical performance reports, staff sales attribution, and inventory variance.
-- **Key Business Capabilities**:
-  - Live revenue dashboard (gross sales, net sales, active open tables, average ticket size).
-  - Sales by menu category, item popularity (Pareto analysis).
-  - Hourly heatmaps (peak order volume and kitchen preparation duration).
-  - Table turnaround time and utilization rates.
-  - Loss reports: item cancellations, discounts, and waste write-offs.
-- **Main Entities / Business Concepts**: `DailySalesReport`, `ItemPerformanceMetric`, `TableUtilizationMetric`.
-- **Dependencies**: Module 04, Module 07, Module 09, Module 10, Module 12.
-- **Release Target**: **v1.0 MVP** (Core dashboards); Advanced predictive analytics in v2.0.
+### Phân Hệ 13: Báo Cáo Doanh Thu & Trí Tuệ Doanh Nghiệp (Reporting & Business Analytics)
+- **Trách nhiệm chính**: Bảng điều khiển doanh số thời gian thực, báo cáo hiệu suất lịch sử, phân bổ doanh số theo nhân viên và phân tích chênh lệch kho.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Bảng điều khiển doanh thu trực quan (doanh thu gộp, doanh thu thuần, số bàn đang mở, quy mô hóa đơn trung bình).
+  - Doanh số theo danh mục thực đơn, mức độ phổ biến của từng món (phân tích Pareto món bán chạy).
+  - Biểu đồ nhiệt theo khung giờ (lượng đơn đặt cao điểm và thời gian chế biến của bếp).
+  - Tốc độ quay vòng bàn và tỷ lệ lấp đầy bàn ăn.
+  - Báo cáo tổn thất: phân tích món bị hủy, chiết khấu và giá trị hao hụt hủy bỏ.
+- **Thực thể dữ liệu / Khái niệm chính**: `DailySalesReport`, `ItemPerformanceMetric`, `TableUtilizationMetric`.
+- **Phụ thuộc**: Phân hệ 04, Phân hệ 07, Phân hệ 09, Phân hệ 10, Phân hệ 12.
+- **Phiên bản mục tiêu**: **v1.0 MVP** (Bảng điều khiển cốt lõi); Phân tích dự báo nâng cao trong v2.0.
 
-### Module 14: Real-Time Notification Mesh
-- **Main Responsibilities**: Centralized zero-latency bidirectional SignalR communication across all connected restaurant terminals.
-- **Key Business Capabilities**:
-  - Live table state broadcasts (`TableHub`).
-  - Instant order dispatch and cancellation alerts (`OrderHub`).
-  - Real-time KDS ticket queue synchronization (`KitchenHub`).
-  - Reconnection state synchronization handling for mobile terminals.
-- **Main Entities / Business Concepts**: `SignalREventContract`, `ClientConnectionRegistry`, `SyncHandshake`.
-- **Dependencies**: Cross-cutting infrastructure for all operational modules.
-- **Release Target**: **v1.0 MVP**.
+### Phân Hệ 14: Trục Đồng Bộ Sự Kiện Thời Gian Thực (Real-Time Notification Mesh)
+- **Trách nhiệm chính**: Truyền thông điệp hai chiều SignalR tập trung với độ trễ bằng không trên toàn bộ các thiết bị đang kết nối trong nhà hàng.
+- **Năng lực nghiệp vụ cốt lõi**:
+  - Phát sóng cập nhật trạng thái bàn theo thời gian thực (`TableHub`).
+  - Phát sóng tức thì đơn gọi món mới và cảnh báo hủy món (`OrderHub`).
+  - Đồng bộ hàng đợi thẻ món KDS nhà bếp thời gian thực (`KitchenHub`).
+  - Xử lý tái đồng bộ trạng thái khi thiết bị di động kết nối lại mạng.
+- **Thực thể dữ liệu / Khái niệm chính**: `SignalREventContract`, `ClientConnectionRegistry`, `SyncHandshake`.
+- **Phụ thuộc**: Hạ tầng dùng chung (Cross-cutting) cho toàn bộ các phân hệ vận hành.
+- **Phiên bản mục tiêu**: **v1.0 MVP**.

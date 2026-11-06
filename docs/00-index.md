@@ -1,75 +1,83 @@
-# SmartRestaurant — Documentation Index
+# SmartRestaurant — Mục Lục Tài Liệu Dự Án (Documentation Index)
 
-Welcome to the centralized documentation index for the **SmartRestaurant** project. All formal technical specifications, requirements, architecture designs, and runbooks reside within this hierarchy.
+Chào mừng bạn đến với mục lục tài liệu tập trung của dự án **SmartRestaurant**. Toàn bộ các đặc tả kỹ thuật, yêu cầu nghiệp vụ, thiết kế kiến trúc và sổ tay vận hành chính thức đều được tổ chức phân cấp tại đây.
 
 ---
 
-## 1. Governance & Project Instructions
+## 1. Quản Trị Dự Án & Bộ Quy Tắc Chỉ Thị
 
-| Document | Description | Scope |
+| Tài liệu | Mô tả | Phạm vi |
 | :--- | :--- | :--- |
-| **[GEMINI.md](../GEMINI.md)** | Authoritative project rules, engineering governance, memory strategy, and safety protocols. | Root Project Governance |
-| **[AGENTS.md](../AGENTS.md)** | Engineering standards, clean architecture rules, coding conventions, and output mandates. | Engineering & Quality Rules |
+| **[GEMINI.md](../GEMINI.md)** | Bộ quy tắc dự án có thẩm quyền cao nhất, quản trị kỹ thuật, chiến lược bộ nhớ và giao thức an toàn. | Quản trị Lõi Dự Án |
+| **[AGENTS.md](../AGENTS.md)** | Chuẩn mực kỹ nghệ, quy tắc kiến trúc sạch (Clean Architecture), quy ước viết mã và chỉ thị đầu ra. | Quy chuẩn Kỹ nghệ & Chất lượng |
 
 ---
 
-## 2. Product Discovery & Business Specifications (Stage 1)
+## 2. Khám Phá Sản Phẩm & Đặc Tả Nghiệp Vụ (Giai Đoạn 1 - Stage 1)
 
-### 2.1. Master Product Specifications
-| Document | Title | Status | Description |
+### 2.1. Bộ Tài Liệu Đặc Tả Sản Phẩm Chính (Master Product Specifications)
+| Tài liệu | Tiêu đề | Trạng thái | Mô tả |
 | :--- | :--- | :--- | :--- |
-| **[docs/product/PRD.md](./product/PRD.md)** | Product Requirements Document (PRD) | `CONFIRMED` | Product vision, target personas, business objectives, KPIs, and scope. |
+| **[docs/product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md](./product/FINAL-GOVERNANCE-TRACEABILITY-AUDIT.md)** | Báo Cáo Kiểm Toán Tổng Thể Tính Truy Vết Quản Trị & Ranh Giới Phê Duyệt | `CONFIRMED` | Kiểm toán tuân thủ toàn diện Stage 1, danh mục 10 điểm kiểm soát người gác cổng, và ranh giới chuyển tiếp Stage 2. |
+| **[docs/product/PRD.md](./product/PRD.md)** | Tài Liệu Yêu Cầu Sản Phẩm (PRD) | `CONFIRMED` | Tầm nhìn sản phẩm, đối tượng người dùng, mục tiêu kinh doanh, chỉ số KPI và phạm vi giải pháp. |
 | **[docs/product/PRODUCT-REVIEW-REPORT.md](./product/PRODUCT-REVIEW-REPORT.md)** | Báo Cáo Đánh Giá & Thẩm Định Nghiệp Vụ Chuyên Sâu | `CONFIRMED` | Phản biện độc lập, 4 vấn đề CRITICAL, 6 vấn đề HIGH, rà soát 12 kịch bản vận hành thực tế. |
-| **[docs/product/PRODUCT-REVIEW-VALIDATION.md](./product/PRODUCT-REVIEW-VALIDATION.md)** | Product Review & Business Validation Report | `CONFIRMED` | Comprehensive cross-document consistency audit, persona stress tests, and Stage 2 readiness. |
-| **[docs/product/VIETNAMESE-LOCALIZATION-STANDARD.md](./product/VIETNAMESE-LOCALIZATION-STANDARD.md)** | Vietnamese-First Localization Standard | `CONFIRMED` | Complete terminology dictionary, regional formats (VND, dates), printing, and UI standards. |
-| **[docs/product/BUSINESS-REQUIREMENTS.md](./product/BUSINESS-REQUIREMENTS.md)** | Business Requirements Specification | `CONFIRMED` | Granular functional requirements, actors, business rules, and exceptions. |
-| **[docs/product/MVP-SCOPE.md](./product/MVP-SCOPE.md)** | MVP Scope & Release Roadmap | `CONFIRMED` | MoSCoW feature matrix, explicit exclusions, and release milestones. |
-| **[docs/product/DOMAIN-GLOSSARY.md](./product/DOMAIN-GLOSSARY.md)** | Ubiquitous Domain Glossary | `CONFIRMED` | Standardized English & Vietnamese operational vocabulary. |
-| **[docs/product/USER-JOURNEYS.md](./product/USER-JOURNEYS.md)** | Comprehensive User Journeys | `CONFIRMED` | 10 end-to-end actor journeys covering daily restaurant routines. |
-| **[docs/product/OPEN-QUESTIONS.md](./product/OPEN-QUESTIONS.md)** | Open Business Questions & Decision Log | `OPEN` | Tier 1 (MVP Blockers) and Tier 2 (Post-MVP) decision analysis. |
-| **[docs/product/MODULE-OVERVIEW.md](./product/MODULE-OVERVIEW.md)** | Business Module Overview & Boundaries | `CONFIRMED` | 14 core business module boundaries, entities, and dependencies. |
-| **[docs/product/NON-FUNCTIONAL-REQUIREMENTS.md](./product/NON-FUNCTIONAL-REQUIREMENTS.md)** | Product Non-Functional Requirements | `CONFIRMED` | Security, data isolation, performance targets, and concurrency rules. |
+| **[docs/product/PRODUCT-REVIEW-VALIDATION.md](./product/PRODUCT-REVIEW-VALIDATION.md)** | Báo Cáo Thẩm Định & Đánh Giá Sản Phẩm | `CONFIRMED` | Kiểm toán tính nhất quán chéo giữa các tài liệu, thử nghiệm áp lực đối tượng vận hành, và mức độ sẵn sàng Stage 2. |
+| **[docs/product/VIETNAMESE-LOCALIZATION-STANDARD.md](./product/VIETNAMESE-LOCALIZATION-STANDARD.md)** | Tiêu Chuẩn Bản Địa Hóa Tiếng Việt (Vietnamese-First) | `CONFIRMED` | Từ điển thuật ngữ chuẩn mực, định dạng vùng miền (VNĐ, ngày tháng), in ấn và chuẩn giao diện người dùng. |
+| **[docs/product/BUSINESS-REQUIREMENTS.md](./product/BUSINESS-REQUIREMENTS.md)** | Đặc Tả Yêu Cầu Nghiệp Vụ (BRS) | `CONFIRMED` | Yêu cầu chức năng chi tiết, các tác nhân vận hành, 16 quy tắc nghiệp vụ cốt lõi và luồng ngoại lệ. |
+| **[docs/product/MVP-SCOPE.md](./product/MVP-SCOPE.md)** | Phạm Vi MVP & Lộ Trình Phát Hành | `CONFIRMED` | Ma trận ưu tiên tính năng MoSCoW, các loại trừ phạm vi rõ ràng và các mốc phát hành phiên bản. |
+| **[docs/product/DOMAIN-GLOSSARY.md](./product/DOMAIN-GLOSSARY.md)** | Thuật Ngữ Miền Phổ Quát (Ubiquitous Glossary) | `CONFIRMED` | Bảng từ vựng vận hành chuẩn mực song ngữ Anh - Việt cho toàn bộ hệ thống. |
+| **[docs/product/USER-JOURNEYS.md](./product/USER-JOURNEYS.md)** | Hành Trình Người Dùng Toàn Diện (User Journeys) | `CONFIRMED` | 10 hành trình khép kín của các đối tượng tác nhân bao quát toàn bộ hoạt động hàng ngày của nhà hàng. |
+| **[docs/product/OPEN-QUESTIONS.md](./product/OPEN-QUESTIONS.md)** | Danh Mục Câu Hỏi Mở & Nhật Ký Quyết Định | `OPEN` | Phân tích quyết định Cấp 1 (Chặn MVP) và Cấp 2 (Sau MVP). |
+| **[docs/product/MODULE-OVERVIEW.md](./product/MODULE-OVERVIEW.md)** | Tổng Quan & Ranh Giới Các Module Nghiệp Vụ | `CONFIRMED` | Ranh giới 14 module nghiệp vụ cốt lõi, thực thể dữ liệu và quan hệ phụ thuộc. |
+| **[docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](./product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md)** | Phân Tích Cấu Hình Module & Quản Lý Tính Năng Nghiệp Vụ | `CONFIRMED` | Phân tầng phạm vi cấu hình 7 cấp, danh mục tham số tổng thể (14 module), ma trận tính năng và quy tắc kiểm toán. |
+| **[docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](./product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md)** | Báo Cáo Đối Soát & Kiểm Toán Quản Trị Module | `CONFIRMED` | Kiểm toán nhất quán chéo, xác minh hạ cấp vận hành êm dịu và đối soát phạm vi MVP đơn điểm. |
+| **[docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](./product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md)** | Hồ Sơ Quyết Định Của Chủ Nhà Hàng & Đánh Giá Độ Sẵn Sàng Stage 2 | `CONFIRMED` | Hồ sơ tổng hợp các quyết định mở của Chủ nhà hàng (OD-14..17, OQ-01..07), bảng điểm sẵn sàng 6 chiều và WBS TASK-03. |
+| **[docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md](./product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md)** | Báo Cáo Đối Soát Bằng Chứng Cuối Cùng & Xác Minh Ranh Giới Quản Trị | `CONFIRMED` | Đối soát bằng chứng vật lý, xác minh không rò rỉ mã nguồn, chứng minh bộ nhớ nguyên vẹn và kiểm tra ủy quyền Stage 2. |
+| **[docs/product/TASK-02.8.2.2-CONTROLLED-GOVERNANCE-CORRECTIONS-REPORT.md](./product/TASK-02.8.2.2-CONTROLLED-GOVERNANCE-CORRECTIONS-REPORT.md)** | Báo Cáo Hiệu Chỉnh Quản Trị Có Kiểm Soát | `CONFIRMED` | Báo cáo thực hiện các hiệu chỉnh từ COR-01 đến COR-06 giải quyết dứt điểm các sai lệch quản trị. |
+| **[docs/product/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md](./product/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md)** | Báo Cáo Kiểm Toán Độc Lập Sau Hiệu Chỉnh | `CONFIRMED` | Kiểm toán độc lập 100% từ AUDIT-01 đến AUDIT-10 chứng nhận niêm phong quản trị Stage 1. |
+| **[docs/product/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md](./product/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md)** | Báo Cáo Việt Hóa Toàn Diện Tài Liệu Sản Phẩm (Task 02.8.3) | `CONFIRMED` | Báo cáo kiểm toán, đối soát và hoàn tất Việt hóa có kiểm soát toàn bộ tài liệu Markdown Stage 1. |
+| **[docs/product/NON-FUNCTIONAL-REQUIREMENTS.md](./product/NON-FUNCTIONAL-REQUIREMENTS.md)** | Yêu Cầu Phi Chức Năng (NFR) | `CONFIRMED` | Bảo mật, cô lập dữ liệu, chỉ tiêu hiệu năng và quy tắc xử lý đồng thời. |
 
-### 2.2. Critical Operational Workflows
-| Document | Title | Status | Scope |
+### 2.2. Các Quy Trình Vận Hành Trọng Yếu (Operational Workflows)
+| Tài liệu | Tiêu đề | Trạng thái | Phạm vi |
 | :--- | :--- | :--- | :--- |
-| **[docs/product/workflows/FLOOR-PLAN-WORKFLOW.md](./product/workflows/FLOOR-PLAN-WORKFLOW.md)** | Floor Plan & Table Management Workflow | `CONFIRMED` | Table states, visual canvas, table move, merge, unmerge, and VIP room booking. |
-| **[docs/product/workflows/ORDER-WORKFLOW.md](./product/workflows/ORDER-WORKFLOW.md)** | POS & Order Management Workflow | `CONFIRMED` | Touch order capture, modifiers, order rounds, firing, remake dish, and void overrides. |
-| **[docs/product/workflows/KITCHEN-WORKFLOW.md](./product/workflows/KITCHEN-WORKFLOW.md)** | Kitchen Routing & KDS Operational Workflow | `CONFIRMED` | Multi-station routing, KDS cards, SLA timers, remake tickets, and expediter pacing. |
-| **[docs/product/workflows/CASHIER-PAYMENT-WORKFLOW.md](./product/workflows/CASHIER-PAYMENT-WORKFLOW.md)** | Cashier, Billing & Payment Workflow | `CONFIRMED` | Multi-bill split without table freeze, VietQR delayed suspense reconciliation, and shift Z-Reports. |
+| **[docs/product/workflows/FLOOR-PLAN-WORKFLOW.md](./product/workflows/FLOOR-PLAN-WORKFLOW.md)** | Quy Trình Quản Lý Sơ Đồ Mặt Bằng & Bàn Ăn | `CONFIRMED` | Trạng thái bàn, sơ đồ Konva.js, chuyển bàn, gộp bàn, hủy gộp bàn, và đặt bao trọn phòng VIP. |
+| **[docs/product/workflows/ORDER-WORKFLOW.md](./product/workflows/ORDER-WORKFLOW.md)** | Quy Trình Bán Hàng POS & Gọi Món | `CONFIRMED` | Gọi món cảm ứng, nhóm tùy chọn, đợt gọi món, báo bếp, làm lại món, và ủy quyền hủy món. |
+| **[docs/product/workflows/KITCHEN-WORKFLOW.md](./product/workflows/KITCHEN-WORKFLOW.md)** | Quy Trình Vận Hành Bếp & Màn Hình KDS | `CONFIRMED` | Điều phối đa trạm, thẻ KDS, đồng hồ SLA, phiếu làm lại món, và nhịp độ bàn ra món expediter. |
+| **[docs/product/workflows/CASHIER-PAYMENT-WORKFLOW.md](./product/workflows/CASHIER-PAYMENT-WORKFLOW.md)** | Quy Trình Thu Ngân, Tính Tiền & Thanh Toán | `CONFIRMED` | Tách hóa đơn không khóa bàn, VietQR đến muộn và sổ treo đối soát, báo cáo chốt ca Z-Report. |
 
-### 2.3. Product Decision Records (PDRs)
-| Decision ID | Document | Status | Summary |
+### 2.3. Biên Bản Quyết Định Sản Phẩm (PDRs)
+| Mã Quyết Định | Tài liệu | Trạng thái | Tóm tắt |
 | :--- | :--- | :--- | :--- |
-| **PDR-001** | [docs/product/decisions/PDR-001-modular-monolith-deployment-model.md](./product/decisions/PDR-001-modular-monolith-deployment-model.md) | `CONFIRMED` | Modular Monolith deployment with early multi-tenant/branch data isolation. |
-| **PDR-002** | [docs/product/decisions/PDR-002-hierarchical-area-room-table-model.md](./product/decisions/PDR-002-hierarchical-area-room-table-model.md) | `PROPOSED` | Hierarchical Area $\rightarrow$ Room $\rightarrow$ Table spatial layout model (Reqs Confirmed). |
-| **PDR-003** | [docs/product/decisions/PDR-003-independent-station-kitchen-routing.md](./product/decisions/PDR-003-independent-station-kitchen-routing.md) | `PROPOSED` | Dynamic station routing with Master Expediter display at kitchen pass (Reqs Confirmed). |
-| **PDR-004** | [docs/product/decisions/PDR-004-inventory-bom-deduction-trigger-policy.md](./product/decisions/PDR-004-inventory-bom-deduction-trigger-policy.md) | `CONFIRMED` | Two-phase inventory lock (`Available = Physical - Reserved`) & Countable items in MVP. |
-| **PDR-005** | [docs/product/decisions/PDR-005-multi-tender-and-bill-splitting-strategy.md](./product/decisions/PDR-005-multi-tender-and-bill-splitting-strategy.md) | `PROPOSED` | Multi-tender checkout with Split by Items and Split Evenly ($1/N$) (Reqs Confirmed). |
-| **PDR-006** | [docs/product/decisions/PDR-006-vietnamese-language-ui.md](./product/decisions/PDR-006-vietnamese-language-ui.md) | `CONFIRMED` | 100% Vietnamese language presentation layer and user interfaces. |
-| **PDR-007** | [docs/product/decisions/PDR-007-business-date-shift-management.md](./product/decisions/PDR-007-business-date-shift-management.md) | `CONFIRMED` | Configurable Business Date (Ngày Kinh Doanh) and Cutoff Time for overnight shifts. |
-| **PDR-008** | [docs/product/decisions/PDR-008-vietqr-delayed-webhook-handling.md](./product/decisions/PDR-008-vietqr-delayed-webhook-handling.md) | `CONFIRMED` | Resolution policy for delayed VietQR webhooks, suspense ledger, and manual audit. |
-| **PDR-009** | [docs/product/decisions/PDR-009-multi-bill-table-session-split-billing.md](./product/decisions/PDR-009-multi-bill-table-session-split-billing.md) | `CONFIRMED` (Reqs) | Multi-Bill per Table Session and split billing without table locking (Tech: `PROPOSED`). |
-| **PDR-010** | [docs/product/decisions/PDR-010-unmerge-tables.md](./product/decisions/PDR-010-unmerge-tables.md) | `CONFIRMED` (Reqs) | Table unmerge and line item reallocation policy (Tech: `PROPOSED`). |
-| **PDR-011** | [docs/product/decisions/PDR-011-area-and-vip-room-surcharges.md](./product/decisions/PDR-011-area-and-vip-room-surcharges.md) | `CONFIRMED` (Reqs) | Percentage and fixed fee surcharges for VIP rooms/areas (Tech: `PROPOSED`). |
-| **PDR-012** | [docs/product/decisions/PDR-012-direct-service-items-foh.md](./product/decisions/PDR-012-direct-service-items-foh.md) | `CONFIRMED` (Reqs) | Direct FOH service routing bypassing Bar KDS (Tech: `PROPOSED`). |
-| **PDR-013** | [docs/product/decisions/PDR-013-shared-room-and-entire-room-booking.md](./product/decisions/PDR-013-shared-room-and-entire-room-booking.md) | `CONFIRMED` (Reqs) | Independent tables in shared rooms and entire room locks (Tech: `PROPOSED`). |
-| **PDR-014** | [docs/product/decisions/PDR-014-concurrent-order-append-business-rules.md](./product/decisions/PDR-014-concurrent-order-append-business-rules.md) | `CONFIRMED` (Reqs) | Concurrent waiter ordering without table locking (Tech: `PROPOSED`). |
-| **PDR-015** | [docs/product/decisions/PDR-015-remake-dish-workflow.md](./product/decisions/PDR-015-remake-dish-workflow.md) | `CONFIRMED` (Reqs) | Remake dish workflow with bill protection & waste logging (UI: `PROPOSED`). |
+| **PDR-001** | [docs/product/decisions/PDR-001-modular-monolith-deployment-model.md](./product/decisions/PDR-001-modular-monolith-deployment-model.md) | `CONFIRMED` | Mô hình triển khai Modular Monolith với phân vùng dữ liệu đa tenant/chi nhánh từ đầu. |
+| **PDR-002** | [docs/product/decisions/PDR-002-hierarchical-area-room-table-model.md](./product/decisions/PDR-002-hierarchical-area-room-table-model.md) | `PROPOSED` | Mô hình không gian phân cấp Khu vực $\rightarrow$ Phòng $\rightarrow$ Bàn (Yêu cầu nghiệp vụ: CONFIRMED). |
+| **PDR-003** | [docs/product/decisions/PDR-003-independent-station-kitchen-routing.md](./product/decisions/PDR-003-independent-station-kitchen-routing.md) | `PROPOSED` | Điều phối trạm bếp động kèm màn hình Master Expediter tại bàn ra món (Yêu cầu nghiệp vụ: CONFIRMED). |
+| **PDR-004** | [docs/product/decisions/PDR-004-inventory-bom-deduction-trigger-policy.md](./product/decisions/PDR-004-inventory-bom-deduction-trigger-policy.md) | `CONFIRMED` (Nghiệp vụ) | Khóa tồn kho 2 bước (`Tồn khả dụng = Tồn thực tế - Tạm giữ`) & Món đếm được trong MVP (Kỹ thuật: `PROPOSED`). |
+| **PDR-005** | [docs/product/decisions/PDR-005-multi-tender-and-bill-splitting-strategy.md](./product/decisions/PDR-005-multi-tender-and-bill-splitting-strategy.md) | `CONFIRMED` (Nghiệp vụ) | Quyết toán đa kênh kèm Tách theo món và Chia đều ($1/N$) (Kỹ thuật: `PROPOSED`). |
+| **PDR-006** | [docs/product/decisions/PDR-006-vietnamese-language-ui.md](./product/decisions/PDR-006-vietnamese-language-ui.md) | `CONFIRMED` | Toàn bộ tầng trình diễn và giao diện người dùng hiển thị 100% bằng tiếng Việt. |
+| **PDR-007** | [docs/product/decisions/PDR-007-business-date-shift-management.md](./product/decisions/PDR-007-business-date-shift-management.md) | `CONFIRMED` (Nghiệp vụ) | Áp dụng Ngày Kinh Doanh (Business Date) có thể cấu hình cho ca qua đêm (Kỹ thuật: `PROPOSED`). |
+| **PDR-008** | [docs/product/decisions/PDR-008-vietqr-delayed-webhook-handling.md](./product/decisions/PDR-008-vietqr-delayed-webhook-handling.md) | `CONFIRMED` (Nghiệp vụ) | Xử lý webhook VietQR đến muộn, điều chuyển vào sổ treo và đối soát thủ công (Kỹ thuật: `PROPOSED`). |
+| **PDR-009** | [docs/product/decisions/PDR-009-multi-bill-table-session-split-billing.md](./product/decisions/PDR-009-multi-bill-table-session-split-billing.md) | `CONFIRMED` (Nghiệp vụ) | Phiên bàn đa hóa đơn và chính sách tách hóa đơn không khóa bàn (Kỹ thuật: `PROPOSED`). |
+| **PDR-010** | [docs/product/decisions/PDR-010-unmerge-tables.md](./product/decisions/PDR-010-unmerge-tables.md) | `CONFIRMED` (Nghiệp vụ) | Chính sách hủy gộp bàn và tái phân bổ món ăn (Kỹ thuật: `PROPOSED`). |
+| **PDR-011** | [docs/product/decisions/PDR-011-area-and-vip-room-surcharges.md](./product/decisions/PDR-011-area-and-vip-room-surcharges.md) | `CONFIRMED` (Nghiệp vụ) | Phụ phí theo tỷ lệ phần trăm và số tiền cố định cho phòng VIP/khu vực (Kỹ thuật: `PROPOSED`). |
+| **PDR-012** | [docs/product/decisions/PDR-012-direct-service-items-foh.md](./product/decisions/PDR-012-direct-service-items-foh.md) | `CONFIRMED` (Nghiệp vụ) | Điều phối mặt hàng phục vụ trực tiếp tại sảnh bỏ qua KDS Quầy Bar (Kỹ thuật: `PROPOSED`). |
+| **PDR-013** | [docs/product/decisions/PDR-013-shared-room-and-entire-room-booking.md](./product/decisions/PDR-013-shared-room-and-entire-room-booking.md) | `CONFIRMED` (Nghiệp vụ) | Bàn độc lập trong phòng dùng chung và khóa bao trọn phòng (Kỹ thuật: `PROPOSED`). |
+| **PDR-014** | [docs/product/decisions/PDR-014-concurrent-order-append-business-rules.md](./product/decisions/PDR-014-concurrent-order-append-business-rules.md) | `CONFIRMED` (Nghiệp vụ) | Nhân viên cùng gọi món đồng thời trên bàn chung không khóa chặn (Kỹ thuật: `PROPOSED`). |
+| **PDR-015** | [docs/product/decisions/PDR-015-remake-dish-workflow.md](./product/decisions/PDR-015-remake-dish-workflow.md) | `CONFIRMED` (Nghiệp vụ) | Quy trình làm lại món do lỗi bếp không tính tiền khách & ghi sổ hủy hỏng (Giao diện: `PROPOSED`). |
 
 ---
 
-## 3. Architecture & Technical Design (Stage 2 — Upcoming)
+## 3. Kiến Trúc Kỹ Thuật & Thiết Kế Giải Pháp (Giai Đoạn 2 - Sắp Tới)
 
-| Document | Title | Status | Target Stage |
+| Tài liệu | Tiêu đề | Trạng thái | Giai đoạn mục tiêu |
 | :--- | :--- | :--- | :--- |
-| *docs/02-architecture/system-architecture.md* | Modular Monolith System Architecture & Component Design | `PLANNED` | Stage 2 |
-| *docs/02-architecture/data-models-and-erd.md* | Entity-Relationship & Relational Schema Design | `PLANNED` | Stage 2 |
-| *docs/02-architecture/realtime-signalr-mesh.md* | SignalR Real-Time Hubs & Event Contracts Specification | `PLANNED` | Stage 2 |
+| *docs/02-architecture/system-architecture.md* | Kiến Trúc Hệ Thống Modular Monolith & Thiết Kế Thành Phần | `PLANNED` | Giai đoạn 2 |
+| *docs/02-architecture/data-models-and-erd.md* | Thiết Kế Lược Đồ Quan Hệ & Mô Hình Thực Thể ERD | `PLANNED` | Giai đoạn 2 |
+| *docs/02-architecture/realtime-signalr-mesh.md* | Đặc Tả Các Hub SignalR Thời Gian Thực & Hợp Đồng Sự Kiện | `PLANNED` | Giai đoạn 2 |
 
 ---
 
-## 4. Decision Taxonomy
-- `CONFIRMED`: Explicitly approved by project owner.
-- `PROPOSED`: Recommended by the Product Architect, pending sign-off.
-- `OPEN QUESTION`: Actively being evaluated or requiring clarification.
+## 4. Phân Loại Trạng Thái Quyết Định
+- `CONFIRMED`: Đã được Chủ nhà hàng (Project Owner) phê duyệt chính thức.
+- `PROPOSED`: Được Kiến trúc sư sản phẩm đề xuất, đang chờ ký duyệt.
+- `OPEN QUESTION`: Đang trong quá trình đánh giá tích cực hoặc cần làm rõ thêm từ Chủ nhà hàng.

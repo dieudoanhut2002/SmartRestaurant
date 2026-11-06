@@ -1,36 +1,36 @@
-# Product Decision Record: PDR-013 — Shared Room Multi-Table and Entire Room Booking Policy
+# Biên Bản Quyết Định Sản Phẩm: PDR-013 — Quản Lý Phòng Ăn Dùng Chung Đa Bàn & Đặt Bao Trọn Phòng
 
-- **Decision ID**: PDR-013
-- **Title**: Lifecycle Management for Shared Multi-Table Dining Rooms and Entire Room Bookings
-- **Status**: `CONFIRMED` (Business Requirements Approved; Room Container Architecture: `PROPOSED`)
-- **Date**: 2026-11-02
-- **Author**: Senior Product Architect & Business Analyst
-
----
-
-## 1. Context
-Large banquet rooms or dining halls often contain multiple discrete tables. The system must support both scenarios: allowing unrelated parties to share tables in the same room, as well as reserving or occupying the entire room for a single private party.
+- **Mã định danh quyết định (Decision ID)**: PDR-013
+- **Tiêu đề**: Quản lý vòng đời phòng ăn đa bàn dùng chung và quy trình đặt bao trọn toàn bộ phòng
+- **Trạng thái**: `CONFIRMED` (Yêu cầu nghiệp vụ đã được phê duyệt; Kiến trúc vùng chứa phòng ăn: `PROPOSED`)
+- **Ngày lập**: 2026-11-02
+- **Tác giả**: Kiến trúc sư trưởng giải pháp & Chuyên viên phân tích nghiệp vụ
 
 ---
 
-## 2. Decision & Operational Rules (Approved by Project Owner)
-
-### 2.1. Default Independent Table Operation:
-- Tables located within the same room container operate completely independently by default. Each table maintains its own dining session, orders, sub-bills, and table lifecycle states (`Available`, `Occupied`, `Reserved`).
-
-### 2.2. Entire Room Booking (Bao Trọn Phòng):
-- A manager or host can execute an **"Bao trọn phòng" (Book Entire Room)** operation for a private party or banquet.
-- **Exclusive Room Lock**: When activated, the system blocks external guest seating and transitions all tables in that room into a reserved/occupied state linked to the single master room reservation. No walk-in guests or other parties can be assigned to any table in that room.
-
-### 2.3. Standard Room Session Release:
-- When the entire-room dining session concludes, individual tables within the room must be checked for fulfilled obligations and released strictly in accordance with standard table release lifecycle (verifying 100% bill settlement and all items served) before transitioning to `CleaningNeeded` or `Available`.
+## 1. Bối Cảnh Nghiệp Vụ (Context)
+Các phòng tiệc lớn hoặc sảnh ăn khép kín thường chứa nhiều bàn ăn độc lập. Hệ thống bắt buộc phải hỗ trợ trọn vẹn cả hai kịch bản vận hành thực tế: cho phép các đoàn khách không quen biết ngồi ăn tại các bàn riêng biệt trong cùng một phòng, đồng thời hỗ trợ đặt trước hoặc xếp khách bao trọn toàn bộ phòng cho một bữa tiệc riêng tư duy nhất.
 
 ---
 
-## 3. Consequences
-- **Positive**: Accurately mirrors hospitality room management; maximizes revenue by supporting both shared banquet seating and exclusive private rentals.
-- **Negative**: Floor plan visual designer and POS must render both room boundaries and individual table statuses clearly.
+## 2. Quyết Định & Quy Tắc Vận Hành (Được Chủ Nhà Hàng Phê Duyệt)
 
-> [!NOTE] Scope Classification & Confirmation Boundaries
-> - **Confirmed Business Requirements**: Per Owner decision OD-09 (REV-09), independent table operations within shared rooms, whole-room exclusive reservation locks, and standard release validation are **CONFIRMED**.
-> - **Technical Proposal**: The specific room boundary grouping data structures, canvas event propagation, and room reservation state machine are **PROPOSED** technical designs subject to Stage 2 Solution Architect review.
+### 2.1. Vận Hành Bàn Độc Lập Mặc Định:
+- Các bàn ăn nằm trong cùng một không gian phòng ăn theo mặc định vận hành hoàn toàn độc lập với nhau. Mỗi bàn tự duy trì phiên dùng bữa riêng, danh sách món gọi, các hóa đơn con và các trạng thái vòng đời bàn ăn (`Available`, `Occupied`, `Reserved`).
+
+### 2.2. Đặt Bao Trọn Toàn Bộ Phòng (Bao Trọn Phòng):
+- Quản lý nhà hàng hoặc nhân viên đón tiếp có thể thực hiện thao tác **"Bao trọn phòng" (Book Entire Room)** để phục vụ một bữa tiệc hoặc đoàn khách lớn riêng tư.
+- **Khóa phòng độc quyền (Exclusive Room Lock)**: Khi kích hoạt, hệ thống lập tức khóa chặn không cho xếp thêm khách vãng lai và chuyển đổi toàn bộ các bàn ăn trong phòng đó sang trạng thái đã đặt/có khách gắn kết với bản ghi đặt phòng tổng thể duy nhất. Không bất kỳ khách vãng lai hay đoàn khách nào khác có thể bị xếp vào bất kỳ bàn nào trong phòng này.
+
+### 2.3. Giải Phóng Phiên Phòng Theo Quy Chuẩn:
+- Khi phiên ăn bao trọn phòng kết thúc, từng bàn ăn riêng lẻ bên trong phòng phải được kiểm tra đối chiếu nghĩa vụ và giải phóng nghiêm ngặt theo đúng vòng đời bàn ăn tiêu chuẩn (xác nhận 100% hóa đơn đã quyết toán và toàn bộ món đã được phục vụ) trước khi chuyển trạng thái sang `CleaningNeeded` hoặc `Available`.
+
+---
+
+## 3. Hệ Quả Nghiệp Vụ & Kỹ Thuật (Consequences)
+- **Tích cực**: Phản ánh chuẩn xác nghiệp vụ quản lý phòng tiệc nhà hàng; tối đa hóa doanh thu nhờ hỗ trợ linh hoạt cả việc ngồi ghép phòng lẫn bao trọn phòng riêng tư.
+- **Tiêu cực**: Trình thiết kế sơ đồ mặt bằng và ứng dụng POS phải hiển thị mạch lạc cả ranh giới không gian phòng lẫn trạng thái của từng bàn ăn riêng lẻ bên trong.
+
+> [!NOTE] Phân Định Ranh Giới & Thẩm Quyền Phê Duyệt
+> - **Yêu cầu nghiệp vụ đã xác nhận**: Căn cứ theo quyết định của Chủ nhà hàng OD-09 (REV-09), việc vận hành bàn độc lập trong phòng dùng chung, khóa bao trọn phòng độc quyền, và xác thực giải phóng bàn theo tiêu chuẩn đã ở trạng thái **CONFIRMED**.
+> - **Đề xuất kỹ thuật**: Cấu trúc dữ liệu gom nhóm ranh giới phòng, cơ chế truyền sự kiện trên canvas và máy trạng thái đặt phòng là các thiết kế kỹ thuật thuộc diện **PROPOSED**, chờ thẩm định của Kiến trúc sư giải pháp trong Stage 2.

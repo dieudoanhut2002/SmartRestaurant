@@ -1,42 +1,42 @@
-# Product Decision Record: PDR-015 — Remake Dish Workflow for Culinary Errors
+# Biên Bản Quyết Định Sản Phẩm: PDR-015 — Quy Trình Làm Lại Món Do Lỗi Bếp & Chế Biến
 
-- **Decision ID**: PDR-015
-- **Title**: Remake Dish Workflow and Waste Logging Policy for Kitchen and Service Errors
-- **Status**: `CONFIRMED` (Business Requirements Approved; KDS UI Presentation: `PROPOSED`)
-- **Date**: 2026-11-02
-- **Author**: Senior Product Architect & Business Analyst
-
----
-
-## 1. Context
-When a prepared dish is rejected at the table due to kitchen error (e.g., burned steak, over-salted soup, allergen oversight, wrong side dish), standard POS workflows forcing servers to cancel and re-order cause billing mistakes (customer charged twice) or distort kitchen inventory reports.
+- **Mã định danh quyết định (Decision ID)**: PDR-015
+- **Tiêu đề**: Quy trình làm lại món (Remake Dish) và chính sách ghi nhận sổ hủy hỏng do lỗi chế biến và phục vụ
+- **Trạng thái**: `CONFIRMED` (Yêu cầu nghiệp vụ đã được phê duyệt; Trình bày giao diện KDS: `PROPOSED`)
+- **Ngày lập**: 2026-11-02
+- **Tác giả**: Kiến trúc sư trưởng giải pháp & Chuyên viên phân tích nghiệp vụ
 
 ---
 
-## 2. Decision & Operational Rules (Approved by Project Owner)
-
-### 2.1. Customer Bill Protection:
-- A remake dish operation for kitchen error NEVER incurs an additional charge on the customer's invoice. The line item quantity and subtotal on the guest bill remain unaffected.
-
-### 2.2. Dedicated Remake Identification on KDS:
-- Remake orders trigger a high-priority preparation ticket on the appropriate KDS station with prominent visual branding:
-  - Label: **"LÀM LẠI DO LỖI BẾP"** (Remake - Kitchen Error).
-  - Explicit reason displayed (e.g., Quá mặn, Khét, Dị vật, Nhầm món).
-
-### 2.3. Waste Logging & Inventory Consumption:
-- The system automatically logs the discarded portion into the **Sổ Hủy Hỏng (Waste Log)** to account for raw material consumption and kitchen accountability.
-- Inventory reservation/consumption is recorded for the replacement portion to maintain physical inventory alignment.
-
-### 2.4. Audit Trail & Distinction from Add-on Orders:
-- System logs: Requester, Authorizing Manager, Timestamp, Error Category, and Responsible Kitchen Department.
-- Remake operations are strictly distinguished from genuine customer re-orders or supplementary orders.
+## 1. Bối Cảnh Nghiệp Vụ (Context)
+Khi một món ăn đã nấu xong bị từ chối tại bàn ăn do lỗi của nhà bếp (ví dụ: bít tết cháy khét, canh quá mặn, sơ suất để dính dị ứng của khách, hoặc làm nhầm món ăn kèm), các quy trình POS thông thường ép nhân viên phải hủy món cũ rồi tạo đơn gọi món mới sẽ gây ra sai sót hóa đơn (khách bị tính tiền 2 lần) hoặc làm sai lệch báo cáo kiểm kê kho bếp.
 
 ---
 
-## 3. Consequences
-- **Positive**: Transparent kitchen operations; protects customer bill accuracy; provides data for kitchen quality control.
-- **Negative**: POS UI must provide a secure, governed action for remake entry with mandatory reason selection.
+## 2. Quyết Định & Quy Tắc Vận Hành (Được Chủ Nhà Hàng Phê Duyệt)
 
-> [!NOTE] Scope Classification & Confirmation Boundaries
-> - **Confirmed Business Requirements**: Per Owner decision OD-12 (REV-11), zero extra customer charge, high-priority remake ticket dispatch, scrap loss logging (`ScrapLoss`) with manager authorization, and audit distinction from add-on orders are **CONFIRMED**.
-> - **Proposed UI Specification**: The specific visual theme (e.g., purple ticket card styling, flashing border, alert chime sound frequency) is an **AI UI proposal** subject to Stage 2 UI/UX design.
+### 2.1. Bảo Vệ Tuyệt Đối Hóa Đơn Khách Hàng:
+- Thao tác làm lại món do lỗi của bếp TUYỆT ĐỐI KHÔNG BAO GIỜ tính thêm tiền vào hóa đơn của thực khách. Số lượng dòng món và tổng tiền phải trả trên hóa đơn của khách được giữ nguyên không đổi.
+
+### 2.2. Nhận Diện Thẻ Làm Lại Chuyên Biệt Trên Màn Hình KDS:
+- Lệnh làm lại món sẽ kích hoạt một phiếu chế biến ưu tiên khẩn cấp trên màn hình KDS của trạm chế biến tương ứng kèm nhận diện trực quan nổi bật:
+  - Nhãn hiển thị: **"LÀM LẠI DO LỖI BẾP"** (Remake - Kitchen Error).
+  - Hiển thị rõ lý do cụ thể (ví dụ: Quá mặn, Khét, Dị vật, Nhầm món).
+
+### 2.3. Ghi Nhận Sổ Hủy Hỏng & Tiêu Hao Kho Thực Tế:
+- Hệ thống tự động ghi nhận phần món ăn bị loại bỏ vào **Sổ Hủy Hỏng (Waste Log / ScrapLoss)** để theo dõi tiêu hao nguyên vật liệu và nâng cao trách nhiệm của bộ phận bếp.
+- Việc tạm giữ/tiêu hao kho được ghi nhận cho phần ăn làm lại thay thế nhằm đảm bảo số liệu tồn kho thực tế luôn chuẩn xác.
+
+### 2.4. Vết Kiểm Toán & Phân Biệt Tuyệt Đối Với Gọi Món Mới:
+- Hệ thống ghi lại đầy đủ: Người yêu cầu, Quản lý phê duyệt (mã PIN), Mốc thời gian, Phân loại lỗi và Bộ phận bếp chịu trách nhiệm.
+- Thao tác làm lại món được phân biệt rạch ròi với hành vi khách tự gọi thêm món mới hoặc gọi suất bổ sung.
+
+---
+
+## 3. Hệ Quả Nghiệp Vụ & Kỹ Thuật (Consequences)
+- **Tích cực**: Vận hành bếp minh bạch; bảo vệ tính chính xác của hóa đơn khách hàng; cung cấp số liệu thực tế để kiểm soát chất lượng ẩm thực của nhà bếp.
+- **Tiêu cực**: Giao diện POS phục vụ phải trang bị thao tác nhập lệnh làm lại có kiểm soát, bắt buộc phải chọn lý do và cần quản lý phê duyệt.
+
+> [!NOTE] Phân Định Ranh Giới & Thẩm Quyền Phê Duyệt
+> - **Yêu cầu nghiệp vụ đã xác nhận**: Căn cứ theo quyết định của Chủ nhà hàng OD-12 (REV-11), không tính thêm tiền cho khách, điều phối phiếu làm lại ưu tiên cao, ghi nhận hao hụt nội bộ (`ScrapLoss`) với sự phê duyệt của quản lý, và phân biệt vết kiểm toán với đơn gọi thêm đã ở trạng thái **CONFIRMED**.
+> - **Đặc tả giao diện đề xuất**: Kiểu dáng hiển thị trực quan cụ thể (ví dụ: phong cách thẻ màu tím, viền nhấp nháy, tần số âm thanh chuông báo) là **đề xuất giao diện của AI (AI UI proposal)**, chờ hoàn thiện trong giai đoạn thiết kế UI/UX ở Stage 2.

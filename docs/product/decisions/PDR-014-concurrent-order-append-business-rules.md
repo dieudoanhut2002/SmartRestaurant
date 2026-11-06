@@ -1,40 +1,40 @@
-# Product Decision Record: PDR-014 — Concurrent Waiter Ordering Business Rules
+# Biên Bản Quyết Định Sản Phẩm: PDR-014 — Quy Tắc Nghiệp Vụ Gọi Món Đồng Thời Của Nhân Viên Phục Vụ
 
-- **Decision ID**: PDR-014
-- **Title**: Business Rules for Concurrent Waiter Operations on Shared Table Sessions
-- **Status**: `CONFIRMED` (Business Requirements Approved; Technical Implementation Mechanics: `PROPOSED`)
-- **Date**: 2026-11-02
-- **Author**: Senior Product Architect & Business Analyst
-
----
-
-## 1. Context
-During rush hours, multiple waiters often attend to different guests at the same large banquet table simultaneously. Locking the table exclusively (Pessimistic Table Lock) stalls operations, while basic optimistic concurrency risks overwriting cart changes or discarding newly entered dishes when multiple servers submit orders close together.
+- **Mã định danh quyết định (Decision ID)**: PDR-014
+- **Tiêu đề**: Quy tắc nghiệp vụ cho các thao tác gọi món đồng thời của nhiều nhân viên phục vụ trên cùng một phiên bàn
+- **Trạng thái**: `CONFIRMED` (Yêu cầu nghiệp vụ đã được phê duyệt; Cơ chế kỹ thuật triển khai: `PROPOSED`)
+- **Ngày lập**: 2026-11-02
+- **Tác giả**: Kiến trúc sư trưởng giải pháp & Chuyên viên phân tích nghiệp vụ
 
 ---
 
-## 2. Approved Business Rules (Confirmed by Project Owner)
-
-### 2.1. Non-Blocking Shared Table Access:
-- Multiple waitstaff members must be permitted to open and draft orders for the same physical table concurrently without triggering blocking UI lockouts.
-
-### 2.2. Data Loss Prevention:
-- One waiter's order submission must NEVER overwrite, delete, or discard line items submitted concurrently by another waiter.
-
-### 2.3. Conflict Detection for Item Modification / Cancellation:
-- If Waiter A attempts to cancel or modify a specific dish line item while Waiter B is also modifying the same item, the system must detect the conflict, prevent partial corruption, and present a clear prompt reflecting the current state.
-
-### 2.4. Idempotency & Duplicate Prevention:
-- The system must provide robust client-side and server-side idempotency safeguards (e.g., submission idempotency keys) to prevent duplicate kitchen tickets or duplicate order lines caused by rapid tapping, double clicking, or network retry loops.
+## 1. Bối Cảnh Nghiệp Vụ (Context)
+Trong giờ cao điểm, nhiều nhân viên phục vụ thường cùng lúc chăm sóc các vị khách khác nhau tại một bàn tiệc lớn đông người. Việc khóa cứng bàn ăn độc quyền (Pessimistic Table Lock) sẽ làm tê liệt vận hành, trong khi cơ chế kiểm soát tranh chấp lạc quan (optimistic concurrency) đơn giản lại tiềm ẩn nguy cơ ghi đè thay đổi giỏ hàng hoặc làm mất các món ăn vừa được nhập khi nhiều nhân viên cùng gửi đơn gần như đồng thời.
 
 ---
 
-## 3. Technical Implementation Status (Solution Architecture Scope)
-- **Status**: `PROPOSED`
-- **Architectural Directive**: The previously suggested "Append-Only Delta Firing" pattern is an architectural proposal, not a mandated technical solution. The **Solution Architect** in Stage 2 is tasked with analyzing and selecting the optimal technical mechanism (e.g., event sourcing delta append, atomic row-level command queues, or distributed optimistic locking) to satisfy these business rules.
+## 2. Quy Tắc Nghiệp Vụ Đã Phê Duyệt (Chủ Nhà Hàng Xác Nhận)
+
+### 2.1. Truy Cập Bàn Không Khóa Chặn (Non-Blocking Shared Table Access):
+- Hệ thống cho phép nhiều nhân viên phục vụ cùng lúc mở và tạo đơn gọi món nháp cho cùng một bàn ăn vật lý mà không kích hoạt cơ chế khóa chặn giao diện (UI lockouts).
+
+### 2.2. Chống Thất Thoát Dữ Liệu Tuyệt Đối (Data Loss Prevention):
+- Thao tác gửi đơn gọi món của một nhân viên phục vụ TUYỆT ĐỐI KHÔNG BAO GIỜ được ghi đè, xóa bỏ hoặc làm mất các dòng món ăn được gửi đồng thời bởi một nhân viên phục vụ khác.
+
+### 2.3. Phát Hiện Xung Đột Khi Sửa / Hủy Món (Conflict Detection):
+- Nếu Nhân viên A thao tác hủy hoặc chỉnh sửa một dòng món ăn cụ thể trong khi Nhân viên B cũng đang đồng thời chỉnh sửa chính dòng món đó, hệ thống phải phát hiện xung đột, ngăn chặn việc sai lệch dữ liệu cục bộ và hiển thị thông báo rõ ràng phản ánh đúng trạng thái thực tế mới nhất.
+
+### 2.4. Tính Bất Khả Biến & Chống Trùng Lặp (Idempotency & Duplicate Prevention):
+- Hệ thống phải trang bị các chốt bảo vệ an toàn thử lại bất khả biến ở cả phía máy khách và máy chủ (ví dụ: khóa tính bất khả biến idempotency key khi gửi đơn) để ngăn chặn việc tạo phiếu bếp trùng lặp hoặc nhân đôi dòng món do nhân viên bấm liên tiếp nhiều lần (double clicking) hoặc do mạng thử lại tự động.
 
 ---
 
-## 4. Consequences
-- **Positive**: High throughput and responsive waiter UX during peak hours; zero lost orders.
-- **Negative**: Technical architecture must design robust concurrency conflict resolution and idempotency handling.
+## 3. Trạng Thái Triển Khai Kỹ Thuật (Phạm Vi Kiến Trúc Giải Pháp Stage 2)
+- **Trạng thái**: `PROPOSED`
+- **Chỉ thị kiến trúc**: Mô hình "Gửi Delta Chỉ Ghi Thêm" (Append-Only Delta Firing) từng được gợi ý trước đây là một đề xuất về mặt kiến trúc, không phải là một giải pháp kỹ thuật bị áp đặt bắt buộc. **Kiến trúc sư giải pháp (Solution Architect)** trong Giai đoạn 2 (Stage 2) có trách nhiệm phân tích và lựa chọn cơ chế kỹ thuật tối ưu nhất (ví dụ: event sourcing delta append, hàng đợi lệnh mức dòng nguyên tử, hoặc khóa lạc quan phân tán) để hiện thực hóa trọn vẹn các quy tắc nghiệp vụ nêu trên.
+
+---
+
+## 4. Hệ Quả Nghiệp Vụ & Kỹ Thuật (Consequences)
+- **Tích cực**: Năng suất phục vụ cao và trải nghiệm người dùng mượt mà cho nhân viên trong giờ cao điểm; loại bỏ hoàn toàn tình trạng mất đơn món.
+- **Tiêu cực**: Kiến trúc kỹ thuật phải thiết kế cơ chế xử lý xung đột đồng thời và tính bất khả biến thật sự vững chắc.

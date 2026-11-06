@@ -1,135 +1,136 @@
-# Product Non-Functional Requirements (NFR) — SmartRestaurant
+# Yêu Cầu Phi Chức Năng Của Sản Phẩm (NFR) — SmartRestaurant
+## (Product Non-Functional Requirements — NFR)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Related Documents**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)
-
----
-
-## 1. Security & Authorization
-
-### NFR-SEC-01: Role-Based Access Control (RBAC) & Principle of Least Privilege
-- **Requirement**: The system must enforce strict role-based authorization across all presentation endpoints and application services.
-- **Roles**: `SystemAdmin`, `RestaurantManager`, `FloorCaptain`, `Waiter`, `Chef`, `Cashier`, `Stockkeeper`.
-- **Enforcement**: Servers cannot access billing totals or financial reports; cashiers cannot modify recipes or branch tax rates; chefs cannot void bills.
-
-### NFR-SEC-02: Manager Override PIN Authorization
-- **Requirement**: High-risk operational actions (bill voids, post-fire dish cancellations, manual discounts, and shift discrepancy overrides) must prompt for a secure 4-digit Manager PIN.
-- **Auditability**: Every PIN authorization must log the authorizing Manager ID, timestamp, target entity, and justification reason into an immutable audit table.
-
-### NFR-SEC-03: Protection Against Common Web Vulnerabilities (OWASP Top 10)
-- **Anti-CSRF**: Mandatory CSRF token validation (`[ValidateAntiForgeryToken]`) across all mutative HTTP requests (POST, PUT, DELETE).
-- **SQL Injection**: Strictly parameterized queries using Entity Framework Core LINQ. Raw string SQL concatenation is completely prohibited.
-- **XSS Prevention**: Automatic HTML encoding on Razor views and client-side escaping on Konva.js canvas labels.
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `CONFIRMED` (Chủ Dự án đã phê duyệt chính thức trong Task 02.6)
+- **Tài Liệu Liên Quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)
 
 ---
 
-## 2. Multi-Tenant & Multi-Branch Data Isolation
+## 1. Bảo Mật & Ủy Quyền (Security & Authorization)
 
-### NFR-ISO-01: Logical Tenant & Branch Partitioning
-- **Requirement**: All transactional tables (`Orders`, `OrderItems`, `Tables`, `DiningSessions`, `Invoices`, `Payments`, `InventoryTransactions`, `Shifts`) must carry `OrganizationId` and `BranchId`.
-- **Query Filter Enforcement**: Global query filters in Entity Framework Core must guarantee that queries automatically scope to the active authenticated user's branch context, preventing accidental cross-branch data leakage.
-- **Assumption**: Initial deployments operate on a single independent database installation. Multi-branch chain expansion in v2.0 will leverage the already enforced `OrganizationId` and `BranchId` partition keys.
+### NFR-SEC-01: Kiểm Soát Truy Cập Dựa Trên Vai Trò (RBAC) & Nguyên Tắc Đặc Quyền Tối Thiểu
+- **Yêu cầu**: Hệ thống phải thực thi cơ chế phân quyền nghiêm ngặt dựa trên vai trò trên toàn bộ các endpoint giao diện và dịch vụ ứng dụng.
+- **Các vai trò**: `SystemAdmin` (Quản trị hệ thống), `RestaurantManager` (Quản lý nhà hàng), `FloorCaptain` (Trưởng ca phục vụ), `Waiter` (Nhân viên phục vụ), `Chef` (Đầu bếp), `Cashier` (Thu ngân), `Stockkeeper` (Thủ kho).
+- **Thực thi**: Phục vụ không thể xem tổng doanh thu hoặc báo cáo tài chính; thu ngân không thể chỉnh sửa công thức món hoặc thuế suất chi nhánh; đầu bếp không thể hủy hóa đơn.
+
+### NFR-SEC-02: Xác Thực Ủy Quyền Bằng Mã PIN Của Quản Lý
+- **Yêu cầu**: Các thao tác vận hành có rủi ro cao (hủy hóa đơn, hủy món sau khi đã bắn bếp, chiết khấu thủ công và duyệt chênh lệch két tiền chốt ca) bắt buộc phải yêu cầu nhập mã PIN bảo mật 4 chữ số của Quản lý.
+- **Tính kiểm toán**: Mỗi lần xác thực PIN phải tự động lưu ID Quản lý phê duyệt, dấu ấn thời gian, thực thể bị tác động và lý do giải trình vào bảng kiểm toán bất biến.
+
+### NFR-SEC-03: Phòng Chống Các Lỗ Hổng Web Phổ Biến (OWASP Top 10)
+- **Chống CSRF**: Bắt buộc xác thực token chống giả mạo (`[ValidateAntiForgeryToken]`) trên toàn bộ các yêu cầu HTTP làm thay đổi dữ liệu (POST, PUT, DELETE).
+- **Chống SQL Injection**: Sử dụng 100% truy vấn được tham số hóa thông qua Entity Framework Core LINQ. Nghiêm cấm hoàn toàn việc nối chuỗi câu lệnh SQL thô.
+- **Chống XSS**: Tự động mã hóa ký tự HTML trên các view Razor và escape chuỗi an toàn phía client trên canvas Konva.js.
 
 ---
 
-## 3. Performance & Latency Targets
+## 2. Phân Lập Dữ Liệu Đa Khách Thuê & Đa Chi Nhánh (Multi-Tenant & Multi-Branch Data Isolation)
 
-| ID | Operational Scope | Target Latency / Throughput | Assumptions & Verification Method |
+### NFR-ISO-01: Phân Vùng Dữ Liệu Logic Theo Chi Nhánh & Doanh Nghiệp
+- **Yêu cầu**: Toàn bộ các bảng giao dịch (`Orders`, `OrderItems`, `Tables`, `DiningSessions`, `Invoices`, `Payments`, `InventoryTransactions`, `Shifts`) bắt buộc phải mang các trường `OrganizationId` và `BranchId`.
+- **Thực thi bộ lọc truy vấn**: Bộ lọc truy vấn toàn cục (Global Query Filters) trong Entity Framework Core phải bảo đảm các truy vấn tự động giới hạn phạm vi trong ngữ cảnh chi nhánh đang đăng nhập của người dùng, ngăn ngừa rò rỉ dữ liệu chéo giữa các chi nhánh.
+- **Giả định**: Các bản triển khai ban đầu chạy trên một cơ sở dữ liệu cài đặt độc lập. Việc mở rộng chuỗi đa chi nhánh trong phiên bản v2.0 sẽ tận dụng các khóa phân vùng `OrganizationId` và `BranchId` đã được thiết kế sẵn.
+
+---
+
+## 3. Mục Tiêu Hiệu Năng & Độ Trễ (Performance & Latency Targets)
+
+| Mã Định Danh | Phạm Vi Vận Hành | Độ Trễ / Thông Lượng Mục Tiêu | Giả Định & Phương Pháp Kiểm Chứng |
 | :--- | :--- | :--- | :--- |
-| **NFR-PERF-01** | POS Touch UI Responsiveness | $\le 100\text{ ms}$ for item tap, modifier modal open, and cart update. | Measured on standard Android/iPad tablets over local 5GHz Wi-Fi. |
-| **NFR-PERF-02** | SignalR Order-to-KDS Propagation | $\le 500\text{ ms}$ from waiter tapping "Fire" to appearance on KDS screen. | Measured in typical local restaurant LAN environment with $\le 50$ connected devices. |
-| **NFR-PERF-03** | Bill Calculation Engine | $\le 50\text{ ms}$ to compute subtotal, vouchers, service charge, and VAT. | In-memory calculation for bills with up to 100 line items. |
-| **NFR-PERF-04** | Floor Plan Live Table Status Sync | $\le 300\text{ ms}$ to reflect color-coded status badge changes across all terminals. | Sub-second visual state broadcast via SignalR `TableHub`. |
-| **NFR-PERF-05** | High-Load Peak Concurrency | Sustain up to $50$ concurrent orders and $200$ active tables per branch without degradation. | *Target requiring stress-test confirmation* — [OPEN QUESTION]. |
+| **NFR-PERF-01** | Độ phản hồi giao diện POS cảm ứng | $\le 100\text{ ms}$ cho thao tác chạm chọn món, mở hộp thoại tùy chọn và cập nhật giỏ hàng. | Đo kiểm trên máy tính bảng Android/iPad chuẩn qua mạng Wi-Fi 5GHz nội bộ. |
+| **NFR-PERF-02** | Độ trễ phát sóng đơn SignalR từ POS sang KDS | $\le 500\text{ ms}$ từ lúc phục vụ bấm "Báo bếp" đến khi thẻ món xuất hiện trên màn hình KDS. | Đo kiểm trong môi trường mạng LAN nhà hàng thông thường với $\le 50$ thiết bị kết nối đồng thời. |
+| **NFR-PERF-03** | Engine tính tiền & thuế phí | $\le 50\text{ ms}$ để tính toán xong tiền tạm tính, voucher, phí dịch vụ và thuế GTGT. | Tính toán trong bộ nhớ (In-memory) cho các hóa đơn có tối đa 100 dòng món ăn. |
+| **NFR-PERF-04** | Đồng bộ trạng thái bàn trên sơ đồ mặt bằng | $\le 300\text{ ms}$ để cập nhật đổi màu huy hiệu trạng thái bàn trên toàn bộ các thiết bị. | Phát sóng trạng thái thị giác tức thì qua SignalR `TableHub`. |
+| **NFR-PERF-05** | Tải cao điểm giờ cao điểm | Chịu tải đồng thời lên đến $50$ đơn gọi món cùng lúc và $200$ bàn hoạt động trên mỗi chi nhánh mà không bị suy giảm hiệu năng. | *Mục tiêu cần kiểm chứng qua kiểm thử tải (Stress-test)* — [CÂU HỎI MỞ]. |
 
 ---
 
-## 4. Concurrency & Data Consistency
+## 4. Kiểm Soát Đồng Thời & Toàn Vẹn Dữ Liệu (Concurrency & Data Consistency)
 
-### NFR-CONC-01: Optimistic Concurrency Control
-- **Requirement**: All critical mutable entities (`Table`, `DiningSession`, `Order`, `Invoice`, `Shift`) must include a byte-array concurrency token (`RowVersion` / `ConcurrencyStamp`).
-- **Conflict Handling**: If two staff members attempt to update the same table session simultaneously (e.g. waiter adding an item while cashier requests checkout), the second transaction fails with an explicit concurrency exception, forcing a state refresh rather than silently overwriting data.
+### NFR-CONC-01: Kiểm Soát Đồng Thời Lạc Quan (Optimistic Concurrency Control)
+- **Yêu cầu**: Toàn bộ các thực thể nhạy cảm có khả năng bị sửa đổi đồng thời (`Table`, `DiningSession`, `Order`, `Invoice`, `Shift`) phải chứa token đồng thời dạng mảng byte (`RowVersion` / `ConcurrencyStamp`).
+- **Xử lý xung đột**: Nếu hai nhân viên cùng cố gắng cập nhật một phiên bàn tại cùng một thời điểm (ví dụ: phục vụ đang thêm món trong khi thu ngân bấm yêu cầu thanh toán), giao dịch thứ hai sẽ bị từ chối với ngoại lệ xung đột đồng thời rõ ràng, buộc giao diện phải tải lại dữ liệu mới nhất thay vì âm thầm ghi đè dữ liệu.
 
-### NFR-CONC-02: Atomic Transaction Boundaries
-- **Requirement**: Order firing, table moving, table merging, bill splitting, and shift closing must execute within atomic database transactions (`IDbContextTransaction`).
-- **All-or-Nothing Guarantee**: If a database write fails during order firing (e.g., ticket creation succeeds but inventory deduction fails), the entire transaction rolls back, preventing orphaned tickets or corrupted billing accounts.
-
----
-
-## 5. Idempotency & Fault Tolerance
-
-### NFR-IDEM-01: Idempotent Order Dispatch & Payment Webhooks
-- **Requirement**: The system must enforce idempotency keys on order submission and payment webhook processing.
-- **Duplicate Suppression**: If a waiter taps "Fire Order" multiple times due to a laggy touchscreen or Wi-Fi retry, the backend verifies the idempotency token and ignores duplicate submissions, guaranteeing that the kitchen never receives duplicate tickets for a single intended order.
-
-### NFR-IDEM-02: Automatic SignalR Reconnection & State Resynchronization
-- **Requirement**: FOH tablets and KDS screens must implement automated SignalR reconnection routines with exponential backoff (0s, 2s, 5s, 10s).
-- **Handshake Resync**: Upon reconnection, the client automatically sends a `SyncStateRequest(LastKnownTimestamp)` to retrieve any table status changes or kitchen tickets missed during the disconnection window.
+### NFR-CONC-02: Ranh Giới Giao Dịch Nguyên Tử (Atomic Transaction Boundaries)
+- **Yêu cầu**: Thao tác báo bếp, chuyển bàn, gộp bàn, tách hóa đơn và chốt ca bắt buộc phải thực thi bên trong các giao dịch cơ sở dữ liệu nguyên tử (`IDbContextTransaction`).
+- **Cam kết Được-Ăn-Cả-Ngã-Về-Không**: Nếu một bước ghi CSDL bị thất bại khi báo bếp (ví dụ: tạo phiếu món thành công nhưng khóa giữ kho thất bại), toàn bộ giao dịch phải được tự động hoàn tác (rollback), ngăn ngừa việc sinh ra các phiếu món mồ côi hoặc làm sai lệch tài khoản hóa đơn.
 
 ---
 
-## 6. Audit Logging & Compliance
+## 5. Tính Bất Biến Khi Thực Thi Lại & Khả Năng Chịu Lỗi (Idempotency & Fault Tolerance)
 
-### NFR-AUD-01: Tamper-Evident Security Audit Trail
-- **Requirement**: All destructive, supervisory, or financial actions must generate an unalterable audit log entry containing:
-  - Timestamp (UTC + local offset).
-  - Actor ID, User Full Name, and Operational Role.
-  - Client Terminal IP and Device Fingerprint.
-  - Action Category: `BillVoid`, `PostFireCancellation`, `TableMerge`, `ManualDiscount`, `DrawerDiscrepancyOverride`.
-  - Old State vs New State (JSON delta).
-  - Justification reason code and optional free-form note.
+### NFR-IDEM-01: Tính Bất Biến Của Thao Tác Bắn Đơn & Webhook Thanh Toán
+- **Yêu cầu**: Hệ thống phải thực thi khóa bất biến (Idempotency Key) trên các yêu cầu gửi đơn gọi món và các webhook xử lý thanh toán.
+- **Chặn đơn trùng lặp**: Nếu nhân viên phục vụ chạm nút "Báo bếp" nhiều lần do màn hình cảm ứng lag hoặc mạng Wi-Fi tự động thử lại, backend sẽ kiểm tra token bất biến và bỏ qua các yêu cầu trùng lặp, đảm bảo nhà bếp không bao giờ nhận trùng 2 phiếu chế biến cho cùng 1 đơn món.
 
----
-
-## 7. Usability & Device Form Factors
-
-### NFR-USE-01: Form Factor Optimization
-- **Responsive Layouts**:
-  - **Cashier Terminal**: Optimized for desktop monitors ($1920 \times 1080$ or $1366 \times 768$) with keyboard shortcuts (F1-F12), barcode scanner input, and thermal receipt printer support.
-  - **Waiter Tablet POS**: Optimized for 10-inch to 12-inch touch tablets ($1920 \times 1200$ or $1024 \times 768$) in landscape mode. Minimum touch target size: $48 \times 48\text{ px}$ with high visual contrast.
-  - **KDS Monitors**: Optimized for 15-inch to 24-inch kitchen touchscreens or HDMI monitors with USB bump bars. High-contrast dark theme designed to be readable from a 2-meter distance in high-glare kitchen environments.
-
-### NFR-USE-02: Accessibility & Audio-Visual Feedback
-- Visual color-coded SLA timers must be accompanied by distinct non-jarring audio chimes for new tickets, rush orders, and cancellations to ensure cooks notice alerts even when facing away from the screen.
+### NFR-IDEM-02: Tự Động Kết Nối Lại SignalR & Tái Đồng Bộ Trạng Thái
+- **Yêu cầu**: Tablet phục vụ tiền sảnh và màn hình bếp KDS phải tích hợp cơ chế tự động kết nối lại SignalR với thuật toán dãn cách lũy thừa (0s, 2s, 5s, 10s).
+- **Bắt tay đồng bộ lại**: Khi kết nối lại thành công, client tự động gửi yêu cầu `SyncStateRequest(LastKnownTimestamp)` để lấy về toàn bộ các thay đổi trạng thái bàn hoặc thẻ món bếp bị lỡ trong khoảng thời gian mất mạng.
 
 ---
 
-## 8. Localization & Regional Conventions (Vietnamese-First)
+## 6. Nhật Ký Kiểm Toán & Tuân Thủ (Audit Logging & Compliance)
 
-### NFR-LOC-01: 100% Vietnamese Language User Experience (CONFIRMED)
-- **Mandate**: The entire presentation tier across all client interfaces (Admin Portal, Waiter Tablet POS, Kitchen Display System - KDS, Bar Station, Cashier Terminal, and Customer QR interface) must be presented 100% in natural, professional Vietnamese.
-- **Scope**:
-  - All navigation menus, forms, buttons, labels, tooltips, placeholders, and table grid headers.
-  - All SweetAlert2 toast notifications, confirmation prompts, empty states, and validation feedback.
-  - All operational table and kitchen statuses (e.g., `Trống`, `Có khách`, `Đã đặt trước`, `Đang thanh toán`, `Cần dọn dẹp`, `Chờ chế biến`, `Đang nấu`, `Đã xong - Chờ bưng`).
-  - All printed materials (Pre-bills / "Phiếu tạm tính", VAT receipts / "Hóa đơn thanh toán", Shift Z-Reports / "Báo cáo chốt ca").
-- **Quality Standard**: Zero untranslated English text; strict adherence to [VIETNAMESE-LOCALIZATION-STANDARD.md](./VIETNAMESE-LOCALIZATION-STANDARD.md).
-
-### NFR-LOC-02: Technical Localization & Future Multilingual Readiness
-- **Separation of Concerns**: User-facing text must be decoupled from application code and business logic. No hardcoded Vietnamese string literals in C# business services or controllers.
-- **Resource Bundles**: Presentation strings managed via strongly-typed ASP.NET Core `.resx` resource files or structured frontend JSON i18n dictionaries.
-- **English Engineering Baseline**: Domain entities, database tables, column names, enums (`TableState.Occupied`), API endpoints, and Git logs remain in standard English to maintain Clean Architecture conventions.
-- **Extensibility**: System defaults to `vi-VN` (`CultureInfo("vi-VN")`), but allows future introduction of secondary languages (English, Korean, Japanese, Chinese) without refactoring business logic.
-
-### NFR-LOC-03: Vietnam Regional Formats, Timezone & Unicode Input
-- **Currency**: Vietnamese Đồng (`₫` / `VND`), formatted with dot thousands separator (`#,,### ₫`), no decimal fractions.
-- **Date & Time**: Date formatted as `dd/MM/yyyy`, time formatted in 24h `HH:mm:ss`.
-- **Timezone**: Default timezone fixed to `Asia/Ho_Chi_Minh` (UTC+7). Database persists UTC and renders local time.
-- **Vietnamese Input & Encoding**: Full UTF-8 support across web, API, and SQL Server (`NVARCHAR` with Vietnamese collation). Smooth compatibility with Telex and VNI input methods across mobile and desktop.
-
-### NFR-LOC-04: Usability for Non-Technical Restaurant Staff
-- **Simplicity**: Short, concise Vietnamese labels; avoid jargon and technical exception messages.
-- **Touch Ergonomics**: Minimum touch target size $\ge 48 \times 48\text{ px}$ with high visual contrast for fast-paced, greasy, or low-light dining environments.
-- **Iconography**: Text paired with universally recognizable icons (e.g., printer icon for "In tạm tính", arrow icon for "Chuyển bàn").
+### NFR-AUD-01: Dấu Vết Kiểm Toán An Ninh Không Thể Chỉnh Sửa
+- **Yêu cầu**: Toàn bộ các hành động mang tính hủy hoại, có tính chất giám sát hoặc liên quan đến tài chính bắt buộc phải sinh ra một bản ghi nhật ký kiểm toán bất biến bao gồm:
+  - Dấu ấn thời gian (UTC + độ lệch giờ địa phương).
+  - ID người thực hiện, Họ tên người dùng và Vai trò vận hành.
+  - Địa chỉ IP thiết bị client và dấu ấn vân tay thiết bị.
+  - Phân loại hành động: `BillVoid` (Hủy hóa đơn), `PostFireCancellation` (Hủy món sau nấu), `TableMerge` (Gộp bàn), `ManualDiscount` (Chiết khấu thủ công), `DrawerDiscrepancyOverride` (Duyệt chênh lệch két).
+  - Trạng thái cũ vs Trạng thái mới (dữ liệu chênh lệch JSON delta).
+  - Mã lý do giải trình bắt buộc và ghi chú bổ sung tùy chọn.
 
 ---
 
-## 9. Backup, Recovery & Operational Continuity
+## 7. Khả Năng Sử Dụng & Quy Chuẩn Thiết Bị (Usability & Form Factors)
 
-### NFR-BCP-01: Disaster Recovery & Automated Backups
-- **Database Backups**:
-  - Daily full backup + hourly differential backups + 15-minute transaction log backups during operating hours.
-  - Target Recovery Point Objective (RPO): $\le 15\text{ minutes}$.
-  - Target Recovery Time Objective (RTO): $\le 2\text{ hours}$.
-- **Hardware Failure Replacement**: If a waiter tablet or KDS screen breaks, staff can replace the physical tablet with a spare, navigate to the web URL, enter their staff PIN, and immediately resume operations with zero local data loss.
+### NFR-USE-01: Tối Ưu Hóa Theo Dạng Thiết Bị
+- **Bố cục giao diện đáp ứng (Responsive Layouts)**:
+  - **Thiết bị thu ngân để bàn**: Tối ưu cho màn hình máy tính để bàn ($1920 \times 1080$ hoặc $1366 \times 768$) kèm phím tắt bàn phím (F1-F12), đầu đọc mã vạch và máy in nhiệt hóa đơn.
+  - **Tablet phục vụ POS**: Tối ưu cho máy tính bảng cảm ứng 10-inch đến 12-inch ($1920 \times 1200$ hoặc $1024 \times 768$) đặt ở chế độ màn hình ngang. Kích thước vùng chạm tối thiểu: $48 \times 48\text{ px}$ với độ tương phản thị giác cao.
+  - **Màn hình KDS nhà bếp**: Tối ưu cho màn hình cảm ứng chuyên dụng 15-inch đến 24-inch hoặc màn hình TV treo tường dùng bàn phím bấm số (Bump bar). Giao diện nền tối (Dark Theme) tương phản cao giúp nhìn rõ từ khoảng cách 2 mét trong môi trường bếp nhiều khói dầu và lóa sáng.
+
+### NFR-USE-02: Khả Năng Tiếp Cận & Phản Hồi Âm Thanh - Hình Ảnh
+- Đồng hồ đếm thời gian SLA theo màu sắc trực quan phải đi kèm âm thanh chuông báo êm dịu, dễ nhận biết khi có thẻ món mới, món ưu tiên gấp và món bị hủy để đầu bếp nhận biết ngay cả khi đang quay lưng về phía màn hình.
+
+---
+
+## 8. Bản Địa Hóa & Quy Chuẩn Khu Vực Việt Nam (Vietnamese-First)
+
+### NFR-LOC-01: Trải Nghiệm Người Dùng Tiếng Việt 100% (CONFIRMED)
+- **Quy định bắt buộc**: Toàn bộ tầng trình diễn trên mọi giao diện người dùng (Cổng quản trị, Tablet POS phục vụ, Màn hình bếp KDS, Quầy pha chế, Quầy thu ngân và giao diện QR khách hàng) phải hiển thị 100% bằng tiếng Việt tự nhiên, chuyên nghiệp.
+- **Phạm vi**:
+  - Toàn bộ menu điều hướng, biểu mẫu nhập liệu, nút bấm, nhãn hiển thị, gợi ý (placeholders) và tiêu đề bảng dữ liệu.
+  - Toàn bộ thông báo toast SweetAlert2, hộp thoại xác nhận, trạng thái rỗng và thông báo lỗi hợp lệ hóa.
+  - Toàn bộ các trạng thái vận hành của bàn và nhà bếp (ví dụ: `Trống`, `Có khách`, `Đã đặt trước`, `Đang thanh toán`, `Cần dọn dẹp`, `Chờ chế biến`, `Đang nấu`, `Đã xong - Chờ bưng`).
+  - Toàn bộ các ấn phẩm in ấn (Phiếu tạm tính, Hóa đơn thanh toán, Báo cáo chốt ca Z-Report).
+- **Tiêu chuẩn chất lượng**: Không có bất kỳ từ tiếng Anh chưa dịch nào; tuân thủ nghiêm ngặt [VIETNAMESE-LOCALIZATION-STANDARD.md](./VIETNAMESE-LOCALIZATION-STANDARD.md).
+
+### NFR-LOC-02: Phân Tách Kỹ Thuật & Sẵn Sàng Đa Ngôn Ngữ Tương Lai
+- **Tách biệt mối quan tâm (SoC)**: Chuỗi hiển thị cho người dùng phải được phân tách độc lập khỏi mã nguồn ứng dụng và logic nghiệp vụ. Tuyệt đối không hard-code chuỗi ký tự tiếng Việt thô vào các domain service hoặc controller C#.
+- **Tệp tài nguyên Resource Bundles**: Chuỗi hiển thị được quản lý tập trung thông qua các tệp tài nguyên `.resx` kiểu mạnh trong ASP.NET Core hoặc từ điển i18n JSON trên frontend.
+- **Quy chuẩn kỹ thuật bằng tiếng Anh**: Các thực thể miền (Domain Entities), bảng CSDL, tên cột, enums (`TableState.Occupied`), API endpoints và commit log Git duy trì bằng tiếng Anh chuẩn để tuân thủ kiến trúc Clean Architecture.
+- **Khả năng mở rộng**: Hệ thống mặc định văn hóa `vi-VN` (`CultureInfo("vi-VN")`), nhưng cấu trúc sẵn sàng cho phép bổ sung các ngôn ngữ phụ (Tiếng Anh, Tiếng Hàn, Tiếng Nhật, Tiếng Trung) mà không cần tái cấu trúc logic nghiệp vụ.
+
+### NFR-LOC-03: Định Dạng Vùng Việt Nam, Múi Giờ & Bộ Gõ Tiếng Việt
+- **Tiền tệ**: Đồng Việt Nam (`₫` / `VND`), định dạng dấu chấm phân cách hàng nghìn (`#,,### ₫`), không dùng số thập phân lẻ.
+- **Ngày & Giờ**: Ngày định dạng `dd/MM/yyyy`, giờ định dạng 24h `HH:mm:ss`.
+- **Múi giờ**: Múi giờ mặc định cố định `Asia/Ho_Chi_Minh` (UTC+7). CSDL lưu trữ thời gian UTC và hiển thị giờ địa phương Việt Nam.
+- **Bộ gõ & Mã hóa tiếng Việt**: Hỗ trợ đầy đủ UTF-8 trên Web, API và SQL Server (`NVARCHAR` với collation hỗ trợ tiếng Việt). Tương thích mượt mà với cả 2 kiểu gõ Telex và VNI trên cả thiết bị di động và máy tính để bàn.
+
+### NFR-LOC-04: Khả Năng Sử Dụng Cho Nhân Viên Nhà Hàng Phổ Thông
+- **Đơn giản hóa**: Nhãn tiếng Việt ngắn gọn, súc tích; tránh tiếng lóng hoặc thông báo lỗi kỹ thuật khó hiểu.
+- **Công thái học cảm ứng**: Kích thước nút bấm tối thiểu $\ge 48 \times 48\text{ px}$ với độ tương phản cao, phù hợp thao tác nhanh trong môi trường dầu mỡ hoặc ánh sáng mờ.
+- **Biểu tượng trực quan**: Kết hợp chữ viết tiếng Việt cùng biểu tượng đồ họa quen thuộc (ví dụ: biểu tượng máy in cho "In tạm tính", biểu tượng mũi tên cho "Chuyển bàn").
+
+---
+
+## 9. Sao Lưu, Phục Hồi & Duy Trì Vận Hành Liên Tục (Backup & Operational Continuity)
+
+### NFR-BCP-01: Kế Hoạch Khôi Phục Sau Thảm Họa & Sao Lưu Tự Động
+- **Sao lưu cơ sở dữ liệu**:
+  - Sao lưu toàn phần (Full backup) hàng ngày + Sao lưu vi sai (Differential) hàng giờ + Sao lưu nhật ký giao dịch (Transaction log) mỗi 15 phút trong giờ mở cửa.
+  - Mục tiêu điểm khôi phục dữ liệu (RPO): $\le 15\text{ phút}$.
+  - Mục tiêu thời gian khôi phục hoạt động (RTO): $\le 2\text{ giờ}$.
+- **Thay thế phần cứng khi hỏng hóc**: Nếu một máy tính bảng phục vụ hoặc màn hình KDS bị hỏng vật lý, nhân viên có thể lấy ngay một máy tính bảng dự phòng, truy cập đường dẫn web, nhập mã PIN nhân viên và tiếp tục làm việc ngay lập tức mà không bị mất bất kỳ dữ liệu cục bộ nào.

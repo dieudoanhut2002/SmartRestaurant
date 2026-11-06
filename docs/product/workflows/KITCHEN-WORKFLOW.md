@@ -1,124 +1,125 @@
-# Kitchen Routing & KDS Operational Workflow — SmartRestaurant
+# Quy Trình Phân Tuyến Bếp & Vận Hành Màn Hình Bếp Số (KDS) — SmartRestaurant
+## (Kitchen Routing & KDS Operational Workflow)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `PROPOSED`
-- **Related Documents**: [PRD.md](../PRD.md), [ORDER-WORKFLOW.md](./ORDER-WORKFLOW.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `PROPOSED`
+- **Tài Liệu Liên Quan**: [PRD.md](../PRD.md), [ORDER-WORKFLOW.md](./ORDER-WORKFLOW.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
 
 ---
 
-## 1. Multi-Station Ticket Decomposition & Routing Architecture
+## 1. Kiến Trúc Phân Tuyến & Bóc Tách Đơn Đa Trạm (Multi-Station Ticket Decomposition)
 
-A single customer order containing a mix of beverages, cold appetizers, hot entrees, and desserts is automatically decomposed into station-specific preparation tickets.
+Một đơn gọi món duy nhất của khách chứa hỗn hợp đồ uống, món khai vị nguội, món chính nóng và đồ tráng miệng sẽ tự động được bóc tách thành các phiếu chế biến riêng biệt gửi đến từng bộ phận bếp chuyên trách.
 
 ```mermaid
 flowchart TD
-    O[Customer Order #104 - Table 04] --> Router[Intelligent Kitchen Routing Engine]
+    O["Đơn Gọi Món #104 - Bàn 04"] --> Router["Engine Phân Tuyến Bếp Thông Minh"]
 
-    Router -->|Bottles & Cocktails| Bar[Bar Station KDS Screen]
-    Router -->|Salads & Spring Rolls| Cold[Cold / Appetizer Station KDS]
-    Router -->|Steaks & Hotpot| Hot[Hot Kitchen Station KDS]
-    Router -->|Ice Cream & Pastries| Bake[Bakery / Dessert Station KDS]
+    Router -->|"Bia Chai & Cocktail"| Bar["Màn Hình KDS Quầy Bar / Pha Chế"]
+    Router -->|"Salad & Gỏi Khai Vị"| Cold["Màn Hình KDS Bếp Nguội / Khai Vị"]
+    Router -->|"Bít Tết & Nồi Lẩu"| Hot["Màn Hình KDS Bếp Nóng"]
+    Router -->|"Bánh Kem & Tráng Miệng"| Bake["Màn Hình KDS Bếp Bánh / Tráng Miệng"]
 
-    Router -->|Consolidated Table Order| Exp[Master Expediter Display at Pass]
+    Router -->|"Toàn Bộ Món Theo Bàn"| Exp["Màn Hình Bàn Ra Món (Master Expediter)"]
 
-    Bar -.->|ReadyToServe| Exp
-    Cold -.->|ReadyToServe| Exp
-    Hot -.->|ReadyToServe| Exp
-    Bake -.->|ReadyToServe| Exp
+    Bar -.->|Đã xong| Exp
+    Cold -.->|Đã xong| Exp
+    Hot -.->|Đã xong| Exp
+    Bake -.->|Đã xong| Exp
 
-    Exp -->|All Courses Ready| Runner[Food Runner Notification]
-    Runner -->|Deliver Tray| Table[Table 04 Guest]
+    Exp -->|"Đủ Món Cho Khay"| Runner["Thông Báo Cho Nhân Viên Tiếp Thực"]
+    Runner -->|"Bưng Món Ra Bàn"| Table["Khách Ngồi Bàn 04"]
 ```
 
 ---
 
-## 2. KDS Ticket Micro-Lifecycle & Operational Transitions
+## 2. Vi Vòng Đời Thẻ Món KDS & Các Bước Chuyển Trạng Thái (KDS Ticket Lifecycle)
 
-Each kitchen ticket card consists of individual items that progress through four well-defined operational states.
+Mỗi thẻ phiếu bếp bao gồm các dòng món ăn con tiến triển tuần tự qua 4 trạng thái vận hành được định nghĩa rõ ràng.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Pending: Ticket Dispatched via SignalR (Timer Starts: 00:00)
+    [*] --> Pending: Thẻ món phát sóng qua SignalR (Bắt đầu tính giờ: 00:00)
 
-    Pending --> Cooking: Chef Taps Ticket / Item (Elapsed: 0-10m Green)
-    Cooking --> Cooking: Prep Continues (Elapsed: 10-20m Yellow)
-    Cooking --> Cooking: SLA Breach Alert (Elapsed: >20m Flashing Red)
+    Pending --> Cooking: Đầu bếp chạm thẻ món / dòng món (0-10 phút: Màu Xanh Lá)
+    Cooking --> Cooking: Tiếp tục nấu (10-20 phút: Màu Vàng)
+    Cooking --> Cooking: Cảnh báo vi phạm SLA (>20 phút: Đỏ Nhấp Nháy)
 
-    Cooking --> ReadyToServe: Dish Plated & Placed on Pass
-    ReadyToServe --> Served: Runner Delivers to Table & Confirms
+    Cooking --> ReadyToServe: Món đã nấu xong & Đặt lên Bàn ra món
+    ReadyToServe --> Served: Tiếp thực bưng lên bàn khách & Xác nhận hoàn thành
 
-    Pending --> Cancelled: Waiter/Manager Void Alert
-    Cooking --> Cancelled: Manager Override Cancel (Waste Logged)
-    ReadyToServe --> Cancelled: Dropped / Returned (Waste Logged)
+    Pending --> Cancelled: Cảnh báo hủy món từ Phục vụ / Quản lý
+    Cooking --> Cancelled: Quản lý can thiệp hủy (Ghi sổ hao phí WasteLog)
+    ReadyToServe --> Cancelled: Món bị đổ / Khách trả lại (Ghi sổ hao phí WasteLog)
 ```
 
 ---
 
-## 3. Critical Kitchen Scenarios & Operational Coordination
+## 3. Các Kịch Bản Phối Hợp Nhà Bếp Thực Tế (Critical Kitchen Scenarios)
 
-### 3.1. Scenario 1: Dishes with Drastically Different Preparation Times
-- **Problem**: Table 04 orders a *Greek Salad* (Prep time: 3 mins) and a *Tomahawk Ribeye Steak* (Prep time: 22 mins). If the salad is prepared immediately, it will sit under heat lamps and wilt for 19 minutes while waiting for the steak.
-- **System Solution**:
-  1. The **Master Expediter Display** correlates item target prep durations.
-  2. The Cold Station KDS can mark items with a **"Pace / Delayed Fire"** indicator or the Expediter taps "Hold Cold Course until Hot Course is Cooking".
-  3. When Hot Kitchen taps `Cooking` on the Tomahawk, an automatic SignalR alert fires to the Cold Station: **"Fire Salad for Table 04 Now"**, synchronizing dish completion within a 2-minute serving window.
-
----
-
-### 3.2. Scenario 2: Partial Completion & Multi-Course Pacing
-- **Problem**: The bar prepares drinks in 2 minutes, appetizers finish in 6 minutes, but main hotpot takes 15 minutes.
-- **Workflow**:
-  1. **Independent Station Completion**:
-     - Bartender taps `ReadyToServe` on the 4 beers.
-     - The Bar KDS clears the drink ticket card.
-     - On the **Master Expediter Screen**, the drink icons turn bright green (`Ready`), while the Hotpot icon remains amber (`Cooking`).
-  2. **Runner Partial Pickup**:
-     - FOH runner can pick up drinks immediately without waiting for the hotpot.
-     - Runner taps "Deliver Drinks" on tablet $\rightarrow$ drink status becomes `Served`.
-     - The Expediter screen updates: Drinks `Served`, Hotpot `Cooking`.
+### 3.1. Kịch Bản 1: Các Món Ăn Có Thời Gian Chế Biến Chênh Lệch Lớn
+- **Bài toán thực tế**: Bàn 04 gọi một đĩa *Salad Hy Lạp* (Thời gian làm: 3 phút) và một phần *Bít tết Tomahawk* (Thời gian nướng: 22 phút). Nếu làm đĩa salad ngay, đĩa salad sẽ nằm nguội dưới đèn giữ nhiệt suốt 19 phút để đợi bít tết.
+- **Giải pháp hệ thống**:
+  1. **Màn Hình Bàn Ra Món (Expediter)** tự động liên kết thời gian chế biến dự kiến giữa các món.
+  2. KDS Bếp Nguội hiển thị nhãn **"Giữ nhịp / Chờ tín hiệu"** hoặc Trưởng tiếp thực bấm "Tạm giữ món nguội cho đến khi bếp nóng bắt đầu nấu".
+  3. Khi Bếp Nóng bấm `Đang nấu` trên miếng Tomahawk, SignalR tự động phát cảnh báo sang Bếp Nguội: **"Bắt đầu làm Salad cho Bàn 04 ngay"**, bảo đảm hai món cùng hoàn thành trong khung thời gian chênh lệch dưới 2 phút.
 
 ---
 
-### 3.3. Scenario 3: Rush / VIP High-Priority Escalation
-- **Problem**: Table 02 (VIP Room) has been waiting 25 minutes due to a grill delay; guests are getting impatient.
-- **Workflow**:
-  1. Floor Captain opens Table 02 on tablet POS $\rightarrow$ taps **"Escalate / Mark Rush"**.
-  2. SignalR dispatches `RushOrderEvent` to Hot Kitchen and Expediter KDS.
-  3. The Table 02 ticket immediately moves to the **far left (first position)** of the KDS queue, surrounded by a **vibrating red border** and sounding an audible double-beep alarm.
-  4. Chefs immediately prioritize Table 02 over standard FIFO tickets.
+### 3.2. Kịch Bản 2: Hoàn Thành Từng Phần & Phục Vụ Theo Nhịp Đợt Món
+- **Bài toán thực tế**: Quầy bar làm xong đồ uống trong 2 phút, khai vị xong trong 6 phút, nhưng nồi lẩu mất 15 phút.
+- **Quy trình vận hành**:
+  1. **Xác nhận xong độc lập theo từng trạm**:
+     - Nhân viên pha chế bấm `Đã xong (Chờ bưng)` trên 4 cốc bia.
+     - KDS Quầy Bar xóa thẻ đồ uống hoàn thành.
+     - Trên **Màn Hình Tiếp Thực Tổng**, biểu tượng đồ uống chuyển sang màu xanh lá sáng (`Đã xong`), trong khi biểu tượng nồi lẩu vẫn giữ màu vàng hổ phách (`Đang nấu`).
+  2. **Tiếp thực bưng trước đồ uống**:
+     - Nhân viên bưng món có thể lấy ngay đồ uống bưng ra cho khách mà không phải chờ nồi lẩu.
+     - Tiếp thực bấm "Đã bưng đồ uống" trên máy tính bảng $\rightarrow$ trạng thái đồ uống chuyển sang `Đã phục vụ`.
+     - Màn hình tiếp thực cập nhật: Đồ uống `Đã phục vụ`, Nồi lẩu `Đang nấu`.
 
 ---
 
-### 3.4. Scenario 4: Item Cancellation While Actively Cooking
-- **Problem**: Customer cancels their Steak 8 minutes into cooking.
-- **Workflow**:
-  1. Manager enters PIN on POS to authorize cancellation.
-  2. SignalR broadcasts cancellation event to Hot Kitchen KDS.
-  3. The steak item on the ticket card **flashes bright red with a strikethrough** and an audio alert: *"Order Item Cancelled"*.
-  4. Chef taps the card to acknowledge the cancellation; the item disappears from the active queue.
-  5. The raw steak is automatically written off to the kitchen `WasteLog` table as scrap loss.
+### 3.3. Kịch Bản 3: Đơn Ưu Tiên Gấp Cho Khách VIP / Đợi Quá Lâu (Rush Order)
+- **Bài toán thực tế**: Bàn 02 (Phòng VIP) đã đợi 25 phút do sự cố trạm nướng; khách bắt đầu sốt ruột.
+- **Quy trình vận hành**:
+  1. Trưởng ca phục vụ mở Bàn 02 trên POS $\rightarrow$ bấm **"Ưu tiên gấp / Báo làm gấp"**.
+  2. SignalR phát sóng sự kiện `RushOrderEvent` tới KDS Bếp Nóng và KDS Tiếp Thực.
+  3. Thẻ món Bàn 02 ngay lập tức nhảy lên **vị trí đầu tiên bên trái** của hàng đợi KDS, bao quanh bởi **viền đỏ rung nhấp nháy** kèm âm thanh chuông báo kép.
+  4. Đầu bếp ngay lập tức ưu tiên chế biến Bàn 02 trước các đơn hàng thông thường khác.
 
 ---
 
-### 3.5. Scenario 5: Remake Dish for Culinary Errors (PDR-015)
-- **Problem**: Dish rejected at table due to kitchen mistake (burnt, too salty, wrong allergy preparation).
-- **Workflow**:
-  1. Server submits Remake action with Manager PIN and reason code.
-  2. A dedicated high-priority **Purple Remake Card** surfaces at the head of the prep queue on the responsible KDS station.
-  3. Header displays: **"LÀM LẠI DO LỖI BẾP"** with prominent error detail (e.g., "Cháy khét - Đổi đĩa mới").
-  4. Dish is remade without customer surcharge; scrap is automatically recorded to the kitchen Waste Register.
+### 3.4. Kịch Bản 4: Khách Hủy Món Khi Đang Nấu Dở
+- **Bài toán thực tế**: Khách đổi ý hủy món Bít tết sau khi bếp đã nấu được 8 phút.
+- **Quy trình vận hành**:
+  1. Quản lý nhập mã PIN trên POS để duyệt hủy món.
+  2. SignalR phát sóng sự kiện hủy món tức thì tới KDS Bếp Nóng.
+  3. Món bít tết trên thẻ KDS **nhấp nháy đỏ kèm vạch gạch ngang chữ** và âm thanh cảnh báo: *"Món ăn đã bị hủy"*.
+  4. Đầu bếp chạm vào thẻ để xác nhận dừng nấu; món biến mất khỏi hàng đợi hoạt động.
+  5. Phần nguyên liệu thăn bò được tự động ghi nhận vào bảng `WasteLog` để hạch toán chi phí hao hụt nhà bếp.
 
 ---
 
-### 3.6. Scenario 6: Direct FOH Service Bypass (PDR-012)
-- Canned beer, bottled soft drinks, and packaged items bypass the Bar KDS preparation queue completely.
-- FOH staff dispense directly from dining area chillers, preventing Bar KDS station clutter.
+### 3.5. Kịch Bản 5: Làm Lại Món Do Lỗi Nhà Bếp (Remake Dish — PDR-015)
+- **Bài toán thực tế**: Món ăn bị khách từ chối tại bàn do lỗi nấu nướng (cháy, mặn, nhầm yêu cầu dị ứng).
+- **Quy trình vận hành**:
+  1. Phục vụ gửi yêu cầu Làm Lại Món kèm mã PIN Quản lý và mã phân loại lỗi.
+  2. Một **Thẻ KDS Làm Lại Màu Tím** ưu tiên cao xuất hiện ngay đầu hàng đợi chế biến tại trạm bếp chịu trách nhiệm.
+  3. Tiêu đề thẻ hiển thị: **"LÀM LẠI DO LỖI BẾP"** kèm chi tiết lỗi nổi bật (ví dụ: "Cháy khét - Đổi đĩa mới").
+  4. Món ăn được nấu lại khẩn trương mà không tính thêm tiền cho khách; chi phí suất ăn lỗi được tự động ghi vào Sổ Hao Phí Nhà Bếp.
 
 ---
 
-## 4. Hardware Fallback: ESC/POS Thermal Kitchen Printing
+### 3.6. Kịch Bản 6: Phân Tuyến Trực Tiếp Tại Quầy FOH (Direct FOH — PDR-012)
+- Bia lon, nước ngọt đóng chai và khăn lạnh được cấu hình cờ lấy trực tiếp tại tiền sảnh sẽ bỏ qua hoàn toàn hàng đợi pha chế của Bar KDS.
+- Nhân viên phục vụ lấy đồ trực tiếp từ tủ mát khu vực ăn uống, giảm tải cho nhân viên pha chế quầy bar trong giờ cao điểm.
 
-While SmartRestaurant prioritizes 100% digital, paperless KDS screens, physical restaurant reality requires resilient fallbacks:
-- If a KDS screen loses power, network connectivity, or suffers touchscreen hardware failure, the system supports a **Hardware Fallback Mode**:
-  - The waiter tablet detects the KDS node is offline and automatically redirects print jobs to a networked **ESC/POS thermal kitchen printer** over IP port 9100.
-  - When the screen re-boots and reconnects to SignalR, it re-fetches active unserved tickets and resumes digital operation without ticket loss.
+---
+
+## 4. Cơ Chế Dự Phòng Phần Cứng: In Nhiệt Phiếu Bếp ESC/POS (Hardware Fallback)
+
+Mặc dù SmartRestaurant ưu tiên tuyệt đối màn hình bếp KDS số hóa không dùng giấy, thực tế vận hành nhà hàng đòi hỏi phương án dự phòng tin cậy:
+- Nếu một màn hình KDS bị mất nguồn điện, đứt mạng hoặc hỏng cảm ứng, hệ thống kích hoạt **Chế Độ Dự Phòng Phần Cứng (Hardware Fallback Mode)**:
+  - Máy tính bảng phục vụ phát hiện màn hình KDS trạm bếp bị ngắt kết nối và tự động chuyển hướng lệnh in sang **máy in nhiệt nhà bếp ESC/POS** qua cổng IP mạng nội bộ (Port 9100).
+  - Khi màn hình KDS khởi động lại và kết nối lại SignalR, hệ thống tự động tải lại các thẻ món chưa phục vụ và tiếp tục vận hành số hóa bình thường mà không bị thất lạc bất kỳ đơn món nào.

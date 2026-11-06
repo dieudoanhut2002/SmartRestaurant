@@ -1,192 +1,193 @@
-# Business Requirements Specification (BRS) — SmartRestaurant
+# Đặc Tả Yêu Cầu Nghiệp Vụ (BRS) — SmartRestaurant
+## (Business Requirements Specification — BRS)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Related Documents**: [PRD.md](./PRD.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md), [DOMAIN-GLOSSARY.md](./DOMAIN-GLOSSARY.md)
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `CONFIRMED` (Chủ Dự án đã phê duyệt chính thức trong Task 02.6)
+- **Tài Liệu Liên Quan**: [PRD.md](./PRD.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md), [DOMAIN-GLOSSARY.md](./DOMAIN-GLOSSARY.md)
 
 ---
 
-## 1. Business Actors & Permission Matrix
+## 1. Ma Trận Vai Trò Nghiệp Vụ & Quyền Hạn (Business Actors & Permission Matrix)
 
-| Role | Scope & Operational Authority | Key Business Capabilities |
+| Vai Trò | Phạm Vi & Thẩm Quyền Vận Hành | Năng Lực Nghiệp Vụ Chính |
 | :--- | :--- | :--- |
-| **Franchise / System Owner** | Enterprise Organization | Global tenant management, brand catalog templates, branch creation. |
-| **Restaurant Manager** | Branch / Restaurant | Floor plan visual design, price editing, discount approval, void authorization, staff shifts, daily sales auditing. |
-| **Floor Captain / Head Waiter** | Dining Areas & Tables | Table reservations, seating allocation, table merges/splits, high-priority order escalation. |
-| **Waiter / Server** | Assigned Tables & FOH | Touch order creation, adding dish modifiers, sending orders to kitchen, printing pre-bills, table service alerts. |
-| **Head Chef / Kitchen Lead** | Kitchen Departments | Station ticket queue monitoring, expediter coordination, ingredient 86-ing (marking unavailable), prep time monitoring. |
-| **Line Cook / Kitchen Staff** | Designated Kitchen Station | Acknowledging incoming tickets, updating prep states (`Cooking` $\rightarrow$ `ReadyToServe`), reporting cooking errors. |
-| **Bartender / Barista** | Bar & Beverage Station | Managing drink queues, recipe adherence, updating drink readiness. |
-| **Runner / Expediter** | Pass / Kitchen Window | Coordinating multi-course completion, picking up finished dishes, matching tickets to table runners. |
-| **Cashier** | Cash Drawer & Settlement | Applying bill discounts, processing payments (Cash, Card, VietQR), splitting/merging invoices, daily cash reconciliation. |
-| **Stockkeeper / Inventory Staff** | Restaurant Warehouse | Inward inventory receipts, supplier tracking, recipe BOM audits, waste/spoilage logging. |
+| **Chủ Doanh Nghiệp / Quản Trị Hệ Thống (Franchise / System Owner)** | Toàn bộ Tổ chức Doanh nghiệp | Quản lý bên thuê (Tenant), mẫu danh mục thực đơn thương hiệu, tạo chi nhánh mới. |
+| **Quản Lý Nhà Hàng (Restaurant Manager)** | Chi nhánh / Cửa hàng | Thiết kế sơ đồ mặt bằng, chỉnh sửa giá món, duyệt chiết khấu, duyệt hủy món/hóa đơn, quản lý ca nhân viên, kiểm toán doanh số ngày. |
+| **Trưởng Ca / Giám Sát Bàn (Floor Captain / Head Waiter)** | Khu vực Ăn uống & Bàn ăn | Quản lý đặt bàn trước, xếp chỗ khách, gộp/tách bàn, chuyển tiếp đơn hàng ưu tiên gấp. |
+| **Nhân Viên Phục Vụ (Waiter / Server)** | Khu vực bàn được giao & Tiền sảnh | Tạo đơn gọi món cảm ứng, thêm tùy chọn món, bắn đơn xuống bếp, in phiếu tạm tính, nhận cảnh báo món xong. |
+| **Bếp Trưởng / Trưởng Bộ Phận Bếp (Head Chef / Kitchen Lead)** | Các Bộ phận Nhà bếp | Giám sát hàng đợi thẻ món các trạm, điều phối tiếp thực (Expediter), báo tạm hết món (86), theo dõi thời gian chế biến. |
+| **Đầu Bếp / Nhân Viên Nấu (Line Cook / Kitchen Staff)** | Trạm Bếp Chuyên Trách Được Giao | Xác nhận thẻ món nhận được, cập nhật tiến độ (`Đang nấu` $\rightarrow$ `Đã xong (Chờ bưng)`), báo sự cố nấu hỏng. |
+| **Nhân Viên Pha Chế (Bartender / Barista)** | Quầy Bar & Trạm Đồ Uống | Quản lý hàng đợi pha chế, tuân thủ công thức đồ uống, cập nhật trạng thái đồ uống hoàn thành. |
+| **Nhân Viên Tiếp Thực / Chạy Bàn (Runner / Expediter)** | Bàn Ra Món / Cửa Tiếp Thực | Phối hợp hoàn thiện các đợt món, tiếp nhận món đã nấu xong, khớp thẻ món với nhân viên bưng bàn. |
+| **Thu Ngân (Cashier)** | Quầy Thu Ngân & Két Tiền Mặt | Áp dụng giảm giá/voucher, xử lý thanh toán (Tiền mặt, Thẻ, VietQR), tách/gộp hóa đơn, đối soát tiền mặt cuối ca. |
+| **Thủ Kho / Nhân Viên Quản Lý Tồn Kho (Stockkeeper / Inventory Staff)**| Kho Hàng Nhà Hàng | Nhập hàng mua sắm, theo dõi nhà cung cấp, kiểm kê định lượng món (BOM), ghi sổ hao phí hỏng hóc. |
 
 ---
 
-## 2. Granular Functional Requirements by Business Domain
+## 2. Yêu Cầu Chức Năng Chi Tiết Theo Miền Nghiệp Vụ (Granular Functional Requirements)
 
-### 2.1. Domain 01: Restaurant Setup, Areas & Floor Plan
-- **BR-AREA-001 (Multi-Area Hierarchy)**: A restaurant branch must support multiple distinct dining areas (e.g., Indoor Ground Floor, Garden Terrace, Rooftop Lounge, Basement Wine Cellar).
-- **BR-AREA-002 (Rooms & VIP Enclosures)**: Within an area, the system must support independent rooms (e.g., Room 101, Banquet Hall) and dedicated VIP suites (e.g., VIP 1, VIP 2, VIP 3).
-- **BR-AREA-003 (Visual 2D Floor Plan Canvas)**:
-  - Managers must be able to design floor plans using an interactive drag-and-drop canvas.
-  - Supports configurable table geometries: Round (2, 4, 8 seats), Rectangular (2, 4, 6, 8, 10 seats), Square (2, 4 seats), and L-shaped / Booth seating.
-  - Supports architectural obstacles: Pillars, interior walls, service counters, doors, and walkways to mirror physical reality accurately.
-- **BR-AREA-004 (Whole Room / Area Booking)**:
-  - The system must allow booking or occupying an entire room or area for private corporate events or banquets, automatically locking all child tables from walk-in assignment.
-- **BR-AREA-005 (Table Status Real-Time Visualization)**:
-  - Table nodes on the floor plan must dynamically display color-coded status badges:
-    - `Available` (Green / Neutral): Ready for new guest seating.
-    - `Reserved` (Blue): Reserved for upcoming party with arrival countdown.
-    - `Occupied` (Yellow / Amber): Guests seated, active order in progress.
-    - `BillingRequested` (Purple): Pre-bill printed, guests awaiting payment settlement.
-    - `CleaningNeeded` (Orange): Bill settled, guests departed, awaiting sanitization.
-    - `OutOfService` (Gray): Broken furniture, maintenance, or closed section.
+### 2.1. Miền 01: Thiết Lập Nhà Hàng, Khu Vực & Sơ Đồ Bàn (Restaurant Setup, Areas & Floor Plan)
+- **BR-AREA-001 (Phân Cấp Đa Khu Vực)**: Một chi nhánh nhà hàng phải hỗ trợ nhiều khu vực ăn uống riêng biệt (ví dụ: *Tầng 1 Trong Nhà*, *Sân Vườn Ngoài Trời*, *Phòng VIP*, *Khu Vực Tầng Thượng*).
+- **BR-AREA-002 (Phòng Ăn & Phòng VIP Riêng Biệt)**: Trong một khu vực, hệ thống phải hỗ trợ các phòng độc lập (ví dụ: *Phòng 101*, *Sảnh Tiệc*) và các phòng VIP riêng biệt (ví dụ: *VIP 1*, *VIP 2*, *VIP 3*).
+- **BR-AREA-003 (Canvas Sơ Đồ Bàn 2D Trực Quan)**:
+  - Quản lý có thể tự thiết kế sơ đồ mặt bằng bằng công cụ kéo thả tương tác.
+  - Hỗ trợ các hình dạng bàn cấu hình linh hoạt: Bàn tròn (2, 4, 8 ghế), Bàn chữ nhật (2, 4, 6, 8, 10 ghế), Bàn vuông (2, 4 ghế) và Bàn ghế sofa chữ L / Booth.
+  - Hỗ trợ vẽ các vật cản kiến trúc: Cột nhà, tường ngăn, quầy thu ngân, cửa ra vào và lối đi để phản ánh chính xác thực tế mặt bằng.
+- **BR-AREA-004 (Bao Trọn Phòng / Đặt Nguyên Khu Vực)**:
+  - Hệ thống cho phép đặt trước hoặc phục vụ bao trọn một phòng hoặc một khu vực cho các sự kiện tiệc riêng tư của doanh nghiệp, tự động khóa toàn bộ các bàn con bên trong không cho khách vãng lai ngồi.
+- **BR-AREA-005 (Trực Quan Hóa Trạng Thái Bàn Thời Gian Thực)**:
+  - Điểm bàn trên sơ đồ mặt bằng phải hiển thị huy hiệu trạng thái theo mã màu trực quan:
+    - `Available` (Màu xanh lá / Trung tính): Bàn trống, sẵn sàng đón lượt khách mới.
+    - `Reserved` (Màu xanh dương): Đã có khách hẹn trước, kèm đồng hồ đếm ngược giờ đến.
+    - `Occupied` (Màu vàng hổ phách): Đang có khách ngồi ăn, có đơn hàng đang hoạt động.
+    - `BillingRequested` (Màu tím): Khách đã yêu cầu in phiếu tạm tính, đang chờ thu tiền.
+    - `CleaningNeeded` (Màu cam): Đã thanh toán xong, khách đã rời đi, chờ nhân viên dọn bàn.
+    - `OutOfService` (Màu xám): Bàn bị hỏng, bảo trì hoặc khu vực tạm thời đóng cửa.
 
-### 2.2. Domain 02: Menu Catalog, Modifiers & Kitchen Station Mapping
-- **BR-MENU-001 (Category Structure)**: Multi-level hierarchy (Category $\rightarrow$ Subcategory $\rightarrow$ Dish/Beverage) with custom sorting orders and display icons.
-- **BR-MENU-002 (Product Variants & Sizes)**:
-  - Standard items can have portion size variants (e.g., Small, Medium, Large; 0.5kg vs 1.0kg) with variant-specific pricing and SKUs.
-- **BR-MENU-003 (Modifier Groups & Add-ons)**:
-  - **Single-choice required** (e.g., Choose noodle type: Pho / Egg noodle).
-  - **Multi-choice optional with min/max caps** (e.g., Toppings: Choose min 0, max 3 from 10 choices).
-  - **Cooking attributes**: Sugar levels (0%, 30%, 50%, 100%), Ice levels (No ice, Less ice, Normal), Spicy levels (Mild, Medium, Hot, Extra hot).
-  - **Allergen flags**: Gluten-free, Peanuts, Shellfish, Dairy.
-- **BR-MENU-004 (Dynamic Station Routing Rule)**:
-  - Every dish item must be bound to a target kitchen department (`HotKitchen`, `ColdKitchen`, `BarStation`, `BakeryStation`).
-  - Items can have override routing rules based on variant (e.g., Bottled Beer $\rightarrow$ Waiter Pickup Station; Cocktail $\rightarrow$ Bar Station).
-- **BR-MENU-005 (Stock Availability & 86-ing)**:
-  - Kitchen leads or managers can mark any dish as `Temporarily Unavailable` (86-ed).
-  - Unavailable dishes immediately lock on all waiter tablets and POS screens with visual disabled styling to prevent taking unavailable orders.
+### 2.2. Miền 02: Thực Đơn, Tùy Chọn & Ánh Xạ Trạm Bếp (Menu Catalog, Modifiers & Routing)
+- **BR-MENU-001 (Cấu Trúc Danh Mục Phân Cấp)**: Phân cấp đa tầng (Danh mục lớn $\rightarrow$ Danh mục con $\rightarrow$ Món ăn / Đồ uống) kèm thứ tự sắp xếp tùy chỉnh và biểu tượng hiển thị.
+- **BR-MENU-002 (Biến Thể & Kích Cỡ Món Ăn)**:
+  - Các món tiêu chuẩn có thể có các biến thể kích cỡ (ví dụ: Nhỏ, Vừa, Lớn; 0.5kg vs 1.0kg) với giá bán và mã SKU riêng biệt.
+- **BR-MENU-003 (Nhóm Tùy Chọn & Món Ăn Kèm - Topping)**:
+  - **Bắt buộc chọn 1 (Single-choice required)**: Ví dụ: Chọn loại sợi bánh: Phở / Bún / Mì trứng.
+  - **Tự chọn nhiều có giới hạn (Multi-choice optional with min/max caps)**: Ví dụ: Topping: Chọn tối thiểu 0, tối đa 3 trong 10 lựa chọn.
+  - **Thuộc tính chế biến**: Mức đường (0%, 30%, 50%, 100%), Mức đá (Không đá, Ít đá, Bình thường), Độ cay (Không cay, Cay vừa, Cay nồng, Siêu cay).
+  - **Cờ cảnh báo dị ứng**: Không chứa gluten, Đậu phộng, Hải sản, Sữa.
+- **BR-MENU-004 (Quy Tắc Phân Tuyến Trạm Bếp Động)**:
+  - Mọi món ăn phải được liên kết với một bộ phận bếp phụ trách (`HotKitchen`, `ColdKitchen`, `BarStation`, `BakeryStation`).
+  - Hỗ trợ quy tắc ghi đè trạm theo biến thể món (ví dụ: Bia chai đóng sẵn $\rightarrow$ Trạm lấy đồ FOH của phục vụ; Cocktail pha chế $\rightarrow$ Quầy Bar).
+- **BR-MENU-005 (Tồn Khả Dụng & Báo Tạm Hết Món - 86)**:
+  - Trưởng bếp hoặc quản lý có thể đánh dấu bất kỳ món ăn nào là `Tạm hết món` (86 / Out-of-Stock).
+  - Món bị báo hết sẽ ngay lập tức bị khóa trên toàn bộ máy tính bảng phục vụ và màn hình POS kèm hiệu ứng làm mờ để ngăn chặn việc nhận đơn món đã hết.
 
-### 2.3. Domain 03: POS, Order Capture & Table Service
-- **BR-ORD-001 (Session Initialization)**: Seating guests on an `Available` table creates a distinct `DiningSession` with customer headcount and server attribution.
-- **BR-ORD-002 (Order Composition & Draft Cart)**:
-  - Servers compose orders via touch grid, searching by dish name, abbreviation (e.g., "BCT" for Bò Cuộn Tiêu), or category.
-  - Adding modifiers, free-form special notes (e.g., "less salt for elderly guest"), and customer-specific allergies.
-- **BR-ORD-003 (Firing Order to Kitchen)**:
-  - On tapping "Send to Kitchen" (Fire), the draft cart items are validated, committed to the database, and dispatched via SignalR to target KDS stations.
-- **BR-ORD-004 (Incremental / Additional Orders)**:
-  - Guests can order additional rounds of drinks, dishes, or desserts at any time.
-  - New items append to the active dining session as Round 2, Round 3, etc., preserving ticket timestamps and routing independently without modifying previously cooked dishes.
-- **BR-ORD-005 (Table Operations — Move & Merge)**:
-  - **Table Move**: Server transfers active session from Table 12 to Table 15 (e.g., guest moves from indoor to outdoor terrace). All unbilled items, KDS tickets, and pre-bills carry over seamlessly.
-  - **Table Merge**: Combine Table 4 and Table 5 into a single master order (e.g., two parties joining together). Sub-tickets merge into one consolidated billing account.
-- **BR-ORD-006 (Multi-Table Orders)**:
-  - A single large banquet party can occupy multiple physical tables (e.g., Tables 21, 22, and 23) under a unified dining session and single master bill.
+### 2.3. Miền 03: POS, Tiếp Nhận Đơn & Dịch Vụ Tại Bàn (POS, Order Capture & Table Service)
+- **BR-ORD-001 (Khởi Tạo Lượt Khách)**: Xếp khách vào một bàn đang `Trống` sẽ tạo ra một `Lượt khách` (DiningSession) riêng biệt kèm số lượng khách và nhân viên phục vụ phụ trách.
+- **BR-ORD-002 (Tạo Đơn Hàng & Giỏ Hàng Nháp)**:
+  - Phục vụ chọn món qua lưới cảm ứng, tìm kiếm theo tên món, viết tắt (ví dụ: "BCT" cho Bò Cuộn Tiêu) hoặc duyệt danh mục.
+  - Thêm tùy chọn, ghi chú riêng bằng văn bản tự do (ví dụ: "ít muối cho người lớn tuổi") và ghi nhận thông tin dị ứng của khách.
+- **BR-ORD-003 (Báo Bếp / Bắn Đơn Xuống Bếp)**:
+  - Khi bấm "Báo bếp" (Fire to Kitchen), các món trong giỏ hàng nháp được xác thực hợp lệ, lưu vào cơ sở dữ liệu và phát sóng qua SignalR tới các trạm bếp KDS đích.
+- **BR-ORD-004 (Gọi Thêm Món Theo Đợt)**:
+  - Khách có thể gọi thêm các đợt đồ uống, món ăn hoặc tráng miệng bất kỳ lúc nào.
+  - Các món mới được nối thêm vào lượt khách hiện tại dưới dạng Đợt 2, Đợt 3, v.v., bảo toàn dấu ấn thời gian và phân tuyến độc lập mà không ảnh hưởng tới các món đã nấu trước đó.
+- **BR-ORD-005 (Nghiệp Vụ Bàn — Chuyển Bàn & Gộp Bàn)**:
+  - **Chuyển bàn (Move Table)**: Phục vụ chuyển lượt khách đang phục vụ từ Bàn 12 sang Bàn 15 (ví dụ: khách chuyển từ trong nhà ra sân vườn). Toàn bộ các món chưa thanh toán, thẻ KDS và phiếu tạm tính được chuyển tiếp nguyên vẹn.
+  - **Gộp bàn (Merge Tables)**: Kết hợp Bàn 4 và Bàn 5 thành một đơn chính duy nhất (ví dụ: hai đoàn khách nhập lại). Các phiếu con được gom vào một tài khoản hóa đơn tổng.
+- **BR-ORD-006 (Đơn Nhiều Bàn Cho Đoàn Lớn)**:
+  - Một đoàn tiệc lớn có thể ngồi chiếm nhiều bàn vật lý (ví dụ: Bàn 21, 22, và 23) dưới một lượt khách thống nhất và một hóa đơn tổng đại diện.
 
-### 2.4. Domain 04: Kitchen Display System (KDS) & Prep Routing
-- **BR-KDS-001 (Automated Ticket Decomposition)**:
-  - When Order #104 contains (2x Steak, 1x Caesar Salad, 2x Cocktails), the system splits the order:
-    - Hot Kitchen KDS receives: `2x Steak`.
-    - Cold Station KDS receives: `1x Caesar Salad`.
-    - Bar KDS receives: `2x Cocktails`.
-    - Master Expediter KDS receives all 5 items with table location (#12).
-- **BR-KDS-002 (KDS Ticket Lifecycle States)**:
-  - Line items progress through strictly defined operational states:
-    - `Pending`: Placed by server; awaiting chef pickup.
-    - `Cooking`: Chef has started active preparation.
-    - `ReadyToServe`: Placed at pickup window / pass; runner alerted.
-    - `Served`: Delivered to guest table; cleared from active KDS queue.
-- **BR-KDS-003 (SLA Wait-Time Alerts & Color Thresholds)**:
-  - Every kitchen card tracks active elapsed minutes since firing:
-    - **Green Badge**: Elapsed time $< 10$ minutes.
-    - **Yellow Badge**: Elapsed time $10 - 20$ minutes.
-    - **Red / Flashing Alert**: Elapsed time $> 20$ minutes (Overdue SLA breach).
-- **BR-KDS-004 (Course Firing & Hold)**:
-  - Waiters can mark specific items as "Hold" (e.g., Dessert held until mains are cleared). Held items appear greyed out on KDS until the server explicitly taps "Fire Next Course".
+### 2.4. Miền 04: Màn Hình Bếp KDS & Điều Phối Chế Biến (KDS & Prep Routing)
+- **BR-KDS-001 (Tự Động Tách Thẻ Món Theo Trạm)**:
+  - Khi Đơn #104 gồm (2x Bít tết, 1x Salad Caesar, 2x Cocktail), hệ thống tự động tách đơn:
+    - KDS Bếp Nóng nhận: `2x Bít tết`.
+    - KDS Bếp Nguội nhận: `1x Salad Caesar`.
+    - KDS Quầy Bar nhận: `2x Cocktail`.
+    - KDS Bàn Ra Món (Expediter) nhận đầy đủ cả 5 món kèm vị trí số bàn (#12).
+- **BR-KDS-002 (Các Trạng Thái Vòng Đời Thẻ Món KDS)**:
+  - Các món ăn tiến triển qua các trạng thái vận hành được định nghĩa nghiêm ngặt:
+    - `Pending` (Chờ chế biến): Phục vụ vừa bắn đơn; đang trong hàng đợi chờ đầu bếp nhận nấu.
+    - `Cooking` (Đang nấu): Đầu bếp đã bấm xác nhận bắt đầu chế biến.
+    - `ReadyToServe` (Đã xong, chờ bưng): Đã nấu xong, đặt tại cửa sổ ra món; chuông báo phục vụ.
+    - `Served` (Đã phục vụ): Đã bưng lên bàn khách thành công; xóa khỏi hàng đợi KDS hoạt động.
+- **BR-KDS-003 (Đồng Hồ Cảnh Báo SLA & Ngưỡng Màu Sắc)**:
+  - Mỗi thẻ món theo dõi thời gian trôi qua thực tế kể từ khi báo bếp:
+    - **Huy hiệu Xanh lá**: Thời gian trôi qua $< 10$ phút.
+    - **Huy hiệu Vàng**: Thời gian trôi qua $10 - 20$ phút.
+    - **Cảnh báo Đỏ nhấp nháy**: Thời gian trôi qua $> 20$ phút (Vi phạm cam kết chất lượng SLA).
+- **BR-KDS-004 (Tạm Giữ Món & Báo Nấu Món Giữ)**:
+  - Nhân viên phục vụ có thể đánh dấu món ở trạng thái "Tạm giữ" (ví dụ: Món tráng miệng tạm giữ cho đến khi ăn xong món chính). Món tạm giữ hiển thị màu xám mờ trên KDS cho đến khi phục vụ bấm "Báo nấu món giữ".
 
-### 2.5. Domain 05: Cashier, Billing & Multi-Channel Payments
-- **BR-BIL-001 (Bill Calculation Engine)**:
-  $$\text{Item Total} = \sum (\text{Base Price} + \text{Modifiers}) \times \text{Quantity}$$
-  $$\text{Subtotal} = \sum \text{Item Totals} - \text{Item-Level Discounts}$$
-  $$\text{Discounted Amount} = \text{Subtotal} - \text{Order-Level Voucher}$$
-  $$\text{Service Charge} = \text{Discounted Amount} \times \text{ServiceChargeRate (e.g., 5\%)}$$
-  $$\text{Tax Base} = \text{Discounted Amount} + \text{Service Charge}$$
-  $$\text{VAT Tax} = \text{Tax Base} \times \text{VAT Rate (e.g., 8\% or 10\%)}$$
-  $$\text{Final Payable Amount} = \text{Tax Base} + \text{VAT Tax} + \text{Surcharges}$$
-- **BR-BIL-002 (Bill Splitting Modes)**:
-  - **Split by Selected Items**: Move item A & B to Bill 1, item C & D to Bill 2. Taxes and discounts re-calculate proportionally on each split bill.
-  - **Split Evenly (Equal Divide)**: Total payable amount divided by $N$ equal parts (e.g., 4 guests splitting a 1,200,000 VND bill pay 300,000 VND each).
-- **BR-BIL-003 (Multi-Tender Payments)**:
-  - A bill can be settled using multiple payment methods (e.g., 500,000 VND Cash + 700,000 VND VietQR transfer).
-- **BR-BIL-004 (VietQR Automated Integration)**:
-  - Display dynamic VietQR payload (Bank Bin, Account No, Exact Amount, Unique Payment Reference Code).
-  - Cashier screen confirms payment upon verified transaction callback or cashier manual check.
-- **BR-BIL-005 (Cash Drawer & Shift Operations)**:
-  - Mandatory Shift Open: Cashier inputs opening float (e.g., 2,000,000 VND change fund).
-  - Shift Close: Cashier performs blind drop cash count; system generates discrepancy analysis ($\text{Expected} - \text{Actual}$) and prints Z-Report.
+### 2.5. Miền 05: Thu Ngân, Tính Tiền & Thanh Toán Đa Kênh (Cashier, Billing & Multi-Channel Payments)
+- **BR-BIL-001 (Công Thức Tính Tiền Chuẩn Hóa)**:
+  $$\text{Tổng tiền món} = \sum (\text{Giá gốc} + \text{Tùy chọn thêm}) \times \text{Số lượng}$$
+  $$\text{Tiền món tạm tính (Subtotal)} = \sum \text{Tổng tiền món} - \text{Chiết khấu theo món}$$
+  $$\text{Số tiền sau giảm giá} = \text{Tiền món tạm tính} - \text{Voucher toàn đơn}$$
+  $$\text{Phí dịch vụ} = \text{Số tiền sau giảm giá} \times \text{Tỷ lệ phí dịch vụ (ví dụ: 5\%)}$$
+  $$\text{Căn cứ tính thuế GTGT} = \text{Số tiền sau giảm giá} + \text{Phí dịch vụ}$$
+  $$\text{Thuế GTGT (VAT)} = \text{Căn cứ tính thuế} \times \text{Thuế suất GTGT (ví dụ: 8\% hoặc 10\%)}$$
+  $$\text{Tổng thanh toán} = \text{Căn cứ tính thuế} + \text{Thuế GTGT} + \text{Các khoản phụ thu}$$
+- **BR-BIL-002 (Các Chế Độ Tách Hóa Đơn)**:
+  - **Tách theo món được chọn**: Chuyển món A & B sang Hóa đơn 1, món C & D sang Hóa đơn 2. Thuế và giảm giá được tính toán lại theo tỷ lệ tương ứng trên từng hóa đơn tách.
+  - **Chia đều (1/N)**: Lấy tổng số tiền thanh toán chia đều cho $N$ phần bằng nhau (ví dụ: 4 khách chia hóa đơn 1.200.000 ₫ sẽ trả 300.000 ₫ mỗi người).
+- **BR-BIL-003 (Thanh Toán Kết Hợp Nhiều Hình Thức - Multi-Tender)**:
+  - Một hóa đơn có thể được thanh toán bằng nhiều hình thức kết hợp (ví dụ: 500.000 ₫ Tiền mặt + 700.000 ₫ Chuyển khoản VietQR).
+- **BR-BIL-004 (Tích Hợp Tự Động Mã QR Động VietQR)**:
+  - Hiển thị mã VietQR động gồm Mã định danh ngân hàng (BIN), Số tài khoản, Số tiền chính xác và Mã tham chiếu thanh toán duy nhất.
+  - Màn hình thu ngân tự động xác nhận thanh toán khi nhận được webhook giao dịch thành công hoặc đối soát thủ công.
+- **BR-BIL-005 (Quản Lý Két Tiền & Vận Hành Ca)**:
+  - Bắt buộc Mở ca: Thu ngân nhập số tiền mặt đầu ca chuẩn bị trong két (ví dụ: 2.000.000 ₫ tiền thối).
+  - Chốt ca: Thu ngân thực hiện đếm tiền mù (Blind Drop); hệ thống đối soát chênh lệch ($\text{Số thực đếm} - \text{Hệ thống tính}$) và in báo cáo chốt ca Z-Report.
 
-### 2.6. Domain 06: Vietnamese Market Localization & Printing Compliance
-- **BR-LOC-001 (100% Vietnamese Interface)**:
-  - All FOH, BOH, Cashier, and Admin screens must display natural, professional Vietnamese adhering strictly to [VIETNAMESE-LOCALIZATION-STANDARD.md](./VIETNAMESE-LOCALIZATION-STANDARD.md).
-- **BR-LOC-002 (Vietnam Regional Formats)**:
-  - Currency displayed in VND formatted as `#,,### ₫` (no decimal cents).
-  - Date formatted as `dd/MM/yyyy`, time formatted in 24h `HH:mm:ss`, timezone fixed to `Asia/Ho_Chi_Minh` (UTC+7).
-- **BR-LOC-003 (Thermal Bill Printing Standards)**:
-  - Pre-bills ("Phiếu tạm tính") and final VAT invoices ("Hóa đơn thanh toán") must print with full Vietnamese diacritics via UTF-8 ESC/POS (with CodePage 1258 and unaccented ASCII fallback).
-- **BR-LOC-004 (E-Invoice Phase-In Readiness)**:
-  - Invoices must structure customer tax metadata (Company Name, Tax Code / Mã số thuế, Address, Email) to enable seamless connection to Vietnamese E-Invoice providers (Thông tư 78/Nghị định 123) in post-MVP releases.
+### 2.6. Miền 06: Bản Địa Hóa Thị Trường Việt Nam & Quy Chuẩn In Ấn
+- **BR-LOC-001 (Giao Diện Tiếng Việt 100%)**:
+  - Toàn bộ màn hình FOH, BOH, Thu ngân và Quản trị hiển thị tiếng Việt tự nhiên, chuẩn mực, tuân thủ nghiêm ngặt [VIETNAMESE-LOCALIZATION-STANDARD.md](./VIETNAMESE-LOCALIZATION-STANDARD.md).
+- **BR-LOC-002 (Định Dạng Quy Chuẩn Khu Vực Việt Nam)**:
+  - Tiền tệ hiển thị theo đồng Việt Nam định dạng `#,,### ₫` (không có phần thập phân lẻ).
+  - Ngày tháng định dạng `dd/MM/yyyy`, thời gian định dạng 24h `HH:mm:ss`, múi giờ cố định `Asia/Ho_Chi_Minh` (UTC+7).
+- **BR-LOC-003 (Tiêu Chuẩn In Ấn Phiếu Nhiệt ESC/POS)**:
+  - Phiếu tạm tính và Hóa đơn thanh toán phải in đầy đủ dấu tiếng Việt qua mã hóa UTF-8 ESC/POS (kèm mã trang CodePage 1258 và phương án dự phòng ASCII không dấu).
+- **BR-LOC-004 (Sẵn Sàng Hóa Đơn Điện Tử Khởi Tạo Từ Máy Tính Tiền)**:
+  - Hóa đơn lưu trữ đầy đủ siêu dữ liệu thuế của khách hàng (Tên công ty, Mã số thuế, Địa chỉ, Email) để sẵn sàng kết nối API với các nhà cung cấp giải pháp HĐĐT theo Thông tư 78/Nghị định 123 trong các bản phát hành sau MVP.
 
 ---
 
-## 3. Explicit Business Rules & Validation Policies
+## 3. Các Quy Tắc Nghiệp Vụ Bắt Buộc & Chính Sách Ràng Buộc (Business Rules & Policies)
 
-| Rule ID | Domain | Business Rule Statement | Enforcement Level |
+| Mã Quy Tắc | Miền Nghiệp Vụ | Phát Biểu Quy Tắc Nghiệp Vụ | Cấp Độ Thực Thi |
 | :--- | :--- | :--- | :--- |
-| **BR-RULE-01** | Table Management | A table cannot be assigned to a new guest session if its status is `Occupied`, `BillingRequested`, or `CleaningNeeded`. | Hard System Block |
-| **BR-RULE-02** | Order Amendments | Once an item state is `Cooking` or `ReadyToServe`, a waiter CANNOT delete or cancel it without Manager PIN override and a mandatory cancellation reason. | Manager Authorization |
-| **BR-RULE-03** | Waste Attribution | Any item cancelled after entering `Cooking` state MUST be logged to the kitchen Waste Register (logged as direct portion scrap loss in MVP; BOM deduction in v1.1). | Automatic Compliance |
-| **BR-RULE-04** | Table Transfer | A table transfer is rejected if the destination table is currently occupied by an active session. | Hard System Block |
-| **BR-RULE-05** | Discount Stacking | Item-level promotional discounts cannot stack with an order-level percentage voucher unless explicitly enabled in restaurant settings. | Configurable Policy |
-| **BR-RULE-06** | Editable BillingRequested Status | When a table is in `BillingRequested` status, the existing unpaid bill remains fully editable. Staff may add, remove, or modify items (subject to permissions and audit logging). Newly ordered items default to being appended to the existing unpaid bill, or staff may explicitly choose to create a new sub-bill. Multiple sub-bills may coexist and be settled independently. The table is released ONLY when 100% of bills are paid and all service obligations are fulfilled. Direct modification of paid bills is strictly prohibited. | Operational Flexibility & Audit Guard |
-| **BR-RULE-07** | Shift Closure | A cashier cannot close their active shift if there are unpaid open bills initiated by that cashier's terminal. | Hard System Block |
-| **BR-RULE-08** | Business Date Shift | All orders and invoices created within an active shift belong to the shift's `BusinessDate` (configured per branch, default 06:00), preserving financial continuity across midnight. | Accounting Invariant |
-| **BR-RULE-09** | Two-Phase Inventory Lock | Firing an order reserves countable stock (`Tạm giữ`); kitchen completion or service converts to actual consumption (`Xuất kho`). Formula: `Available = Physical - Reserved`. Prevents overselling. | Inventory Integrity |
-| **BR-RULE-10** | VietQR Race Resolution | Switching payment to Cash invalidates the active QR token; late-arriving bank webhooks route to `Giao dịch treo đối soát` (Suspense Ledger) with immediate audio-visual alert for manual review. | Payment Safety |
-| **BR-RULE-11** | Multi-Bill Split Sessions | Tables undergoing Split Bill DO NOT freeze the table. Servers can continue adding new dishes to open sub-bills with explicit target assignment. Table releases only when 100% of sub-bills are paid and all items served. | Lifecycle Invariant |
-| **BR-RULE-12** | Table Unmerge with Item Reallocation | Joined tables can be unmerged at any time with line items reallocated to the detached table, preserving preparation states without re-firing kitchen tickets. | Operation Guard |
-| **BR-RULE-13** | Room & Area Surcharge Snapshot | VIP rooms and areas support percentage and flat fee surcharges snapshotted at bill creation; moving tables does not recalculate existing items retroactively. | Billing Transparency |
-| **BR-RULE-14** | Direct FOH Service Routing | Packaged drinks and direct grab items bypass Bar KDS preparation queues but remain fully bound to billing, revenue, and inventory controls. | Prep Efficiency |
-| **BR-RULE-15** | Kitchen Error Remake Dish | Dishes remade due to kitchen error incur no extra charge to the guest, generate high-priority KDS remake tickets, and log raw material loss to the Waste Register. | Quality & Accounting |
-| **BR-RULE-16** | Non-Blocking Concurrent Ordering | Multiple waiters can compose orders for the same table concurrently without table lockouts; system ensures append-only safety and detects item-level update conflicts. | Concurrency Rule |
+| **BR-RULE-01** | Quản lý Bàn | Bàn không thể được gán cho lượt khách mới nếu đang ở trạng thái `Occupied` (Có khách), `BillingRequested` (Đang thanh toán), hoặc `CleaningNeeded` (Cần dọn dẹp). | Chặn Cứng Hệ Thống (Hard System Block) |
+| **BR-RULE-02** | Điều chỉnh Đơn | Khi món ăn đã chuyển sang trạng thái `Cooking` (Đang nấu) hoặc `ReadyToServe` (Đã xong, chờ bưng), phục vụ KHÔNG THỂ xóa hoặc hủy món nếu thiếu mã PIN Quản lý ủy quyền và lý do hủy bắt buộc. | Phê Duyệt Của Quản Lý (Manager Authorization) |
+| **BR-RULE-03** | Quy trách nhiệm Hao phí | Bất kỳ món ăn nào bị hủy sau khi đã vào trạng thái `Cooking` BẮT BUỘC phải được ghi nhận vào Sổ Ghi Nhận Hao Phí Nhà Bếp (Waste Register) (ghi nhận trực tiếp theo đơn vị suất ăn trong MVP; trừ BOM nguyên liệu trong v1.1). | Tự Động Tuân Thủ (Automatic Compliance) |
+| **BR-RULE-04** | Chuyển Bàn | Yêu cầu chuyển bàn bị từ chối nếu bàn đích hiện đang có một lượt khách khác đang hoạt động. | Chặn Cứng Hệ Thống (Hard System Block) |
+| **BR-RULE-05** | Cộng dồn Khuyến mãi | Giảm giá khuyến mãi theo từng món không được cộng dồn với voucher giảm giá theo phần trăm toàn đơn, trừ khi được bật rõ trong cấu hình cài đặt của nhà hàng. | Chính Sách Cấu Hình (Configurable Policy) |
+| **BR-RULE-06** | Bàn Đang Thanh Toán Vẫn Cho Phép Sửa Đổi | Khi bàn đang ở trạng thái `BillingRequested` (Đang thanh toán), hóa đơn chưa thanh toán vẫn hoàn toàn được phép chỉnh sửa. Nhân viên có thể thêm, bớt hoặc điều chỉnh món (tuân thủ phân quyền và lưu vết kiểm toán). Món mới gọi thêm mặc định được nối tiếp vào hóa đơn chưa thanh toán hiện có, hoặc nhân viên có thể chủ động chọn tạo một hóa đơn con mới. Nhiều hóa đơn con có thể cùng tồn tại và được thanh toán độc lập. Bàn CHỈ ĐƯỢC GIẢI PHÓNG khi 100% hóa đơn đã thanh toán và hoàn tất phục vụ. Nghiêm cấm trực tiếp sửa đổi các hóa đơn đã thanh toán xong. | Linh Hoạt Vận Hành & Bảo Vệ Kiểm Toán |
+| **BR-RULE-07** | Chốt Ca Thu Ngân | Thu ngân không thể đóng ca làm việc nếu vẫn còn hóa đơn mở chưa thanh toán do thiết bị của thu ngân đó khởi tạo. | Chặn Cứng Hệ Thống (Hard System Block) |
+| **BR-RULE-08** | Ngày Kinh Doanh Theo Ca | Toàn bộ đơn hàng và hóa đơn tạo trong một ca làm việc đang mở đều thuộc về `BusinessDate` của ca đó (cấu hình theo chi nhánh, mặc định mốc cắt 06:00 sáng), bảo toàn tính liên tục kế toán xuyên nửa đêm. | Bất Biến Kế Toán (Accounting Invariant) |
+| **BR-RULE-09** | Khóa Tồn Kho Hai Pha | Bắn đơn xuống bếp sẽ khóa tạm giữ tồn kho hàng đếm được (`ReservedStock`); bếp nấu xong hoặc phục vụ hoàn thành sẽ chuyển sang tiêu hao thực tế (`ConsumedStock`). Công thức: $\text{Khả dụng} = \text{Thực tế} - \text{Tạm giữ}$. Chống bán âm kho. | Toàn Vẹn Tồn Kho (Inventory Integrity) |
+| **BR-RULE-10** | Xử Lý Tranh Chấp Thanh Toán VietQR | Khi chuyển phương thức thanh toán sang Tiền mặt, mã QR đang mở bị vô hiệu hóa; webhook ngân hàng đến muộn được điều hướng vào `Giao dịch treo đối soát` (Suspense Ledger) kèm cảnh báo thị giác/âm thanh tức thì để quản lý đối soát thủ công. | An Toàn Thanh Toán (Payment Safety) |
+| **BR-RULE-11** | Tách Bill Không Khóa Bàn | Bàn đang thực hiện tách hóa đơn KHÔNG BỊ ĐÓNG BĂNG. Nhân viên phục vụ tiếp tục gọi thêm món vào các hóa đơn con đang mở với chỉ định đích rõ ràng. Bàn chỉ giải phóng khi 100% hóa đơn con đã thanh toán và toàn bộ món đã phục vụ. | Bất Biến Vòng Đời (Lifecycle Invariant) |
+| **BR-RULE-12** | Hủy Gộp Bàn Phân Bổ Lại Món | Các bàn đã gộp có thể hủy gộp bất kỳ lúc nào; nhân viên phân bổ lại các món ăn tương ứng về bàn tách ra mà không phải bắn lại phiếu chế biến xuống nhà bếp. | Bảo Vệ Vận Hành (Operation Guard) |
+| **BR-RULE-13** | Lưu Vết Phụ Thu Phòng & Khu Vực | Phòng VIP và khu vực hỗ trợ phụ thu theo tỷ lệ % hoặc số tiền cố định được chốt số liệu tại thời điểm tạo hóa đơn; thao tác chuyển bàn không tính toán lại hồi tố các món đã dùng trước đó. | Minh Bạch Hóa Đơn (Billing Transparency) |
+| **BR-RULE-14** | Phân Tuyến Trực Tiếp Tại Quầy FOH | Đồ uống đóng chai sẵn và món lấy ngay được phục vụ trực tiếp tại quầy FOH, bỏ qua hàng đợi pha chế của Bar KDS nhưng vẫn bảo đảm liên kết đầy đủ với kiểm soát hóa đơn, doanh thu và tồn kho. | Tối Ưu Tốc Độ Pha Chế |
+| **BR-RULE-15** | Làm Lại Món Do Lỗi Bếp (Remake Dish) | Món ăn nấu lại do lỗi nhà bếp không tính thêm tiền cho khách, sinh thẻ KDS làm lại món ưu tiên cao và tự động ghi nhận tổn thất nguyên liệu vào Sổ Ghi Nhận Hao Phí (WasteLog). | Chất Lượng & Kế Toán |
+| **BR-RULE-16** | Gọi Món Đồng Thời Không Khóa Bàn | Nhiều nhân viên phục vụ có thể cùng lúc chọn món vào một bàn mà không bị khóa chặn bàn; hệ thống bảo đảm cơ chế chỉ nối thêm (append-only) an toàn và phát hiện xung đột cập nhật từng món. | Kiểm Soát Đồng Thời (Concurrency Rule) |
 
 ---
 
-## 4. Exceptional Business Workflows & Error Handling
+## 4. Xử Lý Tình Huống Ngoại Lệ & Quy Trình Lỗi (Exceptional Workflows)
 
 ```mermaid
 flowchart TD
-    E1[Exceptional Event] --> A{Type of Exception}
+    E1["Sự Cố Ngoại Lệ Phát Sinh"] --> A{"Loại Sự Cố Ngoại Lệ"}
 
-    A -->|Item Cancelled Post-Fire| B[Manager PIN Required]
-    B --> B1[Select Reason: Mistake / Spilled / Guest Declined]
-    B1 --> B2[KDS Audio Alert: Red Cancel Card]
-    B2 --> B3[Record Raw Ingredients as Spoilage/Loss]
+    A -->|"Hủy Món Sau Khi Đã Bắn Bếp"| B["Bắt Buộc Nhập Mã PIN Quản Lý"]
+    B --> B1["Chọn Lý Do Hủy: Nhầm lẫn / Đổ vỡ / Khách từ chối"]
+    B1 --> B2["Cảnh Báo Âm Thanh KDS: Thẻ Đỏ Hủy Món"]
+    B2 --> B3["Ghi Sổ Hao Hụt / Tổn Thất Vào WasteLog"]
 
-    A -->|Guest Walkout / No Pay| C[Manager Authorization]
-    C --> C1[Mark Order as Bad Debt / Walkout]
-    C1 --> C2[Log Incident with Security Audit]
-    C2 --> C3[Release Table to CleaningNeeded]
+    A -->|"Khách Bỏ Trốn Không Trả Tiền (Bùng Tiền)"| C["Ủy Quyền Của Quản Lý Nhà Hàng"]
+    C --> C1["Đánh Dấu Đơn Là Nợ Xấu / Bùng Tiền"]
+    C1 --> C2["Ghi Nhận Sự Cố Kèm Kiểm Toán An Ninh"]
+    C2 --> C3["Giải Phóng Bàn Sang Trạng Thái Cần Dọn Dẹp"]
 
-    A -->|Network Disconnection| D[Local Terminal Fallback]
-    D --> D1[POS Buffers Actions Locally]
-    D1 --> D2[Auto-Reconnection via SignalR]
-    D2 --> D3[Server State Reconciliation]
+    A -->|"Mất Kết Nối Mạng Nội Bộ"| D["Cơ Chế Dự Phòng Cục Bộ Tại Thiết Bị"]
+    D --> D1["Giao Diện POS Đệm Dữ Liệu Trong LocalStorage"]
+    D1 --> D2["Tự Động Kết Nối Lại Qua SignalR"]
+    D2 --> D3["Đối Soát Tái Đồng Bộ Trạng Thái Máy Chủ"]
 
-    A -->|Overpayment / Cash Change Error| E[Cashier Void / Refund]
-    E --> E1[Supervisor Re-open Bill]
-    E1 --> E2[Issue Cash Correction Receipt]
+    A -->|"Sai Tiền Thối / Lỗi Tính Tiền"| E["Quy Trình Hủy / Điều Chỉnh Thu Ngân"]
+    E --> E1["Quản Lý Mở Lại Đối Soát Hóa Đơn"]
+    E1 --> E2["Xuất Biên Bản Điều Chỉnh Tiền Mặt"]
 ```
 
-1. **Kitchen Item Cancellation Post-Fire**:
-   - If a customer cancels a dish while it is already being cooked, the waiter triggers "Cancel Item".
-   - The UI prompts for Manager PIN and a cancellation reason code (e.g., "Guest changed mind", "Kitchen delay exceeded 30 mins", "Food burnt/spoiled").
-   - A flashing red cancellation notification appears on the relevant KDS station so the cook immediately stops preparing the dish.
-   - The dish is removed from the guest's bill, but its recipe BOM is logged into the `WasteLog` table as kitchen loss.
-2. **Customer Walkout (Unpaid Bill)**:
-   - If guests leave without paying, the cashier cannot simply delete the order.
-   - Manager must approve the incident, classifying the order as `Walkout / Bad Debt`. The table resets to `CleaningNeeded`, and the loss is attributed to the restaurant's operational loss report.
-3. **Local Network Dropouts**:
-   - In the event of Wi-Fi failure, client terminals buffer transactions in browser local storage.
-   - Upon SignalR reconnection, the client issues a synchronization handshake with the server to prevent duplicate ticket generation.
+1. **Hủy Món Sau Khi Đã Bắn Đơn Xuống Bếp**:
+   - Nếu khách hủy món khi đầu bếp đã bắt đầu nấu, phục vụ bấm "Hủy món".
+   - Giao diện yêu cầu nhập mã PIN Quản lý và chọn mã lý do hủy (ví dụ: "Khách đổi ý", "Bếp làm chậm quá 30 phút", "Món bị cháy/hỏng").
+   - Thông báo thẻ đỏ nhấp nháy phát âm thanh cảnh báo trên KDS trạm bếp tương ứng để đầu bếp dừng chế biến ngay lập tức.
+   - Món bị loại khỏi hóa đơn của khách, nhưng hao phí định lượng được ghi vào bảng `WasteLog` để hạch toán tổn thất nhà bếp.
+2. **Khách Bỏ Đi Không Trả Tiền (Walkout / Bùng Tiền)**:
+   - Nếu khách rời quán mà không trả tiền, thu ngân không được phép tự ý xóa đơn hàng.
+   - Quản lý bắt buộc phải phê duyệt sự cố, chuyển trạng thái đơn sang `Khách bùng / Nợ khó đòi` (Walkout / Bad Debt). Bàn chuyển sang trạng thái `Cần dọn dẹp`, và tổn thất được hạch toán vào báo cáo tổn thất vận hành của nhà hàng.
+3. **Mất Kết Nối Mạng Nội Bộ (Wi-Fi Drops)**:
+   - Trong trường hợp mạng Wi-Fi bị gián đoạn tạm thời, các thiết bị POS lưu tạm thời các thao tác vào bộ nhớ cục bộ (Local Storage).
+   - Khi SignalR kết nối lại thành công, thiết bị thực hiện bắt tay đồng bộ hóa với máy chủ để ngăn chặn việc sinh trùng lặp thẻ món.

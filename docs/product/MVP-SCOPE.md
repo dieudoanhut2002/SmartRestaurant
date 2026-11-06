@@ -1,115 +1,125 @@
-# MVP Scope & Release Roadmap — SmartRestaurant
+# Phạm Vi MVP & Lộ Trình Phát Hành — SmartRestaurant
+## (MVP Scope & Release Roadmap)
 
-- **Document Version**: 1.0.0
-- **Document Status**: `CONFIRMED` (Explicitly approved by Project Owner in Task 02.6)
-- **Related Documents**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)
-
----
-
-## 1. Scope Governance & Prioritization Framework
-
-To ensure a resilient, stable, and production-ready core, SmartRestaurant employs the **MoSCoW Prioritization Method** (Must Have, Should Have, Could Have, Won't Have).
-
-### Guiding Principles for MVP Scoping
-1. **Core Operational Viability First**: A restaurant cannot operate a single shift without reliable table tracking, touch order entry, kitchen station routing, and cash/card checkout. These are strict `Must-Have` items.
-2. **Defend Kitchen-FOH Communication**: Eliminating paper chits and establishing sub-second SignalR KDS tickets prevents the #1 failure mode in busy restaurants.
-3. **Prevent Premature Edge Integrations**: Features such as online delivery aggregators (Grab/Shopee), multi-warehouse inter-branch transfer logistics, and automated SMS marketing require massive external dependencies and add zero value to immediate on-premise dining stability.
+- **Phiên Bản Tài Liệu**: 1.0.0
+- **Trạng Thái Tài Liệu**: `CONFIRMED` (Chủ Dự án đã phê duyệt chính thức trong Task 02.6)
+- **Tài Liệu Căn Cứ Đối Soát**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)
 
 ---
 
-## 2. Detailed MoSCoW Feature Matrix
+## 1. Quản Trị Phạm Vi & Khung Ưu Tiên (Scope Governance & Prioritization Framework)
 
-| Feature / Subsystem | Scope Description | Priority | Target Release | Rationale for Classification |
+Để đảm bảo nền tảng cốt lõi ổn định, bền vững và sẵn sàng vận hành thực tế tại nhà hàng, SmartRestaurant áp dụng **Phương pháp Phân loại Ưu tiên MoSCoW** (Must Have — Bắt buộc phải có, Should Have — Nên có, Could Have — Có thể có, Won't Have — Chưa làm trong giai đoạn này).
+
+### Các Nguyên Tắc Chỉ Đạo Xác Định Phạm Vi MVP
+1. **Ưu Tiên Khả Năng Vận Hành Cốt Lõi Trước Tiên**: Một nhà hàng không thể vận hành dù chỉ một ca làm việc nếu thiếu việc theo dõi bàn ăn tin cậy, gọi món cảm ứng, phân tuyến trạm bếp và quyết toán tiền mặt/thẻ. Đây là các hạng mục bắt buộc tuyệt đối (`Must Have`).
+2. **Bảo Vệ Luồng Giao Tiếp Bếp - Tiền Sảnh**: Loại bỏ phiếu giấy và thiết lập thẻ KDS cập nhật dưới một giây qua SignalR giúp ngăn ngừa nguyên nhân gây lỗi hàng đầu trong giờ cao điểm tại nhà hàng.
+3. **Ngăn Ngừa Tích Hợp Sớm Các Hệ Thống Phức Tạp**: Các tính năng như cổng kết nối ứng dụng giao hàng bên thứ ba (Grab/Shopee), điều chuyển kho chuỗi đa chi nhánh và tiếp thị SMS tự động đòi hỏi phụ thuộc lớn vào bên ngoài và không mang lại giá trị cho sự ổn định của việc ăn uống trực tiếp tại quán trong tuần đầu khai trương.
+
+---
+
+## 2. Ma Trận Tính Năng Chi Tiết Theo Phương Pháp MoSCoW (Detailed MoSCoW Feature Matrix)
+
+| Tính Năng / Phân Hệ | Mô Tả Chi Tiết Phạm Vi | Mức Độ Ưu Tiên | Phiên Bản Mục Tiêu | Lý Do Phân Loại & Căn Cứ |
 | :--- | :--- | :---: | :---: | :--- |
-| **Visual 2D Floor Plan** | Interactive drag-and-drop canvas (Konva.js), tables, areas, VIP rooms. | **Must Have** | v1.0 MVP | Fundamental for FOH staff to locate tables and visualize status in real-time. |
-| **Table State Lifecycle** | `Available`, `Occupied`, `Reserved`, `BillingRequested`, `CleaningNeeded`. | **Must Have** | v1.0 MVP | Critical to prevent double-seating and coordinate busser sanitization. |
-| **Table Move, Merge & Unmerge** | Seamless session migration between tables; merging parties; unmerging tables with line item reallocation. | **Must Have** | v1.0 MVP | Frequent daily occurrence in casual, pub, and banquet dining. |
-| **Digital Menu & Modifiers**| Categories, items, portion sizes, required/optional modifier groups, direct FOH grab flags, 86-ing. | **Must Have** | v1.0 MVP | Core prerequisite for taking any accurate order and fast beverage dispatch. |
-| **Waiter Touch POS** | Quick item search, touch grid, notes, add-on rounds, concurrent non-blocking ordering. | **Must Have** | v1.0 MVP | Primary FOH operational tool. |
-| **Multi-Station KDS** | Hot, Cold, Bar, Bakery routing, Remake tickets, SLA timers (<10m, 10-20m, >20m red alerts). | **Must Have** | v1.0 MVP | Core differentiator; eliminates paper kitchen chits. |
-| **Master Expediter KDS** | Consolidated table pass view for coordinating runner dish delivery. | **Must Have** | v1.0 MVP | Prevents companion dishes from being served cold. |
-| **Billing & Calculations** | Subtotals, item/order discounts, VIP room/area surcharges (% or flat fee), configurable VAT (8%/10%). | **Must Have** | v1.0 MVP | Legal and operational prerequisite for financial settlement. |
-| **Multi-Tender Payments** | Cash, Card POS terminal, and Dynamic VietQR (with Suspense Ledger reconciliation for delayed webhooks). | **Must Have** | v1.0 MVP | Accommodates modern Vietnamese payment preferences safely. |
-| **Multi-Bill Splitting** | Multi-bill table session (split by item, split evenly), uninterrupted guest ordering, release on 100% completion. | **Must Have** | v1.0 MVP | High-frequency requirement for group dining without stalling active service. |
-| **Shift & Cash Drawer** | Opening float, shift close, blind drop, cash discrepancy, Z-Report by configurable Business Date. | **Must Have** | v1.0 MVP | Essential for internal control and overnight operations. |
-| **Direct Dish Inventory** | Direct finished portion stock tracking (portions, bottles, cans) with Two-Phase Lock (Available = Physical - Reserved). | **Must Have** | v1.0 MVP | Prevents overselling without requiring complex gram/ml initial setup. |
-| **Vietnamese-First UI** | 100% natural Vietnamese interface, VNĐ formatting (`#,,### ₫`), 24h timestamps. | **Must Have** | v1.0 MVP | Fundamental for zero-friction operation in Vietnamese F&B establishments. |
-| **Manager Override PIN** | Security PIN for bill voids, dish cancellation, manual discounts. | **Must Have** | v1.0 MVP | Vital anti-fraud control. |
-| **Live Sales Dashboard** | Hourly revenue by Business Date, top-selling items, table turnover rate. | **Should Have**| v1.0 MVP | Provides daily operational intelligence to managers. |
-| **Table Reservations** | Advance booking schedule with arrival countdown. | **Should Have**| v1.0 MVP | Needed for peak weekend planning. |
-| **Waste & Spoilage Log** | Recording burnt/dropped food and kitchen remake losses with mandatory reason codes. | **Should Have**| v1.0 MVP | Connects kitchen errors to inventory variance. |
-| **Kitchen Remake Dish** | High-priority remake tickets without extra guest charge; waste audit logging. | **Should Have**| v1.0 MVP | Protects customer bill accuracy and tracks kitchen error rates. |
-| **ESC/POS Thermal Printing**| Hardware backup for pre-bills and kitchen chits with UTF-8 Vietnamese. | **Should Have**| v1.0 MVP | Hardware resilience during network or screen maintenance. |
-| **Corporate Credit Accounts**| Full B2B customer credit limit, approval workflow, accounts receivable (Ký nợ). | **Could Have** | v1.2 | Replaces informal tab tracking with formal corporate ledger post-MVP. |
-| **Deep Recipe BOM (Gram/ml)**| Sub-gram raw material BOM formulation and multi-ingredient deduction. | **Could Have** | v1.1 | Advanced raw ingredient tracking phased post-MVP. |
-| **Customer QR Ordering** | Dine-in guest self-ordering via mobile browser. | **Could Have** | v1.1 | Enhances guest speed, but requires stable FOH baseline first. |
-| **E-Invoice Integration** | Direct API connection to VNPT/Viettel/MISA E-Invoice (Thông tư 78). | **Could Have** | v1.1 | Official electronic tax invoice generation post-MVP. |
-| **Customer CRM & Points** | Loyalty tier accrual, guest dining history. | **Could Have** | v1.2 | Marketing tool; not needed for opening week operations. |
-| **Multilingual Support** | Secondary languages (English, Korean, Chinese) via resource catalogs. | **Could Have** | v2.0 | Caters to foreign tourist restaurants; i18n architectural readiness preserved. |
-| **Aggregator Integrations** | GrabFood, ShopeeFood, Baemin API order ingestion. | **Won't Have** | v2.0 | High maintenance API contracts; outside MVP core focus. |
-| **Central Supply Chain** | Inter-branch warehouse transfer & purchase requisition workflows. | **Won't Have** | v2.0 | Multi-branch logistics irrelevant for initial single/pilot branch. |
+| **Sơ Đồ Bàn 2D Trực Quan** | Canvas kéo thả tương tác (Konva.js), vị trí bàn, khu vực, phòng VIP. | **Bắt buộc (Must Have)** | v1.0 MVP | Căn bản để nhân viên phục vụ định vị bàn và theo dõi trạng thái bàn theo thời gian thực. |
+| **Vòng Đời Trạng Thái Bàn** | `Trống`, `Có khách`, `Đã đặt trước`, `Đang thanh toán`, `Cần dọn dẹp`. | **Bắt buộc (Must Have)** | v1.0 MVP | Cực kỳ quan trọng để chống xếp trùng bàn và điều phối nhân viên dọn bàn. |
+| **Chuyển Bàn, Gộp Bàn & Hủy Gộp** | Chuyển đơn mượt mà giữa các bàn; gộp bàn cho đoàn đông; hủy gộp bàn phân bổ lại món. | **Bắt buộc (Must Have)** | v1.0 MVP | Tần suất phát sinh hàng ngày rất cao tại các nhà hàng, quán nhậu và tiệc đông người. |
+| **Thực Đơn Số & Tùy Chọn Món** | Danh mục, món ăn, kích cỡ, nhóm tùy chọn bắt buộc/tự chọn, cờ lấy ngay FOH, báo tạm hết món (86). | **Bắt buộc (Must Have)** | v1.0 MVP | Điều kiện tiên quyết để ghi nhận đơn hàng chính xác và xuất đồ uống quầy Bar nhanh. |
+| **POS Cảm Ứng Cho Phục Vụ** | Tìm kiếm món nhanh, lưới chọn cảm ứng, ghi chú bếp, gọi thêm đợt món, ghi món đồng thời không khóa bàn. | **Bắt buộc (Must Have)** | v1.0 MVP | Công cụ làm việc chính yếu của nhân viên phục vụ tiền sảnh (FOH). |
+| **Màn Hình Bếp Đa Trạm (KDS)** | Phân tuyến Bếp Nóng, Nguội, Bar, Bánh, thẻ làm lại món lỗi (Remake), đồng hồ SLA (<10p, 10-20p, >20p đỏ nhấp nháy). | **Bắt buộc (Must Have)** | v1.0 MVP | Điểm khác biệt cốt lõi; loại bỏ hoàn toàn phiếu giấy nhà bếp. |
+| **Màn Hình Tiếp Thực (Expediter KDS)** | Màn hình tổng hợp toàn bộ món của bàn tại bàn ra món để điều phối nhân viên bưng bàn. | **Bắt buộc (Must Have)** | v1.0 MVP | Tránh tình trạng món ăn kèm bị nguội trong khi chờ món chính nấu xong. |
+| **Tính Tiền & Thuế Phí** | Tiền tạm tính, chiết khấu món/voucher, phụ thu phòng VIP/khu vực (% hoặc số tiền), thuế GTGT cấu hình (8%/10%). | **Bắt buộc (Must Have)** | v1.0 MVP | Yêu cầu pháp lý và vận hành bắt buộc để quyết toán tài chính. |
+| **Thanh Toán Đa Phương Thức** | Tiền mặt, quẹt thẻ máy POS ngân hàng, và Chuyển khoản VietQR động (kèm Hàng đợi tiền treo Suspense Ledger đối soát webhook muộn). | **Bắt buộc (Must Have)** | v1.0 MVP | Đáp ứng an toàn các thói quen thanh toán không tiền mặt phổ biến tại Việt Nam. |
+| **Tách Hóa Đơn Đa Hóa Đơn (Multi-Bill)** | Phiên bàn đa hóa đơn (tách theo món, chia đều 1/N), không khóa bàn khi khách tách thanh toán trước, chỉ đóng bàn khi thanh toán 100%. | **Bắt buộc (Must Have)** | v1.0 MVP | Nhu cầu tần suất cao của các nhóm khách đi đông mà không làm gián đoạn phục vụ bàn. |
+| **Vận Hành Ca Kíp & Két Tiền** | Khai báo tiền mặt đầu ca, nộp tiền giữa ca, chốt ca kiểm tiền mù, báo cáo chênh lệch, in Z-Report theo Ngày kinh doanh. | **Bắt buộc (Must Have)** | v1.0 MVP | Cần thiết cho kiểm soát nội bộ và quản trị ca làm việc xuyên đêm. |
+| **Tồn Kho Hàng Hóa Đếm Được** | Quản lý tồn kho hàng thành phẩm đếm được (suất ăn, lon bia, chai nước) theo cơ chế Khóa Hai Pha (`Khả dụng = Thực tế - Tạm giữ`). | **Bắt buộc (Must Have)** | v1.0 MVP | Ngăn chặn bán vượt tồn kho mà không đòi hỏi thiết lập BOM gram/ml phức tạp ban đầu. |
+| **Giao Diện Tiếng Việt 100%** | Toàn bộ giao diện tiếng Việt tự nhiên, định dạng VNĐ (`#,,### ₫`), hiển thị thời gian 24h. | **Bắt buộc (Must Have)** | v1.0 MVP | Nền tảng để nhân viên nhà hàng vận hành không gặp rào cản ngôn ngữ. |
+| **Mã PIN Quản Lý Ủy Quyền** | Mã PIN bảo mật khi hủy hóa đơn, hủy món sau nấu, chiết khấu thủ công. | **Bắt buộc (Must Have)** | v1.0 MVP | Kiểm soát nội bộ sống còn chống thất thoát và gian lận. |
+| **Bảng Điều Khiển Doanh Thu Trực Quan** | Doanh thu theo giờ theo Ngày kinh doanh, món bán chạy, tốc độ quay vòng bàn. | **Nên có (Should Have)** | v1.0 MVP | Cung cấp thông tin điều hành hàng ngày cho Quản lý nhà hàng. |
+| **Đặt Bàn Trước** | Lịch đặt bàn hẹn trước kèm đồng hồ đếm ngược giờ khách đến. | **Nên có (Should Have)** | v1.0 MVP | Phục vụ kế hoạch đón khách giờ cao điểm và cuối tuần *(Chờ chốt OD-15)*. |
+| **Sổ Ghi Nhận Hao Phí & Hủy Hàng** | Ghi nhận món cháy, đổ vỡ và hao hụt làm lại món kèm mã lý do bắt buộc. | **Nên có (Should Have)** | v1.0 MVP | Liên kết lỗi nhà bếp với sai lệch tồn kho. |
+| **Làm Lại Món Lỗi Nhà Bếp (Remake Dish)**| Thẻ làm lại món ưu tiên cao không tính thêm tiền khách; ghi sổ hao hụt WasteLog. | **Nên có (Should Have)** | v1.0 MVP | Bảo vệ độ chính xác hóa đơn của khách và theo dõi tỷ lệ sai sót của bếp. |
+| **In Nhiệt Dự Phòng ESC/POS** | In phiếu tạm tính và phiếu chế biến tiếng Việt UTF-8 ra máy in nhiệt. | **Nên có (Should Have)** | v1.0 MVP | Phương án dự phòng phần cứng khi bảo trì mạng hoặc màn hình. |
+| **Khách Ký Nợ Doanh Nghiệp (B2B AR)** | Quản lý hạn mức nợ, quy trình duyệt ký nợ, sổ theo dõi công nợ khách quen. | **Có thể có (Could Have)** | v1.2 | Thay thế việc ghi sổ tay bằng sổ cái công nợ chính quy sau MVP. |
+| **Định Lượng BOM Chi Tiết (Gram/ml)** | Định lượng nguyên liệu thô chi tiết và trừ kho đa thành phần sâu. | **Có thể có (Could Have)** | v1.1 | Quản lý nguyên vật liệu thô nâng cao triển khai theo phân kỳ sau MVP. |
+| **Khách Tự Quét QR Gọi Món Tại Bàn** | Khách tự mở menu và đặt món trên trình duyệt điện thoại. | **Có thể có (Could Have)** | v1.1 | Nâng cao trải nghiệm khách hàng, triển khai khi FOH đã vận hành ổn định. |
+| **Tích Hợp Hóa Đơn Điện Tử Khởi Tạo Từ Máy Tính Tiền**| Kết nối API trực tiếp sang VNPT/Viettel/MISA phát hành HĐĐT (Thông tư 78). | **Có thể có (Could Have)** | v1.1 | Xuất hóa đơn điện tử chính thức có mã cơ quan thuế sau MVP. |
+| **Khách Hàng Thân Thiết & Tích Điểm CRM** | Tích điểm thành viên, lịch sử ăn uống của khách. | **Có thể có (Could Have)** | v1.2 | Công cụ tiếp thị; chưa bắt buộc cho tuần đầu khai trương. |
+| **Hỗ Trợ Đa Ngôn Ngữ (Multilingual)** | Ngôn ngữ phụ (Tiếng Anh, Hàn, Trung) qua tệp tài nguyên. | **Có thể có (Could Have)** | v2.0 | Phục vụ nhà hàng đón khách du lịch quốc tế; kiến trúc đã sẵn sàng i18n. |
+| **Tích Hợp Ứng Dụng Giao Hàng** | Kết nối nhận đơn tự động từ GrabFood, ShopeeFood qua API. | **Chưa làm (Won't Have)** | v2.0 | Chi phí duy trì hợp đồng API cao; nằm ngoài trọng tâm ăn tại chỗ của MVP. |
+| **Logistics Chuỗi Cung Ứng Tổng** | Điều chuyển kho liên chi nhánh và quy trình mua hàng bếp trung tâm. | **Chưa làm (Won't Have)** | v2.0 | Vận hành logistics chuỗi chưa áp dụng cho nhà hàng đơn lập MVP. |
 
 ---
 
-## 3. Explicit MVP Exclusions (Scope Boundary Guard)
+## 3. Các Hạng Mục Loại Trừ Minh Bạch Trong MVP (Scope Boundary Guard)
 
-The following capabilities are **explicitly excluded** from the v1.0 MVP to protect delivery timeline, architectural clarity, and software reliability:
+Các năng lực sau đây được **loại trừ minh bạch** khỏi phiên bản MVP v1.0 nhằm bảo vệ tiến độ bàn giao, sự tường minh kiến trúc và độ tin cậy phần mềm:
 
-1. **Third-Party Delivery Aggregators**: No GrabFood / ShopeeFood webhook integrations. Orders from third-party apps must be manually keyed into the POS as "Takeaway" if needed during MVP.
-2. **Central Multi-Branch Warehouse Logistics**: While the database schema supports `OrganizationId` and `BranchId`, cross-branch ingredient transfers and central commissary workflows are excluded from MVP. Each branch operates its own independent inventory catalog.
-3. **Customer Self-Service App / Portal**: Customers do not log in or register accounts in MVP. Table service is entirely facilitated by waitstaff tablets.
-4. **Automated Dynamic Surge Pricing**: No automatic algorithm that changes dish prices during peak hours. Price changes are manual and scheduled by managers.
-5. **Biometric Hardware Integration**: Staff authentication relies on PIN codes, usernames, and passwords; no fingerprint or facial recognition hardware SDKs.
-
----
-
-## 4. Release Roadmap & Milestones
-
-```mermaid
-gantt
-    title SmartRestaurant Release Roadmap
-    dateFormat  YYYY-MM
-    section v1.0 MVP (Core Foundation)
-    Floor Plan Designer & Tables       :done, 2026-11, 2026-12
-    Menu Catalog & BOM Mapping         :done, 2026-12, 2027-01
-    Touch POS & Order Routing          :active, 2027-01, 2027-02
-    Multi-Station KDS & SLA Alerts     :2027-02, 2027-03
-    Billing, VietQR & Cash Drawer      :2027-03, 2027-04
-    Pilot Deployment & Hardening       :2027-04, 2027-05
-
-    section v1.1 (Guest Digital Experience)
-    Customer Table QR Self-Ordering    :2027-05, 2027-06
-    Digital Waiter Call & Bill Request :2027-06, 2027-07
-
-    section v1.2 (CRM & Promotion Engine)
-    Customer Loyalty & Points Accrual  :2027-07, 2027-08
-    Complex Promotional Rule Engine    :2027-08, 2027-09
-
-    section v2.0 (Enterprise Multi-Branch)
-    Central Commissary Logistics       :2027-09, 2027-11
-    Third-Party Aggregator APIs        :2027-11, 2027-12
-```
+1. **Ứng Dụng Giao Đồ Ăn Bên Thứ Ba**: Không tích hợp webhook tự động với GrabFood / ShopeeFood. Trong giai đoạn MVP, đơn từ các ứng dụng này được nhân viên nhập thủ công vào POS dưới dạng đơn "Mang đi" nếu cần.
+2. **Logistics Kho Chuỗi Đa Chi Nhánh**: Mặc dù cấu trúc cơ sở dữ liệu hỗ trợ `OrganizationId` và `BranchId`, các luồng điều chuyển nguyên liệu giữa các chi nhánh và bếp trung tâm hoàn toàn không đưa vào MVP. Mỗi chi nhánh vận hành danh mục tồn kho độc lập.
+3. **Cổng Khách Hàng Tự Phục Vụ / Đăng Ký Tài Khoản**: Khách hàng không cần đăng nhập hay tạo tài khoản trong MVP. Dịch vụ tại bàn được phục vụ trọn vẹn thông qua máy tính bảng của nhân viên.
+4. **Thuật Toán Tự Động Tăng Giá Giờ Cao Điểm**: Không xây dựng thuật toán tự động đổi giá món theo độ đông của quán. Việc thay đổi giá được quản lý thiết lập thủ công theo lịch.
+5. **Tích Hợp Thiết Bị Sinh Trắc Học**: Xác thực nhân viên dựa trên mã PIN, tài khoản và mật khẩu; không tích hợp SDK phần cứng nhận diện vân tay hay khuôn mặt.
 
 ---
 
-## 5. Architectural & Domain Dependencies
+## 4. Lộ Trình Phát Hành & Các Mốc Bàn Giao (Release Roadmap & Milestones)
 
 ```mermaid
 flowchart TD
-    A[Organization & Branch Config] --> B[Area, Room & Table Management]
-    A --> C[Menu & Product Catalog]
-    C --> D[Recipe Formulation BOM]
-    B & C --> E[POS & Order Capture]
-    E --> F[Intelligent Kitchen Routing]
-    F --> G[Multi-Station KDS Screens]
-    G --> H[Inventory Stock Deduction]
-    E --> I[Cashier Billing & Calculations]
-    I --> J[Multi-Tender Payments & VietQR]
-    J --> K[Shift Closing & Z-Reports]
-    I & J & K --> L[Reporting & Analytics]
+    subgraph V10["Phiên Bản v1.0 MVP: Nền Tảng Vận Hành Cốt Lõi"]
+        M1["Thiết Kế Sơ Đồ Bàn & Quản Lý Bàn (2026-11 -> 2026-12)"]
+        M2["Danh Mục Thực Đơn & Ánh Xạ Trạm Bếp (2026-12 -> 2027-01)"]
+        M3["POS Gọi Món Cảm Ứng & Phân Tuyến Bếp (2027-01 -> 2027-02)"]
+        M4["Màn Hình Bếp KDS Đa Trạm & Cảnh Báo SLA (2027-02 -> 2027-03)"]
+        M5["Tính Tiền, VietQR Động & Quản Lý Két Ca (2027-03 -> 2027-04)"]
+        M6["Triển Khai Thí Điểm & Tối Ưu Hệ Thống (2027-04 -> 2027-05)"]
+        M1 --> M2 --> M3 --> M4 --> M5 --> M6
+    end
+
+    subgraph V11["Phiên Bản v1.1: Trải Nghiệm Số Khách Hàng & Kho Nâng Cao"]
+        M7["Khách Quét QR Tại Bàn Tự Gọi Món (2027-05 -> 2027-06)"]
+        M8["Định Lượng Nguyên Liệu BOM Chi Tiết Gram/ml (2027-06 -> 2027-07)"]
+        M9["Tích Hợp Hóa Đơn Điện Tử Thông Tư 78 (2027-07 -> 2027-08)"]
+        M7 --> M8 --> M9
+    end
+
+    subgraph V12["Phiên Bản v1.2: CRM & Quản Trị Công Nợ"]
+        M10["Quản Lý Khách Ký Nợ Doanh Nghiệp B2B (2027-08 -> 2027-09)"]
+        M11["Tích Điểm Thành Viên & Khuyến Mãi Phức Hợp (2027-09 -> 2027-10)"]
+        M10 --> M11
+    end
+
+    subgraph V20["Phiên Bản v2.0: Chuỗi Đa Chi Nhánh Quy Mô Lớn"]
+        M12["Bếp Trung Tâm & Điều Chuyển Kho Chuỗi (2027-10 -> 2027-12)"]
+        M13["Tích Hợp API Đơn Hàng Grab/ShopeeFood (2027-12 -> 2028-01)"]
+        M12 --> M13
+    end
+
+    V10 --> V11 --> V12 --> V20
 ```
 
-### Dependency Analysis:
-1. **Menu & Floor Plan must precede POS**: An order cannot be formed without a physical or virtual table and active menu items.
-2. **KDS precedes Inventory Deduction**: Real-time raw material consumption relies on kitchen preparation triggers (`ReadyToServe`).
-3. **Billing relies on Order Capture**: An invoice cannot be calculated or split without confirmed order line items and applied promotional vouchers.
+---
+
+## 5. Phụ Thuộc Kiến Trúc & Miền Nghiệp Vụ (Architectural & Domain Dependencies)
+
+```mermaid
+flowchart TD
+    A["Cấu Hình Doanh Nghiệp & Chi Nhánh"] --> B["Quản Lý Khu Vực, Phòng & Bàn Ăn"]
+    A --> C["Danh Mục Thực Đơn & Nhóm Tùy Chọn"]
+    C --> D["Định Lượng Hàng Tồn Kho (BOM)"]
+    B & C --> E["Giao Diện POS & Tiếp Nhận Đơn"]
+    E --> F["Phân Tuyến Bếp Thông Minh"]
+    F --> G["Màn Hình Bếp KDS Đa Trạm"]
+    G --> H["Khấu Trừ Tồn Kho Thực Tế"]
+    E --> I["Thu Ngân, Tính Tiền & Giảm Giá"]
+    I --> J["Thanh Toán Đa Phương Thức & VietQR"]
+    J --> K["Chốt Ca & Báo Cáo Z-Report"]
+    I & J & K --> L["Báo Cáo Doanh Thu & Vận Hành"]
+```
+
+### Phân Tích Mối Quan Hệ Phụ Thuộc:
+1. **Thực Đơn & Sơ Đồ Bàn phải có trước POS**: Không thể tạo đơn gọi món nếu chưa có bàn vật lý/ảo và các món ăn đang khả dụng.
+2. **KDS đi trước Trừ Tồn Kho**: Tiêu hao tồn kho thực tế phụ thuộc vào tín hiệu hoàn thành chế biến của nhà bếp (`ReadyToServe`).
+3. **Thu Ngân phụ thuộc vào Tiếp Nhận Đơn**: Hóa đơn không thể tính toán hoặc tách bill nếu thiếu các món ăn đã được xác nhận trong đơn và các voucher áp dụng.
