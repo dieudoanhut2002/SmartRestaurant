@@ -6,6 +6,12 @@ Welcome to the **SmartRestaurant** codebase. This document is the authoritative,
 
 ## 1. Project Vision & Domain Overview
 
+> [!IMPORTANT]
+> **AUTHORITATIVE SPECIFICATION ANCHORS:**
+> - All governance boundaries and lifecycle permissions are governed by [`docs/PROJECT-GOVERNANCE.md`](docs/PROJECT-GOVERNANCE.md).
+> - All functional requirements, business rules, invariants, and Owner decisions are governed solely by [`docs/PRODUCT-BASELINE-v1.0.0.md`](docs/PRODUCT-BASELINE-v1.0.0.md).
+> - Archived historical documents in `docs/99-archive/stage-1-history/` must NOT be read or used as active requirements.
+
 **SmartRestaurant** is a modern, enterprise-ready Restaurant Management & Digital Operations System designed to digitize end-to-end food service operations with high reliability, real-time synchronization, and smooth user experience.
 
 ### Core Business Subsystems

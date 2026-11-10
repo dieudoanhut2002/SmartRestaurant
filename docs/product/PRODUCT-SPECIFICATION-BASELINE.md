@@ -72,7 +72,7 @@ Bộ cơ sở đặc tả sản phẩm được tổ chức phân cấp, chuyên
 | 6 | **Ma Trận Truy Xuất Nguồn Gốc**| [`REQUIREMENT-TRACEABILITY-MATRIX.md`](./REQUIREMENT-TRACEABILITY-MATRIX.md) | Ma trận truy xuất nguồn gốc hai chiều từ Nhu cầu $\rightarrow$ Yêu cầu $\rightarrow$ Quy tắc $\rightarrow$ PDR $\rightarrow$ Kiến trúc Stage 2. | `CONFIRMED & SEALED` |
 | 7 | **Sổ Câu Hỏi Mở & Yêu Cầu Hoãn**| [`OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md`](./OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md) | Sổ quản lý vòng đời toàn bộ quyết định (`OD-14..17`), câu hỏi mở (`OQ-01..07`) và các yêu cầu hoãn có bằng chứng. | `CONFIRMED & SEALED` |
 | 8 | **Hồ Sơ Bàn Giao Stage 2** | [`STAGE-2-PRODUCT-HANDOFF.md`](./STAGE-2-PRODUCT-HANDOFF.md) | Hồ sơ bàn giao chính thức cho Solution Architect: Bối cảnh nghiệp vụ, NFRs, ràng buộc và 13 chủ đề kỹ thuật cần nghiên cứu. | `CONFIRMED & SEALED` |
-| 9 | **Báo Cáo Thực Hiện Task 02.9**| [`TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md`](./TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md) | Báo cáo kiểm toán, đối soát Git baseline, kiểm toán nhất quán quy tắc và xác nhận hoàn tất nhiệm vụ Task 02.9. | `CONFIRMED & SEALED` |
+| 9 | **Báo Cáo Thực Hiện Task 02.9**| [`TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md`](../99-archive/stage-1-history/audit-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md) | Báo cáo kiểm toán, đối soát Git baseline, kiểm toán nhất quán quy tắc và xác nhận hoàn tất nhiệm vụ Task 02.9. | `CONFIRMED & SEALED` |
 
 ---
 

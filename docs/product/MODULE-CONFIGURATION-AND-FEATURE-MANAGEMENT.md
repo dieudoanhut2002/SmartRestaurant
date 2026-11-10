@@ -26,7 +26,7 @@ Tài liệu này cung cấp bản **Khám Phá Sản Phẩm & Phân Tích Miền
 
 ## 2. Ma Trận Phân Loại Module (Module Classification Matrix)
 
-Để ngăn ngừa tình trạng bế tắc vận hành và tránh nhầm lẫn giữa năng lực cấu trúc hệ thống với các tùy chọn hành vi, hệ thống phân loại toàn bộ 14 module đã định nghĩa trong [`MODULE-OVERVIEW.md`](./MODULE-OVERVIEW.md) thành 3 tầng kiến trúc tách bạch:
+Để ngăn ngừa tình trạng bế tắc vận hành và tránh nhầm lẫn giữa năng lực cấu trúc hệ thống với các tùy chọn hành vi, hệ thống phân loại toàn bộ 14 module đã định nghĩa trong [`MODULE-OVERVIEW.md`](../99-archive/stage-1-history/superseded-documents/MODULE-OVERVIEW.md) thành 3 tầng kiến trúc tách bạch:
 
 ```mermaid
 flowchart TD
@@ -348,7 +348,7 @@ flowchart TD
 
 ## 8. Khuyến Nghị Phân Kỳ Phạm Vi MVP So Với Sau MVP
 
-Tuân thủ nghiêm ngặt Quyết định của Chủ nhà hàng `OD-01` và Phạm vi sản phẩm đã duyệt trong [`MVP-SCOPE.md`](./MVP-SCOPE.md), mọi module và năng lực cấu hình được phân bổ vào phân kỳ phát hành cụ thể:
+Tuân thủ nghiêm ngặt Quyết định của Chủ nhà hàng `OD-01` và Phạm vi sản phẩm đã duyệt trong [`MVP-SCOPE.md`](../99-archive/stage-1-history/superseded-documents/MVP-SCOPE.md), mọi module và năng lực cấu hình được phân bổ vào phân kỳ phát hành cụ thể:
 
 | Phân hệ / Năng lực | Phân kỳ phát hành | Cơ sở lựa chọn & Ranh giới vận hành | Phân loại |
 | :--- | :---: | :--- | :---: |
@@ -375,8 +375,8 @@ Việc thiết lập khung quản lý tính năng và cấu hình module này t�
 | Tài liệu đặc tả hiện có | Tác động của Hệ thống Cấu hình Module | Trạng thái nhất quán |
 | :--- | :--- | :--- :---: |
 | **[PRD.md](./PRD.md)** | Tái khẳng định ranh giới Modular Monolith 14 module; củng cố trọng tâm đơn điểm cho MVP v1.0. | `CONSISTENT` |
-| **[BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md)** | Làm rõ BR-01 đến BR-14 bằng cách chỉ rõ yêu cầu nào là cốt lõi bắt buộc so với tùy chọn bật/tắt. | `CONSISTENT` |
-| **[MVP-SCOPE.md](./MVP-SCOPE.md)** | Khớp nối hoàn hảo với thứ tự ưu tiên MoSCoW; bảo tồn các loại trừ rõ ràng (BOM gram/ml, Khách ký nợ). | `CONSISTENT` |
+| **[BUSINESS-REQUIREMENTS.md](../99-archive/stage-1-history/superseded-documents/BUSINESS-REQUIREMENTS.md)** | Làm rõ BR-01 đến BR-14 bằng cách chỉ rõ yêu cầu nào là cốt lõi bắt buộc so với tùy chọn bật/tắt. | `CONSISTENT` |
+| **[MVP-SCOPE.md](../99-archive/stage-1-history/superseded-documents/MVP-SCOPE.md)** | Khớp nối hoàn hảo với thứ tự ưu tiên MoSCoW; bảo tồn các loại trừ rõ ràng (BOM gram/ml, Khách ký nợ). | `CONSISTENT` |
 | **[USER-JOURNEYS.md](./USER-JOURNEYS.md)** | Xác nhận các hành trình người dùng chuyển đổi êm dịu (ví dụ: UJ-03 in phiếu giấy nếu KDS tắt). | `CONSISTENT` |
 | **4 Quy trình vận hành (`workflows/`)** | Các máy trạng thái không đổi; các cờ module xác định nhánh rẽ được kích hoạt hay bỏ qua. | `CONSISTENT` |
 | **PDR-001 đến PDR-015 (`decisions/`)** | Các yêu cầu nghiệp vụ trong PDR được củng cố; tham số cấu hình cung cấp các núm vặn vận hành thực tế. | `CONSISTENT` |

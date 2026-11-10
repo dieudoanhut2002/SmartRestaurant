@@ -135,11 +135,11 @@ flowchart LR
 | Tài Liệu | Mục Đích & Nội Dung Chính | Đối Tượng Đọc |
 | :--- | :--- | :--- |
 | **[VIETNAMESE-LOCALIZATION-STANDARD.md](./VIETNAMESE-LOCALIZATION-STANDARD.md)** | Quy chuẩn từ điển giao diện tiếng Việt, định dạng vùng và tiêu chuẩn in ấn. | Toàn bộ đội ngũ, UI/UX, Lập trình viên |
-| **[BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md)** | Yêu cầu nghiệp vụ chi tiết, vai trò tác nhân, quy tắc ràng buộc và xử lý ngoại lệ. | BA, Kiến trúc sư, Lập trình viên |
-| **[MVP-SCOPE.md](./MVP-SCOPE.md)** | Ma trận tính năng theo mức độ ưu tiên MoSCoW, danh mục hoãn và phụ thuộc. | Chủ dự án, Trưởng nhóm kỹ thuật |
+| **[BUSINESS-REQUIREMENTS.md](../99-archive/stage-1-history/superseded-documents/BUSINESS-REQUIREMENTS.md)** | Yêu cầu nghiệp vụ chi tiết, vai trò tác nhân, quy tắc ràng buộc và xử lý ngoại lệ. | BA, Kiến trúc sư, Lập trình viên |
+| **[MVP-SCOPE.md](../99-archive/stage-1-history/superseded-documents/MVP-SCOPE.md)** | Ma trận tính năng theo mức độ ưu tiên MoSCoW, danh mục hoãn và phụ thuộc. | Chủ dự án, Trưởng nhóm kỹ thuật |
 | **[DOMAIN-GLOSSARY.md](./DOMAIN-GLOSSARY.md)** | Bảng đối chiếu thuật ngữ song ngữ Anh - Việt chuẩn mực ngành F&B. | Toàn bộ đội ngũ dự án |
 | **[USER-JOURNEYS.md](./USER-JOURNEYS.md)** | 10 kịch bản trải nghiệm người dùng thực tế từ mở ca đến đóng ca. | Thiết kế UI/UX, Kiểm thử QA, Devs |
-| **[MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)** | Ranh giới 14 phân hệ nghiệp vụ cốt lõi, thực thể dữ liệu và phụ thuộc. | Kiến trúc sư hệ thống, Kỹ sư chính |
+| **[MODULE-OVERVIEW.md](../99-archive/stage-1-history/superseded-documents/MODULE-OVERVIEW.md)** | Ranh giới 14 phân hệ nghiệp vụ cốt lõi, thực thể dữ liệu và phụ thuộc. | Kiến trúc sư hệ thống, Kỹ sư chính |
 | **[Workflows/](./workflows/)** | Sơ đồ quy trình và máy trạng thái cho Mặt bằng, Đơn hàng, Bếp và Thu ngân. | Kỹ sư hệ thống, Kiểm thử QA |
 | **[NON-FUNCTIONAL-REQUIREMENTS.md](./NON-FUNCTIONAL-REQUIREMENTS.md)** | Tiêu chuẩn hiệu năng, bảo mật, đồng thời, độ tin cậy và khả năng sử dụng. | Kiến trúc sư, Kỹ sư DevOps |
 | **[Decisions/](./decisions/)** | Bộ bản ghi quyết định nghiệp vụ và kiến trúc (PDRs) kèm phân tích đánh đổi. | Quản trị dự án & Đội ngũ kỹ thuật |

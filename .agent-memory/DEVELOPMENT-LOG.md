@@ -63,7 +63,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-02] — Task 02.5: Product Review & Business Validation
 - **Objective**: Conduct formal architectural review and business validation of the entire Stage 1 Product Specification Suite.
 - **Deliverables**:
-  - Authored [PRODUCT-REVIEW-VALIDATION.md](../docs/product/PRODUCT-REVIEW-VALIDATION.md) covering:
+  - Authored [PRODUCT-REVIEW-VALIDATION.md](../docs/99-archive/stage-1-history/task-reports/PRODUCT-REVIEW-VALIDATION.md) covering:
     - Cross-document consistency and requirement traceability matrix across 10 specifications, 4 workflows, and 6 decision records.
     - Persona stress-testing under operational restaurant rush hours (Waitstaff, Line Cooks, Expediter, Cashier, Manager).
     - Edge-case scenario resolutions (concurrent checkout lock, Wi-Fi reconnection handshake, post-fire dish cancellation with scrap attribution).
@@ -78,7 +78,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-02] — Task 02.5 (Phần 2): Independent Product Review & Critical Business Validation
 - **Objective**: Conduct an independent, critical product review of SmartRestaurant specifications, challenging assumptions, identifying operational gaps, and auditing 12 complex restaurant scenarios.
 - **Deliverables**:
-  - Authored [PRODUCT-REVIEW-REPORT.md](../docs/product/PRODUCT-REVIEW-REPORT.md) detailing:
+  - Authored [PRODUCT-REVIEW-REPORT.md](../docs/99-archive/stage-1-history/task-reports/PRODUCT-REVIEW-REPORT.md) detailing:
     - 4 CRITICAL issues: Business Date for overnight shifts (`REV-01`), Two-Phase Inventory Lock for BOM overselling prevention (`REV-02`), VietQR delayed webhook race conditions (`REV-03`), Order freeze during bill splitting (`REV-04`).
     - 6 HIGH severity issues: Unmerging tables (`REV-05`), Area/VIP surcharges (`REV-06`), Accounts Receivable / Corporate charge accounts (`REV-07`), Concurrency delta append-only ordering (`REV-10`), Network print spools, and Document contradictions (`CONTR-01`, `CONTR-02`).
     - Strategic MVP scope recommendations: Postponing deep gram/ml BOM stock deduction to v1.1 to protect MVP delivery schedule.
@@ -135,7 +135,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.1: Module Governance & Business Rule Reconciliation Audit
 - **Objective**: Execute a rigorous cross-document governance and business rule reconciliation audit between `MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md` and the entire Stage 1 specification suite.
 - **Deliverables**:
-  - Authored [MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](../docs/product/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md) certifying:
+  - Authored [MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md](../docs/99-archive/stage-1-history/audit-reports/MODULE-GOVERNANCE-RECONCILIATION-AUDIT.md) certifying:
     - 100% reconciliation and cross-consistency with 14 Business Requirements (BR-01..14) and 15 PDRs (PDR-001..015).
     - Operational workflow degradation verification: Certified that disabling any optional module (MOD-06, MOD-09, MOD-11, MOD-12) leaves all 4 core workflows (Floor, Order, Kitchen, Cashier) 100% operational without deadlocks.
     - Verified non-breaking fallback paths for all 10 user journeys (UJ-01..10).
@@ -153,7 +153,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.2: Owner Decision Preparation & Stage 2 Readiness Assessment
 - **Objective**: Prepare comprehensive Owner Decision Dossier for all pending business/operational questions and perform formal Stage 2 Readiness Assessment.
 - **Deliverables**:
-  - Authored [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) containing:
+  - Authored [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) containing:
     - Complete 9-part Owner Decision Dossier covering OD-14 (paid bill dispute & void policy), OD-15 (MOD-06 Advance Reservations scope), OD-16 (Onboarding presets adoption), OD-17 (Graceful drain deactivation policy), OQ-01 (% bill split deferral), OQ-02 (Kitchen thermal auto-print default), OQ-06 (Service charge taxability default), OQ-07 (Long-running table session audit banner), and formal sign-off on 14-Module 3-Tier Classification.
     - Ready-to-Sign Owner Ballot & Sign-off Form.
     - Comprehensive Stage 2 Readiness Assessment auditing Stage 1 artifact stability, invariant boundary compliance (single store, countable inventory BOM, non-locking bill splitting), zero code leakage verification (0 .cs files, 0 migrations), and 6-dimensional readiness scorecard (100% score).
@@ -170,7 +170,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.2.1: Final Evidence Reconciliation & Governance Boundary Verification
 - **Objective**: Execute rigorous physical evidence reconciliation and verify governance boundaries across all Stage 1 product artifacts and git state.
 - **Deliverables**:
-  - Authored [FINAL-EVIDENCE-RECONCILIATION-REPORT.md](../docs/product/FINAL-EVIDENCE-RECONCILIATION-REPORT.md) certifying:
+  - Authored [FINAL-EVIDENCE-RECONCILIATION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/FINAL-EVIDENCE-RECONCILIATION-REPORT.md) certifying:
     - 100% empirical evidence backing for all audit statements and git provenance.
     - Zero code leakage verification: confirmed exactly 0 `.cs`, 0 `.csproj`, 0 `.sln`, 0 `.sql` files, and confirmed `docs/02-architecture/` does not exist.
     - Tamper-proof memory integrity: verified zero git diff against HEAD for `.agent-memory/ARCHITECTURE-DECISIONS.md`.
@@ -190,7 +190,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.2.2: Controlled Governance Corrections
 - **Objective**: Execute controlled, precision governance corrections across Stage 1 documentation addressing all 6 findings from the Task 02.8.2.1 final review.
 - **Deliverables**:
-  - Corrected [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md):
+  - Corrected [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md):
     - Unmerged `D3` (Delayed VietQR Suspense Ledger) and `D4` (Multi-Bill Table Session without Freezing) into distinct rows in Owner Decision Register.
     - Demoted station-specific inventory deduction policy from `OWNER-CONFIRMED` to `AI/BA PROPOSAL (Cần Solution Architect đánh giá trong Stage 2)`.
     - Corrected OD-14 Option A analysis: removed false claims of "zero schema changes/zero data storage"; added explicit requirements for shift closing variance logs, manager incident trails, and original invoice linking.
@@ -206,7 +206,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.2.3: Independent Post-Correction Verification
 - **Objective**: Execute an independent, 100% read-only audit of all corrections made in Task 02.8.2.2 across Stage 1 documentation.
 - **Deliverables**:
-  - Authored [TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md](../docs/product/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md) verifying:
+  - Authored [TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.8.2.3-INDEPENDENT-POST-CORRECTION-VERIFICATION.md) verifying:
     - 10/10 audit checks (AUDIT-01 to AUDIT-10) passed at 100%.
     - D3 (PDR-008) and D4 (PDR-009) fully unmerged and traceable.
     - D2/D5 inventory deduction authority cleanly decoupled from station triggers.
@@ -221,7 +221,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-05] — Task 02.8.3: Controlled Vietnamese Documentation Localization
 - **Objective**: Execute controlled Vietnamese documentation localization and audit across Stage 1 deliverables, supporting the Project Owner with an authoritative, 100% Vietnamese Product Specification and Decision Dossier.
 - **Deliverables**:
-  - Referenced and verified [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) (Vietnamese Owner Decision Dossier) establishing:
+  - Referenced and verified [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) (Vietnamese Owner Decision Dossier) establishing:
     - Executive Vietnamese overview of the SmartRestaurant MVP single-store boundary (OD-01).
     - Comprehensive breakdown of all 14 business modules (10 Core Mandatory + 4 MVP Optional).
     - Full register of Owner-confirmed baselines (D1–D5, REV-05..11, OD-01..13, BillingRequested Option 2) with standardized Vietnamese terminology.
@@ -230,7 +230,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     - 6-role Vietnamese RBAC matrix (Quản lý, Thu ngân, Phục vụ, Bếp trưởng, Phụ bếp/Bar, Thủ kho).
     - Stage 2 execution roadmap and governance transition criteria (TASK-03 WBS).
   - Executed controlled in-place localization for 32 product and workflow markdown specifications across `docs/01-requirements/`, `docs/product/`, `docs/product/workflows/`, and `docs/product/decisions/`.
-  - Authored [TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md](../docs/product/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md) certifying:
+  - Authored [TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.8.3-VIETNAMESE-LOCALIZATION-REPORT.md) certifying:
     - 100% terminology compliance across 4 core business domains against [VIETNAMESE-LOCALIZATION-STANDARD.md](../docs/product/VIETNAMESE-LOCALIZATION-STANDARD.md).
     - Clean technical decoupling (English backend contracts vs Vietnamese presentation strings via resource catalogs).
     - Zero code leakage (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
@@ -256,7 +256,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.8.4: Independent Vietnamese Documentation Quality Verification
 - **Objective**: Execute an exhaustive, independent quality audit across all Vietnamese product documentation, workflows, and decisions following Task 02.8.3 and 02.8.3-REV.
 - **Deliverables**:
-  - Authored [TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](../docs/product/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md) certifying:
+  - Authored [TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md) certifying:
     - 8/8 audit checks (AUDIT-01 to AUDIT-08) evaluated; PASS WITH MINOR FINDINGS verdict.
     - Exact file count confirmed: 50 Markdown files total (40 docs, 7 agent memory, 3 root).
     - Terminology compliance: 100% adherence to `VIETNAMESE-LOCALIZATION-STANDARD.md` and `DOMAIN-GLOSSARY.md`; zero forbidden terms detected.
@@ -277,7 +277,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.8.5: Project Owner Decision Workshop & Decision Consolidation
 - **Objective**: Convene interactive Project Owner Decision Workshop to officially review, vote, and consolidate all pending business decisions, operational defaults, and the 14-module architecture framework for Stage 1 sign-off.
 - **Deliverables**:
-  - Authored [TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/product/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md) documenting:
+  - Authored [TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md) documenting:
     - Official Owner Vote on `OD-14` (Option A: Paid Bill Immutability & Shift Closing Variance logging).
     - Official Owner Vote on `OD-15` (Option A: Advance Reservations as MVP Optional module).
     - Official Owner Vote on `OD-16` (Option A: 3 Onboarding Configuration Presets - Family, Casual, VIP).
@@ -287,8 +287,8 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     - Official Owner Vote on `OQ-06` (Option A: Default Service Charge taxable under VAT).
     - Official Owner Vote on `OQ-07` (Option A: Retain original BusinessDate + Manager warning banner for sessions > 24h).
     - Official Owner Approval of the 14-Module Architecture Framework (10 Core Mandatory + 4 MVP Optional).
-  - Updated [docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) with confirmed statuses and Stage 1 sign-off declaration.
-  - Updated [docs/product/OPEN-QUESTIONS.md](../docs/product/OPEN-QUESTIONS.md) setting all MVP items to `RESOLVED / OWNER-CONFIRMED`.
+  - Updated [docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md) with confirmed statuses and Stage 1 sign-off declaration.
+  - Updated [docs/product/OPEN-QUESTIONS.md](../docs/99-archive/stage-1-history/superseded-documents/OPEN-QUESTIONS.md) setting all MVP items to `RESOLVED / OWNER-CONFIRMED`.
   - Updated [docs/00-index.md](../docs/00-index.md).
   - Synchronized `.agent-memory/PROJECT-STATUS.md` and `.agent-memory/DEVELOPMENT-LOG.md`.
 - **Verdict**: ALL DECISIONS RESOLVED & CONSOLIDATED (100% OWNER APPROVED) — STAGE 1 FULLY SIGNED OFF — READY FOR STAGE 2 AUTHORIZATION.
@@ -299,7 +299,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.8.6: Project Owner Decision Recording & Controlled Documentation Update
 - **Objective**: Officially record the Project Owner's decisions into the master decision dossier and execute controlled documentation synchronization across all Stage 1 specifications, workflows, and decisions.
 - **Deliverables**:
-  - Recorded 100% of Owner Decisions into [OWNER-DECISION-WORKSHOP.md](../docs/product/OWNER-DECISION-WORKSHOP.md):
+  - Recorded 100% of Owner Decisions into [OWNER-DECISION-WORKSHOP.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-WORKSHOP.md):
     - Updated 8 Decision Briefs (`OD-14`..`OD-17`, `OQ-01`, `OQ-02`, `OQ-06`, `OQ-07`) to `CHÍNH THỨC PHÊ DUYỆT — PHƯƠNG ÁN A` and `OWNER-CONFIRMED (PHƯƠNG ÁN A)`.
     - Confirmed 14 Module Classification table (10 Core Mandatory + 4 MVP Optional) to `OWNER-CONFIRMED`.
     - Completed official Ballot Register table with Option A choices, `OWNER-CONFIRMED` statuses, and signature date `2026-11-06`.
@@ -310,12 +310,12 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     - [KITCHEN-WORKFLOW.md](../docs/product/workflows/KITCHEN-WORKFLOW.md): Updated print fallback (§4) to confirmed `OQ-02: Phương án A` (AutoPrintOnFire: false default).
     - [PDR-005](../docs/product/decisions/PDR-005-multi-tender-and-bill-splitting-strategy.md): Updated §5 with confirmed `OQ-01` and `OQ-06`.
     - [PDR-007](../docs/product/decisions/PDR-007-business-date-shift-management.md): Updated §3 with confirmed `OQ-07`.
-    - [MVP-SCOPE.md](../docs/product/MVP-SCOPE.md): Updated Table Reservation to `MVP Optional (MOD-06)` per `OD-15`.
-    - [MODULE-OVERVIEW.md](../docs/product/MODULE-OVERVIEW.md): Updated Phân Hệ 06 to `v1.0 MVP (MVP Optional)` per `OD-15`.
-    - [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/product/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md): Updated D1 row note with confirmed `OQ-07`.
-    - [01-requirements/product-requirements-document.md](../docs/01-requirements/product-requirements-document.md): Updated §7 with confirmed resolutions for OQ-01, OQ-02, OQ-03.
+    - [MVP-SCOPE.md](../docs/99-archive/stage-1-history/superseded-documents/MVP-SCOPE.md): Updated Table Reservation to `MVP Optional (MOD-06)` per `OD-15`.
+    - [MODULE-OVERVIEW.md](../docs/99-archive/stage-1-history/superseded-documents/MODULE-OVERVIEW.md): Updated Phân Hệ 06 to `v1.0 MVP (MVP Optional)` per `OD-15`.
+    - [OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md](../docs/99-archive/stage-1-history/task-reports/OWNER-DECISION-DOSSIER-AND-STAGE-2-READINESS.md): Updated D1 row note with confirmed `OQ-07`.
+    - [01-requirements/product-requirements-document.md](../docs/99-archive/stage-1-history/superseded-documents/LEGACY-PRD-INITIAL-DRAFT.md): Updated §7 with confirmed resolutions for OQ-01, OQ-02, OQ-03.
     - [docs/00-index.md](../docs/00-index.md): Updated `OPEN-QUESTIONS.md` and `OWNER-DECISION-WORKSHOP.md` statuses to `CONFIRMED`; added Task 02.8.6 deliverable link.
-  - Authored [TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/product/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md) summarizing all updates, master decision matrix, cross-document consistency verification, and boundary audit.
+  - Authored [TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md) summarizing all updates, master decision matrix, cross-document consistency verification, and boundary audit.
   - Synchronized `.agent-memory/PROJECT-STATUS.md`, `.agent-memory/NEXT-TASK.md`, and `.agent-memory/DEVELOPMENT-LOG.md`.
 - **Execution Constraints Enforced**:
   - Documentation synchronization only; zero application code, .NET projects, or migrations created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
@@ -337,8 +337,8 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     6. [REQUIREMENT-TRACEABILITY-MATRIX.md](../docs/product/REQUIREMENT-TRACEABILITY-MATRIX.md): 12-column bidirectional traceability matrix mapping all 56 requirements end-to-end.
     7. [OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md](../docs/product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md): Master register for decisions (`OD-14..17`, `OQ-01..07`), deferred items (BOM gram/ml, B2B AR), and Stage 2 technical investigation topics.
     8. [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md): Solution Architect handoff package (Business context, NFRs, constraints, 13 investigation topics).
-    9. [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md): Comprehensive execution report, Git baseline verification, consistency audit, Gatekeeper scorecard (10/10 PASS).
-  - Also authored companion [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md).
+    9. [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md): Comprehensive execution report, Git baseline verification, consistency audit, Gatekeeper scorecard (10/10 PASS).
+  - Also authored companion [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md).
   - Updated [MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md](../docs/product/MODULE-CONFIGURATION-AND-FEATURE-MANAGEMENT.md) (§7) to reflect `OWNER-CONFIRMED (OD-16)` status for the 3 onboarding presets.
   - Updated [docs/00-index.md](../docs/00-index.md) indexing the 9 baseline documents under Section 2.1.
   - Synchronized `.agent-memory/PROJECT-STATUS.md`, `.agent-memory/NEXT-TASK.md`, and `.agent-memory/DEVELOPMENT-LOG.md`.
@@ -354,7 +354,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.9.1: Independent Product Specification Audit
 - **Objective**: Conduct an independent, rigorous, read-only audit of the consolidated Product Specification Baseline Suite (`v1.0.0-FROZEN`), verifying evidence provenance, scope integrity, invariant consistency, and technical boundaries.
 - **Deliverables**:
-  - Authored [TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](../docs/product/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md) certifying:
+  - Authored [TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md) certifying:
     - 100% Owner decision preservation with zero distortion (`OD-01`, `D1-D5`, `OD-14..17`, `OQ-01..07`, `REV-05..11`, 10 Core + 4 Optional modules).
     - Forensic traceability audit across all 56 functional requirements and 18 business rules / 15 invariants (0 contradictions).
     - Technical boundary protection across 7 proposed topics (Modular Monolith, MediatR, RowVersion vs Append-Only Delta, SignalR Mesh, Stock trigger, DB multi-branch keys, Module filter).
@@ -379,7 +379,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.9.2: Governance Finding Resolution
 - **Objective**: Execute controlled baseline refinements to systematically resolve all 4 audit findings (F-01..F-04) from Task 02.9.1, verify baseline consistency, and confirm the Clean Pass attestation.
 - **Deliverables**:
-  - Authored [TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/product/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md).
+  - Authored [TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md).
   - Resolved `AUDIT-FINDING-F-01` (Medium): Refined dual DB key scoping in [MVP-SCOPE-BASELINE.md](../docs/product/MVP-SCOPE-BASELINE.md), [BUSINESS-REQUIREMENTS-BASELINE.md](../docs/product/BUSINESS-REQUIREMENTS-BASELINE.md) (`BR-SEC-004`), [PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md), and [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md) §5.8 (`TECH-06`).
   - Resolved `AUDIT-FINDING-F-02` (Low): Verified agent memory synchronization across [PROJECT-STATUS.md](./PROJECT-STATUS.md), [NEXT-TASK.md](./NEXT-TASK.md), and [DEVELOPMENT-LOG.md](./DEVELOPMENT-LOG.md).
   - Resolved `AUDIT-FINDING-F-03` (Informational): Standardized `NFR-PERF-05` as an explicit stress-test benchmarking target in [NON-FUNCTIONAL-REQUIREMENTS.md](../docs/product/NON-FUNCTIONAL-REQUIREMENTS.md), [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md), and [OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md](../docs/product/OPEN-QUESTIONS-AND-DEFERRED-REGISTER.md) (`TECH-07`).
@@ -396,7 +396,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.9.2.1: Independent Governance Integrity Verification
 - **Objective**: Conduct an independent empirical audit verifying the complete governance integrity and consistency of the codebase following Task 02.9.2, in strict compliance with the Project Owner's mandate.
 - **Deliverables**:
-  - Authored [TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/product/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md) certifying:
+  - Authored [TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md) certifying:
     - 10/10 audit items passed: F-01 dual key wording resolution, F-02 PROJECT-STATUS locked status, F-03 NFR-PERF-05 benchmark target, F-04 inventory trigger open status, REV-11 remake dish integrity, DirectFOHPick integrity, Owner decision register integrity (23 items), Stage 2 gate enforcement (`NOT AUTHORIZED / LOCKED`), absence of `docs/02-architecture/` (`False`), and repository zero code leakage.
     - Zero code leakage verified: exactly 0 .cs, 0 .csproj, 0 .sln, 0 .sql files.
     - Zero diff on `ARCHITECTURE-DECISIONS.md`, `GEMINI.md`, `AGENTS.md` against HEAD `b94a2eb`.
@@ -411,15 +411,15 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-06] — Task 02.8.6.1: Governance Correction & Decision Traceability Verification
 - **Objective**: Execute controlled refinements resolving the Decision ID mismatch finding (`AUDIT-FINDING-ID-01`) identified in Task 02.9.2.1, disambiguate `OD-13` (paid bill immutability) vs `OD-14` (paid bill complaint/refund policy) vs `BillingRequested Option 2`, and verify complete bidirectional traceability for all 23 Owner decisions.
 - **Deliverables**:
-  - Authored [TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/product/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md).
+  - Authored [TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md).
   - Executed surgical baseline refinements across 7 documents:
     - [BUSINESS-RULES-BASELINE.md](../docs/product/BUSINESS-RULES-BASELINE.md): `BR-RULE-06` source set to `PDR-009 (Op2) / D4`; `BR-RULE-17` source set to `OD-14 (Op A) / OD-13`.
     - [BUSINESS-REQUIREMENTS-BASELINE.md](../docs/product/BUSINESS-REQUIREMENTS-BASELINE.md): `BR-POS-005` description updated to `(PDR-009 BillingRequested Option 2 / D4)`.
     - [REQUIREMENT-TRACEABILITY-MATRIX.md](../docs/product/REQUIREMENT-TRACEABILITY-MATRIX.md): `BR-POS-005` mapped to `PDR-009 (Op2)/D4`; `BR-BIL-005` mapped to `OD-14 / OD-13` and `OD-14 / PDR-009`.
     - [STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md): Item 6 mapped to `PDR-009 (BillingRequested Option 2) / D4`; Item 7 mapped to `OD-14 Option A (kết hợp OD-13)`; Item 13 added explicitly for `OQ-07 Option A`.
     - [PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md): §4 Item 6 updated; §4 Item 8 updated with `OQ-07`.
-    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md): `BR-RULE-06` and Mermaid class invariants updated.
-    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/product/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md): Consistency audit mapping updated.
+    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-CONSOLIDATION.md): `BR-RULE-06` and Mermaid class invariants updated.
+    - [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md): Consistency audit mapping updated.
   - Updated master index in [docs/00-index.md](../docs/00-index.md).
 - **Execution Constraints Enforced**:
   - Zero code, zero project/solution, zero SQL scripts created (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
@@ -434,7 +434,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-09] — Task 02.9.3: Final Stage 1 Governance & Baseline Integrity Audit
 - **Objective**: Conduct an independent, rigorous, read-only forensic audit of the entire Stage 1 documentation suite across all 70 markdown files, verifying owner decision preservation, traceability, and the sealed status of the Stage 2 gate.
 - **Deliverables**:
-  - Authored [TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md](../docs/product/TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md) certifying:
+  - Authored [TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md) certifying:
     - 100% preservation of all 23 Owner decisions (`OD-01`, `D1-D5`, `OD-13`, `OD-14`, `BillingRequested Op2`, `OD-15..17`, `OQ-01..07`, `REV-05..11`).
     - Complete 100% traceability coverage across 56 functional requirements (`BR-FOH-001` through `BR-LOC-001`).
     - Empirical verification of repository cleanliness: exactly 0 .cs, 0 .csproj, 0 .sln, 0 .sql files.
@@ -448,7 +448,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-09] — Task 02.9.3.1: Final Audit Finding Clarification & Evidence Report
 - **Objective**: Execute a targeted, strictly read-only audit clarifying 7 critical evidence points identified in Task 02.9.3, disambiguating Owner business approvals from AI/BA technical proposals, and confirming git historical commit integrity.
 - **Deliverables**:
-  - Authored [TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md](../docs/product/TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md) clarifying:
+  - Authored [TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md) clarifying:
     - Konva.js is a technical proposal (`ADR-004`), not an Owner business ballot.
     - Dual table release condition confirmed: 100% paid sub-bills AND 100% fulfilled culinary obligations (`Served`/`Cancelled`).
     - 3-tier inventory distinction verified (`Reserved`, `Consumed`, `Waste`) with deduction trigger maintained as `OPEN / TECH-02`.
@@ -463,7 +463,7 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 ### [2026-11-10] — Task 03.0: Stage 1 Document Consolidation & Archive Plan
 - **Objective**: Author an authoritative, comprehensive, non-destructive Stage 1 Document Consolidation and Archival Plan to organize 62 documentation files (1.22 MB text), reduce active workspace clutter by 60%, and safeguard 100% of historical audit evidence with zero broken link guarantee.
 - **Deliverables**:
-  - Authored [TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md) detailing:
+  - Authored [TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/99-archive/stage-1-history/task-reports/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md) detailing:
     - Complete forensic inventory of all 62 markdown files in `docs/` categorized into 5 functional tiers.
     - Evaluation of 3 architectural options, establishing Option 1 (In-Place Structured Archive under `docs/product/archive/`) as the recommended path.
     - 1:1 migration mapping matrix for 24 historical audit/review reports into 3 structured subcategories (`01-reviews-and-reconciliation`, `02-owner-decision-workshops`, `03-baseline-and-governance-audits`) plus legacy draft consolidation.
@@ -476,3 +476,26 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Pure documentation planning; zero code, zero .NET scaffolding, zero migrations (0 .cs, 0 .csproj, 0 .sln, 0 .sql).
   - Stage 2 Gate strictly maintained as `NOT AUTHORIZED / LOCKED`.
 - **Status**: Completed; Submitted for Project Owner Review & Confirmation.
+
+---
+
+### [2026-11-10] — Task 03.1: Stage 1 Document Consolidation & Archive Execution
+- **Objective**: Execute physical consolidation and archival of Stage 1 documentation per the approved Task 03.0 plan, establishing `docs/PROJECT-GOVERNANCE.md` and `docs/PRODUCT-BASELINE-v1.0.0.md` as the authoritative canonical baselines, relocating 29 historical files to `docs/99-archive/stage-1-history/` via `git mv`, updating agent reading policies, normalizing links (263 links scanned, 0 broken), and certifying zero code leakage.
+- **Deliverables**:
+  - **Canonical Governance Specification**: Authored [docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md) establishing project lifecycle boundaries, Owner supreme authority, AI/Solution Architect limitations, single source-of-truth hierarchy, handling of unresolved decisions (`TECH-02`), and archive access restrictions.
+  - **Canonical Master Baseline Specification**: Authored [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md) (15 comprehensive sections, 56 functional requirements, 18 business rules, 15 invariants, 23 Owner decisions, 4 operational workflows, 10 user journeys, ubiquitous glossary, Vietnamese-First localization standard, 12-column traceability matrix, and open technical topics).
+  - **Structured Archive Scaffolding**: Created `docs/99-archive/stage-1-history/` with 3 dedicated subdirectories: `task-reports/`, `audit-reports/`, and `superseded-documents/`.
+  - **Tamper-Evident Relocation (`git mv`)**: Preserved 100% of historical audit evidence by relocating 29 files (14 task reports, 10 audit reports, 5 superseded documents). Removed empty legacy directory `docs/01-requirements/`.
+  - **Archive Catalog**: Authored [docs/99-archive/stage-1-history/README.md](../docs/99-archive/stage-1-history/README.md) cataloging all 29 archived files with classification and context.
+  - **Master Navigation Restructuring**: Rewrote [docs/00-index.md](../docs/00-index.md) anchoring directly to `docs/PROJECT-GOVERNANCE.md`, `docs/PRODUCT-BASELINE-v1.0.0.md`, living component references, and the archive catalog.
+  - **Agent Reading Policy Enactment**:
+    - Updated [GEMINI.md](../GEMINI.md) Section 3.1 with mandatory reading sequence and archive access prohibition.
+    - Updated [AGENTS.md](../AGENTS.md) Section 1 referencing canonical specifications.
+  - **Automated Link Verification**: Normalized relative paths across active documentation; executed automated PowerShell link verification certifying **263 relative/local links scanned, exactly 0 broken links**.
+  - **Code Leakage & Gate Verification**: Confirmed repository remains 100% free of implementation artifacts (0 .cs, 0 .csproj, 0 .sln, 0 .sql files) and `docs/02-architecture/` verified non-existent (`Test-Path = False`).
+  - Synchronized [.agent-memory/CODEBASE-MAP.md](./CODEBASE-MAP.md), [.agent-memory/PROJECT-STATUS.md](./PROJECT-STATUS.md), and [.agent-memory/NEXT-TASK.md](./NEXT-TASK.md).
+- **Execution Constraints Enforced**:
+  - Documentation consolidation and governance execution only; zero code, zero .NET scaffolding, zero database migrations.
+  - Stage 1 certified as `OWNER-APPROVED (v1.0.0-FROZEN)`.
+  - Stage 2 Gate strictly maintained as `NOT AUTHORIZED / LOCKED`.
+- **Status**: Completed & Verified; Stage 1 Fully Consolidated & Sealed; Standing by for Owner Authorization of Stage 2.

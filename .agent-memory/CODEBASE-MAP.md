@@ -18,14 +18,17 @@ SmartRestaurant/
 │   └── KNOWN-ISSUES.md         # Active technical debt & risks
 ├── docs/                       # Formal project documentation hierarchy
 │   ├── 00-index.md             # Master documentation index
-│   ├── 01-requirements/        # Legacy scaffolding requirements (to be archived)
-│   │   └── product-requirements-document.md # Initial PRD draft
-│   └── product/                # Official Stage 1 product documentation suite
-│       ├── PRODUCT-SPECIFICATION-BASELINE.md # Master Baseline Suite (v1.0.0-FROZEN)
-│       ├── PRD.md              # Official Product Requirements Document
-│       ├── TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md # Consolidation & archive plan
-│       ├── decisions/          # Product Decision Records (PDR-001..015)
-│       └── workflows/          # Core operational workflows (FOH, POS, BOH, Cashier)
+│   ├── PROJECT-GOVERNANCE.md   # Authoritative project governance & stage boundaries
+│   ├── PRODUCT-BASELINE-v1.0.0.md # Sole authoritative Stage 1 product specification
+│   ├── product/                # Component specifications, workflows, and decisions
+│   │   ├── decisions/          # Product Decision Records (PDR-001..015)
+│   │   └── workflows/          # Core operational workflows (FOH, POS, BOH, Cashier)
+│   └── 99-archive/             # Sealed historical archive (strictly read-only)
+│       └── stage-1-history/
+│           ├── README.md       # Archive repository index
+│           ├── task-reports/   # 14 task execution reports
+│           ├── audit-reports/  # 10 independent audit reports
+│           └── superseded-documents/ # 5 superseded early drafts
 ├── .gitignore                  # .NET & IDE exclusion rules
 ├── AGENTS.md                   # Engineering standards & permanent instructions
 ├── GEMINI.md                   # Permanent project instructions & governance
@@ -82,6 +85,7 @@ SmartRestaurant.sln
 ---
 
 ## 4. Key Contracts & Documentation Links
-- **Master PRD**: [docs/01-requirements/product-requirements-document.md](../docs/01-requirements/product-requirements-document.md)
+- **Master Product Baseline**: [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md)
+- **Project Governance**: [docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md)
 - **Documentation Index**: [docs/00-index.md](../docs/00-index.md)
 - **Engineering Instructions**: [AGENTS.md](../AGENTS.md) / [GEMINI.md](../GEMINI.md)

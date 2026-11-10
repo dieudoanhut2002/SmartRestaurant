@@ -5,7 +5,7 @@
 - **Mã Tài Liệu**: `MVP-SCOPE-BASELINE`
 - **Phiên Bản Cơ Sở**: `v1.0.0-FROZEN`
 - **Trạng Thái Quản Trị**: `OWNER-CONFIRMED & SEALED`
-- **Tài Liệu Căn Cứ**: [`MVP-SCOPE.md`](./MVP-SCOPE.md), [`PRD.md`](./PRD.md), [`OWNER-DECISION-WORKSHOP.md`](./OWNER-DECISION-WORKSHOP.md), [`TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md`](./TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)
+- **Tài Liệu Căn Cứ**: [`MVP-SCOPE.md`](../99-archive/stage-1-history/superseded-documents/MVP-SCOPE.md), [`PRD.md`](./PRD.md), [`OWNER-DECISION-WORKSHOP.md`](../99-archive/stage-1-history/task-reports/OWNER-DECISION-WORKSHOP.md), [`TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md`](../99-archive/stage-1-history/task-reports/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)
 
 ---
 

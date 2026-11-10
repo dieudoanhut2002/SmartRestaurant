@@ -3,7 +3,7 @@
 
 - **Phiên Bản Tài Liệu**: 1.0.0
 - **Trạng Thái Tài Liệu**: `PROPOSED`
-- **Tài Liệu Liên Quan**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../MODULE-OVERVIEW.md)
+- **Tài Liệu Liên Quan**: [PRD.md](../PRD.md), [BUSINESS-REQUIREMENTS.md](../../99-archive/stage-1-history/superseded-documents/BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../../99-archive/stage-1-history/superseded-documents/MODULE-OVERVIEW.md)
 
 ---
 

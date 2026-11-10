@@ -1,61 +1,60 @@
 # SmartRestaurant — Next Approved Task Specification
 
-- **Task Identifier**: TASK-03.0.1 (PENDING OWNER APPROVAL OF PLAN TASK 03.0)
-- **Task Title**: Execute Stage 1 Document Consolidation & Archival
-- **Lifecycle Stage**: Transition between Stage 1 and Stage 2
-- **Current Status**: **STAGE 1 = OWNER-APPROVED (`v1.0.0-FROZEN`); STAGE 2 = NOT AUTHORIZED / LOCKED**. Kế hoạch hợp nhất và lưu trữ tài liệu Giai đoạn 1 đã hoàn tất tại [TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md). Chờ Chủ Dự Án phê duyệt phương án kiến trúc lưu trữ để tiến hành thực thi chuyển tệp bằng `git mv` và kiểm thử tự động liên kết. Cổng Giai đoạn 2 tiếp tục duy trì trạng thái KHÓA (LOCKED).
+- **Task Identifier**: TASK-04.0 (PENDING EXPLICIT OWNER AUTHORIZATION FOR STAGE 2)
+- **Task Title**: Stage 2 System Architecture & Technical Design Kickoff
+- **Lifecycle Stage**: Transition to Stage 2 (System Architecture & Technical Design)
+- **Current Status**: **STAGE 1 = OWNER-APPROVED (`v1.0.0-FROZEN`) & FULLY CONSOLIDATED; STAGE 2 = NOT AUTHORIZED / LOCKED**. Nhiệm vụ hợp nhất và lưu trữ tài liệu Giai đoạn 1 (Task 03.1) đã hoàn thành xuất sắc với 100% bằng chứng lịch sử được lưu trữ an toàn, 0 liên kết hỏng, và 2 tài liệu chuẩn tắc tối thượng ([docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md) và [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md)) đã sẵn sàng. Toàn bộ hệ thống hiện đang ở trạng thái **CHỜ LỆNH (STRICT STANDBY)**, chờ Chủ Dự Án chính thức phát lệnh mở khóa Cổng Giai đoạn 2 (Stage 2 Gate).
 
 ---
 
 ## 1. Objective
-Upon Owner review and approval of the Consolidation & Archive Plan (Task 03.0), execute the physical relocation of 24 historical audit, verification, and workshop reports into `docs/product/archive/` using `git mv`, update the 191 cross-links, generate `docs/product/archive/README.md`, streamline `docs/00-index.md`, and run automated link verification to guarantee 0 broken links.
+Upon explicit written authorization from the Project Owner to unlock Stage 2, commence Stage 2 Technical Architecture & System Design for SmartRestaurant based strictly upon the canonical specifications in `docs/PRODUCT-BASELINE-v1.0.0.md` and `docs/PROJECT-GOVERNANCE.md`.
 
 ---
 
 ## 2. Scope
-1. **Directory Scaffolding**: Create `docs/product/archive/01-reviews-and-reconciliation/`, `02-owner-decision-workshops/`, and `03-baseline-and-governance-audits/`.
-2. **Git Relocation**: Execute `git mv` on all 24 historical reports and the legacy scaffolding PRD draft per the 1:1 migration matrix in Task 03.0. Clean up empty `docs/01-requirements/`.
-3. **Index Creation**: Author `docs/product/archive/README.md` cataloging all archived records with audit verdicts and context.
-4. **Link Normalization**: Surgically update 191 cross-links across the codebase to point to new archive paths.
-5. **Index Streamlining**: Update `docs/00-index.md` to present a lean, clean active catalog.
-6. **Automated Verification**: Run PowerShell link verification script; certify **0 broken links**.
-7. **Strict Boundary**: Zero C# code, zero .NET scaffolding, zero database migrations. Stage 2 Gate remains strictly LOCKED until explicit Owner instruction.
+1. **Architecture Blueprinting**: Design high-level Modular Monolith solution architecture (`SmartRestaurant.Domain`, `SmartRestaurant.Application`, `SmartRestaurant.Infrastructure`, `SmartRestaurant.Web`).
+2. **Domain Entity & Relationship Modeling**: Formulate core domain entities, Value Objects, and ERD schemas adhering to clean architecture rules in `AGENTS.md`.
+3. **SignalR Real-Time Contract Design**: Design hub contracts for Table status broadcasting, KDS multi-station routing, and POS updates.
+4. **Integration Protocols**: Formulate VietQR payment callback, printer spooling abstractions, and background worker job scheduling.
+5. **Technical Decision Formalization**: Document Architectural Decision Records (ADRs) for pending technical proposals (`TECH-01` through `TECH-07`, including `TECH-02` Inventory Deduction Trigger).
+6. **Strict Boundary**: Zero application code (.cs), zero project scaffolding (.csproj, .sln), zero database migrations (.sql) until Stage 2 technical design is reviewed and approved by the Project Owner.
 
 ---
 
 ## 3. Required Inputs
-- Approved [Stage 1 Document Consolidation & Archive Plan](../docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md).
-- Master Baseline Suite (`v1.0.0-FROZEN`) at [docs/product/PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md).
-- Architectural guidelines established in [GEMINI.md](../GEMINI.md) and [AGENTS.md](../AGENTS.md).
+- [docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md) (Governance, authority boundaries, source-of-truth rules).
+- [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md) (Sole authoritative Stage 1 product specification).
+- [GEMINI.md](../GEMINI.md) & [AGENTS.md](../AGENTS.md) (Engineering standards and architectural rules).
+- Explicit written instruction from the Project Owner authorizing Stage 2 commencement.
 
 ---
 
 ## 4. Relevant Documentation
-- [docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md)
 - [docs/00-index.md](../docs/00-index.md)
-- [docs/product/PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md)
-- [docs/product/STAGE-2-PRODUCT-HANDOFF.md](../docs/product/STAGE-2-PRODUCT-HANDOFF.md)
+- [docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md)
+- [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md)
+- [docs/99-archive/stage-1-history/README.md](../docs/99-archive/stage-1-history/README.md) (Archive reference if forensic lookup needed).
 
 ---
 
 ## 5. Expected Deliverables
-1. Reorganized repository structure with `docs/product/archive/` hierarchy containing 24 archived reports.
-2. Authoritative index `docs/product/archive/README.md`.
-3. Streamlined `docs/00-index.md`.
-4. Automated verification test results certifying 0 broken links.
-5. Task Completion Report (`TASK-03.0.1-EXECUTION-REPORT.md`).
+1. Stage 2 System Architecture Specification under `docs/02-architecture/`.
+2. Domain Entity & ERD Data Model Specification.
+3. SignalR Real-Time Hub & Protocol Specifications.
+4. Formulated ADRs for `TECH-01` through `TECH-07`.
+5. Stage 2 Kickoff Report and updated project memory.
 
 ---
 
 ## 6. Acceptance Criteria
-- 100% of the 24 historical files preserved via `git mv` (zero data loss, full git history retained).
-- All 191 links updated and verified; automated test returns `PASS (0 broken links)`.
-- Active working set in `docs/product/` reduced from 41 files down to 18 active living documents.
-- The 8 Baseline documents (`v1.0.0-FROZEN`) retain 100% invariant meaning.
-- Zero code written; Stage 2 Gate remains `NOT AUTHORIZED / LOCKED`.
+- Explicit Owner directive authorizing Stage 2 received prior to creating any Stage 2 documents.
+- 100% conformance to Master Baseline `PRODUCT-BASELINE-v1.0.0.md` (no deviation from approved business rules).
+- Clean separation of concerns per Modular Monolith guidelines in `AGENTS.md`.
+- Zero code leakage during technical architecture phase.
 
 ---
 
 ## 7. Approval Requirements
-- Owner confirmation of Option 1 (In-Place Structured Archive) in Task 03.0.
-- Commencing Stage 2 Technical Architecture (TASK-03) remains strictly on STANDBY / LOCKED pending separate explicit Owner directive.
+- **MANDATORY**: Explicit written authorization from the Project Owner to unlock Stage 2.
+- Commencing Stage 2 without explicit Owner authorization is strictly prohibited by `GEMINI.md` and `PROJECT-GOVERNANCE.md`.

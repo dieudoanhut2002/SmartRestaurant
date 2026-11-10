@@ -3,7 +3,7 @@
 
 - **Phiên Bản Tài Liệu**: 1.0.0
 - **Trạng Thái Tài Liệu**: `CONFIRMED` (Chủ Dự án đã phê duyệt chính thức trong Task 02.6)
-- **Tài Liệu Liên Quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](./MODULE-OVERVIEW.md)
+- **Tài Liệu Liên Quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](../99-archive/stage-1-history/superseded-documents/BUSINESS-REQUIREMENTS.md), [MODULE-OVERVIEW.md](../99-archive/stage-1-history/superseded-documents/MODULE-OVERVIEW.md)
 
 ---
 

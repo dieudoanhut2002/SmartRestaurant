@@ -2,7 +2,7 @@
 
 - **Phiên bản tài liệu**: 1.0.0
 - **Trạng thái tài liệu**: `CONFIRMED` (Đã được Chủ nhà hàng phê duyệt rõ ràng tại Task 02.6)
-- **Tài liệu liên quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](./BUSINESS-REQUIREMENTS.md), [Workflows/](./workflows/)
+- **Tài liệu liên quan**: [PRD.md](./PRD.md), [BUSINESS-REQUIREMENTS.md](../99-archive/stage-1-history/superseded-documents/BUSINESS-REQUIREMENTS.md), [Workflows/](./workflows/)
 
 ---
 

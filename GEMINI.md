@@ -84,15 +84,22 @@ Root Rule Anchor: `GEMINI.md`
 At the start of **every** new task or CLI session, the Agent must restore context in the following sequence:
 
 1. Read `GEMINI.md` (this file).
-2. Read `.agent-memory/PROJECT-STATUS.md` (if it exists).
-3. Read `.agent-memory/NEXT-TASK.md` (if it exists).
-4. Read relevant approved decisions in `.agent-memory/ARCHITECTURE-DECISIONS.md`.
-5. Read `docs/00-index.md` (if it exists).
-6. Read only the specific documentation files relevant to the assigned task.
+2. Read `docs/PROJECT-GOVERNANCE.md` (Project governance, authorization boundaries, Stage 1/2 status, Owner authority).
+3. Read `.agent-memory/PROJECT-STATUS.md` (if it exists).
+4. Read `.agent-memory/NEXT-TASK.md` (if it exists).
+5. Read `docs/PRODUCT-BASELINE-v1.0.0.md` as the sole authoritative product specification.
+6. Read `docs/00-index.md` (if it exists).
 7. Consult `.agent-memory/CODEBASE-MAP.md` when navigating code structures.
 
 *Note*: If a memory file does not yet exist, do not treat it as an error; it will be created during the dedicated memory initialization phase.  
 *Rule*: Never assume prior CLI conversation history is accessible. The persistent memory files and approved documentation are the definitive sources of truth.
+
+### Strict Archive Reading Policy
+- **No Archive Scanning**: Future Agents MUST NEVER recursively read, traverse, or load files under `docs/99-archive/stage-1-history/` during normal work.
+- **Archive Is Not Active**: Archived documents are NOT active requirements and MUST NOT be used to derive new tasks.
+- **Owner Prompt Exemption Only**: Access archived documents ONLY when the Project Owner explicitly requests historical forensic investigation.
+- **Unresolved Handling**: Treat missing requirements as `OPEN / UNRESOLVED` rather than guessing.
+- Do not duplicate the full product specification inside `GEMINI.md` or `AGENTS.md`.
 
 ## 3.2. Source Code Inspection Policy
 
