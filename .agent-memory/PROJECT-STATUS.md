@@ -1,8 +1,8 @@
 # SmartRestaurant — Project Status
 
 - **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (Stage 1: OWNER-APPROVED; Stage 2: NOT AUTHORIZED / LOCKED — Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner)
-- **Current Milestone**: Milestone 1.17 (Task 02.8.6.1) Completed — Governance Correction & Decision Traceability Certified; Stage 1 Officially OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED
-- **Status Date**: 2026-11-06
+- **Current Milestone**: Milestone 1.20 (Task 03.0) Completed — Stage 1 Document Consolidation & Archive Plan Authored; Stage 1 Officially OWNER-APPROVED (`v1.0.0-FROZEN`); Stage 2 NOT AUTHORIZED / LOCKED
+- **Status Date**: 2026-11-10
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Stage | Name | Status | Deliverables |
 | :--- | :--- | :--- | :--- |
-| **Stage 1** | Product Requirements & Business Domain Analysis | **`OWNER-APPROVED`** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit, Task 02.8.5 Consolidation Record, Task 02.8.6 Implementation Report, Task 02.9 Baseline Suite (v1.0.0-FROZEN), Task 02.9.1 Audit Report, Task 02.9.2 Resolution Report, Task 02.9.2.1 Integrity Audit, Task 02.8.6.1 Traceability Verification |
+| **Stage 1** | Product Requirements & Business Domain Analysis | **`OWNER-APPROVED`** | PRD, BRS, MVP Scope, Glossary, Journeys, Modules, Workflows, NFRs, PDR-001..015, Final Traceability Audit, Task 02.8.5 Consolidation Record, Task 02.8.6 Implementation Report, Task 02.9 Baseline Suite (v1.0.0-FROZEN), Task 02.9.1 Audit Report, Task 02.9.2 Resolution Report, Task 02.9.2.1 Integrity Audit, Task 02.8.6.1 Traceability Verification, Task 02.9.3 Final Audit, Task 02.9.3.1 Evidence Clarification, Task 03.0 Consolidation & Archive Plan |
 | **Stage 2** | System Architecture & Technical Design | **`NOT AUTHORIZED / LOCKED`** | System Architecture, ERD, SignalR Specs, Concurrency Strategy (Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner) |
 | **Stage 3** | Detailed Module Specifications & Data Models | `PENDING` | Module Specs, DTOs, Business Rules |
 | **Stage 4** | Implementation & Milestone Planning | `PENDING` | Work Breakdown Structure (WBS), Sprints |
@@ -42,6 +42,9 @@
 - [x] **Milestone 1.15 (Task 02.9.2)**: Governance Finding Resolution ([TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/product/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md)). 100% of audit findings (F-01..F-04) resolved; controlled baseline suite refined; certified Clean Pass.
 - [x] **Milestone 1.16 (Task 02.9.2.1)**: Independent Governance Integrity Verification ([TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/product/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md)). 10/10 audit criteria passed; certified 100% compliance; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
 - [x] **Milestone 1.17 (Task 02.8.6.1)**: Governance Correction & Decision Traceability Verification ([TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/product/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md)). Surgical resolution of Decision ID mismatches (`OD-13` vs `OD-14`, `BillingRequested Op2`); 100% verified traceability chain for 23 Owner Decisions; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
+- [x] **Milestone 1.18 (Task 02.9.3)**: Final Stage 1 Governance & Baseline Integrity Audit ([TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md](../docs/product/TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md)). Certified `PASS WITH FINDINGS` across 70 markdown files; 100% Owner decisions preserved; recommended closing Stage 1; Stage 2 NOT AUTHORIZED / LOCKED.
+- [x] **Milestone 1.19 (Task 02.9.3.1)**: Final Audit Finding Clarification & Evidence Verification ([TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md](../docs/product/TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md)). Verified 7 key target evidence points; confirmed 8 commits and zero code leakage; certified Clean Pass.
+- [x] **Milestone 1.20 (Task 03.0)**: Stage 1 Document Consolidation & Archive Plan ([TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/product/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md)). Comprehensive planning for archiving 24 historical reports into 3 structured subcategories, preserving 100% evidence, mapping 191 links with zero broken link guarantee.
 - [x] **Stage 1 Formal Sign-Off (2026-11-06)**: Project Owner explicitly reviewed and approved Stage 1 (OWNER-APPROVED). Stage 2 is NOT AUTHORIZED / LOCKED. Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner. Zero code written, zero schemas scaffolded.
 
 ---

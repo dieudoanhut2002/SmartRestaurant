@@ -18,8 +18,14 @@ SmartRestaurant/
 │   └── KNOWN-ISSUES.md         # Active technical debt & risks
 ├── docs/                       # Formal project documentation hierarchy
 │   ├── 00-index.md             # Master documentation index
-│   └── 01-requirements/        # Requirements specifications
-│       └── product-requirements-document.md # Master PRD
+│   ├── 01-requirements/        # Legacy scaffolding requirements (to be archived)
+│   │   └── product-requirements-document.md # Initial PRD draft
+│   └── product/                # Official Stage 1 product documentation suite
+│       ├── PRODUCT-SPECIFICATION-BASELINE.md # Master Baseline Suite (v1.0.0-FROZEN)
+│       ├── PRD.md              # Official Product Requirements Document
+│       ├── TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md # Consolidation & archive plan
+│       ├── decisions/          # Product Decision Records (PDR-001..015)
+│       └── workflows/          # Core operational workflows (FOH, POS, BOH, Cashier)
 ├── .gitignore                  # .NET & IDE exclusion rules
 ├── AGENTS.md                   # Engineering standards & permanent instructions
 ├── GEMINI.md                   # Permanent project instructions & governance
