@@ -1,0 +1,215 @@
+@model List<WorkShiftDto>
+@{
+    ViewData["Title"] = "Quản Lý Ca Làm Việc & Két Tiền";
+    var activeShifts = ViewBag.ActiveShifts as List<WorkShiftDto> ?? [];
+    var staffList = ViewBag.StaffList as List<StaffMemberDto> ?? [];
+}
+
+<div class="container-fluid p-0">
+    <!-- Top Action Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>Ca Làm Việc & Kiểm Tiền Mù Cuối Ca</h5>
+                <small class="text-muted">Nguyên tắc kế toán ca F&B Việt Nam — Thu ngân tự đếm tiền thực tế mà không nhìn số liệu hệ thống (INV-12 / BR-RULE-07)</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a asp-action="VarianceLogs" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-journal-text me-1"></i> Sổ Lệch Két (VarianceLog)
+                </a>
+                <button type="button" class="btn btn-warning fw-semibold btn-sm" data-bs-toggle="modal" data-bs-target="#openShiftModal">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Khởi Tạo Mở Ca Mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Open Shifts Section -->
+    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-play-circle-fill me-2 text-success"></i>Ca Làm Việc Đang Hoạt Động (@activeShifts.Count)</h6>
+    <div class="row g-3 mb-4">
+        @if (activeShifts.Count == 0)
+        {
+            <div class="col-12">
+                <div class="card border-0 shadow-sm p-4 text-center text-muted">
+                    <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                    Hiện tại chưa có ca làm việc nào đang mở. Vui lòng bấm "Khởi Tạo Mở Ca Mới" để bắt đầu ca bán hàng.
+                </div>
+            </div>
+        }
+        @foreach (var shift in activeShifts)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">@shift.StaffFullName</h6>
+                                <small class="text-muted">Bắt đầu: @shift.OpenedAt.ToString("HH:mm - dd/MM/yyyy")</small>
+                            </div>
+                            <span class="badge bg-success px-2 py-1">Đang mở</span>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Tiền quỹ đầu ca (Float):</span>
+                            <strong>@shift.OpeningCashFloat.ToString("N0") ₫</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-3">
+                            <span class="text-muted">Doanh số tiền mặt tạm tính:</span>
+                            <strong class="text-primary fw-bold">@shift.SystemCashTotal.ToString("N0") ₫</strong>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger w-100 btn-sm fw-semibold"
+                                onclick="openBlindCloseModal('@shift.Id', '@shift.StaffFullName', @shift.OpeningCashFloat)">
+                            <i class="bi bi-door-closed me-1"></i> Chốt Ca & Kiểm Tiền Mù
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Shift History Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-3 px-3">
+            <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-clock me-2 text-secondary"></i>Lịch Sử Các Ca Đã Chốt</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Thu Ngân / Quản Lý</th>
+                            <th>Thời Gian Mở</th>
+                            <th>Thời Gian Chốt</th>
+                            <th class="text-end">Tiền Quỹ Đầu</th>
+                            <th class="text-end">Doanh Số Tiền Mặt</th>
+                            <th class="text-end">Tiền Thực Đếm</th>
+                            <th class="text-center">Chênh Lệch</th>
+                            <th class="pe-3">Ghi Chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">Chưa có lịch sử ca làm việc đã đóng.</td>
+                            </tr>
+                        }
+                        @foreach (var item in Model.Where(s => s.Status == ShiftStatus.Closed))
+                        {
+                            <tr>
+                                <td class="ps-3 fw-semibold text-dark">@item.StaffFullName</td>
+                                <td class="small text-muted font-monospace">@item.OpenedAt.ToString("HH:mm - dd/MM/yyyy")</td>
+                                <td class="small text-muted font-monospace">@(item.ClosedAt?.ToString("HH:mm - dd/MM/yyyy") ?? "—")</td>
+                                <td class="text-end">@item.OpeningCashFloat.ToString("N0") ₫</td>
+                                <td class="text-end fw-semibold text-primary">@item.SystemCashTotal.ToString("N0") ₫</td>
+                                <td class="text-end fw-bold">@(item.ActualCashCount?.ToString("N0") ?? "—") ₫</td>
+                                <td class="text-center">
+                                    @if (!item.VarianceAmount.HasValue || item.VarianceAmount.Value == 0)
+                                    {
+                                        <span class="badge bg-success-subtle text-success">Khớp 100% (0 ₫)</span>
+                                    }
+                                    else if (item.VarianceAmount.Value > 0)
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning-emphasis">Dư +@item.VarianceAmount.Value.ToString("N0") ₫</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger">Thiếu @item.VarianceAmount.Value.ToString("N0") ₫</span>
+                                    }
+                                </td>
+                                <td class="pe-3 small text-muted">@item.Notes</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Open Shift -->
+<div class="modal fade" id="openShiftModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="OpenShift" method="post">
+                <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-in-right me-2 text-warning"></i>Mở Ca Bán Hàng Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nhân Viên Trực Ca <span class="text-danger">*</span></label>
+                        <select name="StaffMemberId" class="form-select" required>
+                            @foreach (var staff in staffList)
+                            {
+                                <option value="@staff.Id">@staff.FullName (@staff.RoleName)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tiền Quỹ Tiền Mặt Đầu Ca (VNĐ) <span class="text-danger">*</span></label>
+                        <input type="number" name="OpeningCashFloat" class="form-control" value="2000000" min="0" step="10000" required />
+                        <small class="text-muted">Tiền thối dự trữ ban đầu bàn giao trong két tiền.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ghi Chú Mở Ca</label>
+                        <input type="text" name="Notes" class="form-control" placeholder="Ví dụ: Ca sáng, két số 1" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-warning fw-semibold">Mở Ca Làm Việc</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Blind Shift Close -->
+<div class="modal fade" id="blindCloseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CloseShift" method="post">
+                <input type="hidden" name="ShiftId" id="blind-shift-id" />
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title fw-bold text-danger"><i class="bi bi-shield-lock-fill me-2"></i>Chốt Ca — Kiểm Tiền Mù (Blind Close)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning border-0 small mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Quy tắc bất biến INV-12:</strong> Thu ngân đếm toàn bộ tiền mặt vật lý có trong két và nhập vào ô dưới đây mà không nhìn thấy doanh số hệ thống. Sai lệch tiền mặt (nếu có) sẽ được tự động ghi nhận vào sổ ShiftClosingVarianceLog để đối soát với Quản lý.
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-muted small">Nhân viên trực ca: <strong class="text-dark" id="blind-staff-name">—</strong></div>
+                        <div class="text-muted small">Tiền quỹ bàn giao đầu ca: <strong class="text-dark" id="blind-float-amount">—</strong></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark fs-6">Tổng Tiền Mặt Thực Đếm Trong Két (VNĐ) <span class="text-danger">*</span></label>
+                        <input type="number" name="ActualCashCount" class="form-control form-control-lg text-center fs-3 fw-bold text-success" placeholder="0" min="0" step="1000" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Giải Trình / Ghi Chú Chốt Ca</label>
+                        <textarea name="Notes" class="form-control" rows="2" placeholder="Nhập lý do chênh lệch (nếu có) hoặc ghi chú bàn giao ca sau..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger fw-semibold">Xác Nhận Chốt Ca</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openBlindCloseModal(shiftId, staffName, floatAmount) {
+            document.getElementById('blind-shift-id').value = shiftId;
+            document.getElementById('blind-staff-name').textContent = staffName;
+            document.getElementById('blind-float-amount').textContent = floatAmount.toLocaleString('vi-VN') + ' ₫';
+            new bootstrap.Modal(document.getElementById('blindCloseModal')).show();
+        }
+    </script>
+}

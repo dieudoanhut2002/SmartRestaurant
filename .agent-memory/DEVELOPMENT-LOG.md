@@ -499,3 +499,41 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Stage 1 certified as `OWNER-APPROVED (v1.0.0-FROZEN)`.
   - Stage 2 Gate strictly maintained as `NOT AUTHORIZED / LOCKED`.
 - **Status**: Completed & Verified; Stage 1 Fully Consolidated & Sealed; Standing by for Owner Authorization of Stage 2.
+
+
+---
+
+### [2026-11-11] — Implementation Task 02: Complete Manager Application
+- **Objective**: Build and deliver the complete, production-ready Manager Application (Cổng Quản Lý & Vận Hành) across all 4 Clean Architecture tiers in .NET 8 LTS (`net8.0`), fulfilling Core Business Subsystems 1, 2, 6, 7, 8 and Master Business Rules across all 7 functional domains (A through G).
+- **Deliverables**:
+  - **Domain Expansion (`SmartRestaurant.Domain`)**:
+    - Entities: `Branch`, `DiningArea`, `DiningRoom`, `RestaurantTable`, `KitchenStation`, `MenuItem`, `MenuItemVariant`, `ModifierGroup`, `ModifierOption`, `InventoryItem`, `InventoryTransaction`, `StaffMember`, `WorkShift`, `ShiftClosingVarianceLog`, `ManagerPinAuditLog`, `KitchenWasteLog`, `DiningSession`.
+    - Enums & Exceptions: `PrepStation`, `StaffRole`, `ShiftStatus`, `DiningSessionStatus`, `InventoryTransactionType`, `TableStatus` expanded with `BillingRequested` (Tím) and `OutOfService` (Xám), `TableShape` with `Square`, `DomainNotFoundException`.
+    - Business rules & invariants enforced: 4-digit PIN hashing (`BR-SEC-002`), blind shift closing variance calculation (`INV-12`), 1-click 86 temporary out-of-stock toggle (`BR-KIT-006`), automatic 86 when countable stock hits 0 (`BR-INV-004`), manager PIN authorization with audit logging (`INV-09`, `BR-SEC-003`), Two-Phase Inventory Invariant `AvailableStock = PhysicalStock - ReservedStock` (`INV-03`, `D2`), Business day cutoff default `06:00` (`D1`), VIP room surcharges (`PDR-011`, `REV-06`), 4 MVP Optional module toggles with 3 Onboarding Presets (`OD-16`).
+  - **Application Services & DTOs (`SmartRestaurant.Application`)**:
+    - Abstractions: `IAppDbContext`, `IFloorPlanService`, `IMenuService`, `IKitchenStationService`, `IInventoryService`, `ISettingService`, `IStaffService`, `IShiftService`, `IDashboardService`, `IReportService`.
+    - DTOs: `FloorPlanDtos`, `MenuDtos`, `StationDtos`, `InventoryDtos`, `SettingDtos`, `StaffAndShiftDtos`, `DashboardAndReportDtos`.
+    - Services: `FloorPlanService`, `MenuService`, `KitchenStationService`, `InventoryService`, `SettingService`, `StaffService`, `ShiftService`, `DashboardService`, `ReportService` with full DI registration.
+  - **Infrastructure & Data Access (`SmartRestaurant.Infrastructure`)**:
+    - `AppDbContext` with EF Core fluent API configurations for all entities and global soft delete query filters (`IsDeleted == false`).
+    - `DatabaseSeeder`: Automatic idempotent database seeder creating LocalDB database `SmartRestaurantDb_v3`, default branch, 6 staff roles with test accounts & PINs, 3 dining areas, 16 tables with Konva.js visual coordinates, 4 kitchen stations, 5 categories, 16 dishes, variants, modifier groups & options, 5 inventory items for countable goods with physical/reserved/consumed/waste stocks, inventory audit transactions, active shift, dining sessions, and sample audit/waste logs.
+  - **Manager Web Portal (`SmartRestaurant.Web`)**:
+    - Responsive ASP.NET Core MVC application targeting `net8.0` with 100% Vietnamese presentation tier (`vi-VN`, `₫`).
+    - `DashboardController` & `Views/Dashboard/Index.cshtml`: KPI metric cards, Chart.js hourly sales, table status overview, recent activity list.
+    - `FloorPlanController` & `Views/FloorPlan/Index.cshtml`: Interactive 2D floor plan visual designer powered by Konva.js, drag-and-drop table position saving via AJAX, table cards, inspector panel, status change triggers, add/edit table modals, dining room & VIP surcharge modal.
+    - `MenuController` & `Views/Menu/Index.cshtml`: Category filter tabs, search under 100ms, dish list with prep stations, `DirectFOHPick` flag, 86 availability toggle switch, stock modal, add item modal, portion variants (S/M/L) modal, modifier groups & options management modal.
+    - `StationController` & `Views/Station/Index.cshtml`: Kitchen station catalog (`HotKitchen`, `ColdKitchen`, `Bar`, `Bakery`), printer IPs, assigned dishes count, dish routing matrix, unified KDS support.
+    - `InventoryController` & `Views/Inventory/Index.cshtml`: Real-time stock table displaying all 4 states (`Physical`, `Reserved`, `Consumed`, `Waste`) + invariant `Available = Physical - Reserved`, low stock alerts, stock receipt modal, stock adjustment modal, and transaction audit log modal.
+    - `SettingController` & `Views/Setting/Index.cshtml`: Business day cutoff time (`06:00`), VIP room surcharges (% and fixed amount), 4 MVP optional module toggles, and 3 quick onboarding presets (`Cafe`, `Alacarte`, `BeerPub`).
+    - `StaffController` & `Views/Staff/Index.cshtml`: 6 RBAC roles, staff accounts, PIN reset, and interactive Manager PIN authorization tester.
+    - `ShiftController`, `Views/Shift/Index.cshtml` & `VarianceLogs.cshtml`: Active shifts, Blind Shift Close modal, and variance audit trail.
+    - `ReportController`, `Views/Report/Index.cshtml`, `WasteLogs.cshtml`, `PinAudits.cshtml`: BusinessDate (06:00 cutoff) sales report, tender breakdown (Cash, VietQR, Card), kitchen waste log, and manager PIN audit trail.
+  - **Automated Test Suite**:
+    - Total test suite: 45/45 tests passing (21 Domain tests + 24 Application tests).
+    - Verified full solution build with 0 warnings and 0 errors.
+    - Verified real HTTP 200 execution across all 10 manager routes, AJAX table drag-and-drop coordinate saving, table state transitions, 86 toggle, and station dish assignment.
+- **Build & Test Results**:
+  - `dotnet build`: Succeeded (0 Errors, 0 Warnings).
+  - `dotnet test`: 45 Passed, 0 Failed, 0 Skipped (100% passing).
+  - HTTP Server: Verified serving 200 OK across all routes (`/Dashboard`, `/FloorPlan`, `/Menu`, `/Station`, `/Inventory`, `/Staff`, `/Shift`, `/Report`, `/Setting`).
+- **Status**: Completed & Verified.

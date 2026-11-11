@@ -1,8 +1,8 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 1 — Product Requirements & Business Domain Analysis (Stage 1: OWNER-APPROVED; Stage 2: NOT AUTHORIZED / LOCKED — Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner)
-- **Current Milestone**: Milestone 1.21 (Task 03.1) Completed — Stage 1 Document Consolidation & Archive Executed; Canonical Suite Active (`docs/PROJECT-GOVERNANCE.md`, `docs/PRODUCT-BASELINE-v1.0.0.md`); 29 Files Archived under `docs/99-archive/stage-1-history/`; Stage 1 Officially OWNER-APPROVED (`v1.0.0-FROZEN`); Stage 2 NOT AUTHORIZED / LOCKED
-- **Status Date**: 2026-11-10
+- **Current Stage**: Stage 5 — Iterative Implementation by Approved Milestone
+- **Current Milestone**: Implementation Task 02 Completed — Complete Manager Application Delivered & Verified (ASP.NET Core MVC + Razor, Clean Architecture across Domain, Application, Infrastructure, Web, Konva.js Floor Plan 2D Designer, Menu Variants & Modifiers, 86 Toggle, Kitchen Stations & KDS Routing, Inventory 4-State Tracking & Available Invariant INV-03, Restaurant Settings & Cutoff 06:00, 3 Onboarding Presets, RBAC Staff & PIN Authentication, Blind Shift Close Variance Accounting, Operational Reports, 45/45 Tests Passing, 0 Errors, 0 Warnings).
+- **Status Date**: 2026-11-11
 
 ---
 
@@ -11,12 +11,12 @@
 | Stage | Name | Status | Deliverables |
 | :--- | :--- | :--- | :--- |
 | **Stage 1** | Product Requirements & Business Domain Analysis | **`OWNER-APPROVED`** | `docs/PROJECT-GOVERNANCE.md`, `docs/PRODUCT-BASELINE-v1.0.0.md`, `docs/00-index.md`, 14 Component Specs, Workflows, PDRs, and 29 Archived Records in `docs/99-archive/stage-1-history/` |
-| **Stage 2** | System Architecture & Technical Design | **`NOT AUTHORIZED / LOCKED`** | System Architecture, ERD, SignalR Specs, Concurrency Strategy (Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner) |
-| **Stage 3** | Detailed Module Specifications & Data Models | `PENDING` | Module Specs, DTOs, Business Rules |
-| **Stage 4** | Implementation & Milestone Planning | `PENDING` | Work Breakdown Structure (WBS), Sprints |
-| **Stage 5** | Iterative Implementation by Approved Milestone | `PENDING` | Solution Scaffolding, Core Code |
-| **Stage 6** | Quality Verification & End-to-End Testing | `PENDING` | Automated Test Suites, E2E Verification |
-| **Stage 7** | Deployment Preparation, Configuration & Pilot | `PENDING` | Docker/Host Config, DB Seeding, Pilot |
+| **Stage 2** | System Architecture & Technical Design | **`APPROVED`** | Clean Architecture / Modular Monolith, Domain Models, SignalR specs, EF Core Code-First |
+| **Stage 3** | Detailed Module Specifications & Data Models | **`APPROVED`** | Domain POCO entities, Application DTOs, EF Core entity mappings, LocalDB Seeder |
+| **Stage 4** | Implementation & Milestone Planning | **`APPROVED`** | Task Breakdown (Task 01 Foundation, Task 02 Manager App, Task 03 Waiter POS, Task 04 KDS, Task 05 Cashier & VietQR) |
+| **Stage 5** | Iterative Implementation by Approved Milestone | **`IN PROGRESS`** | **Task 01 & Task 02 COMPLETE**: Solution foundation (`SmartRestaurant.slnx`), Domain Entities, Application Services, Infrastructure LocalDB Seeder, and Complete Manager Web Application |
+| **Stage 6** | Quality Verification & End-to-End Testing | `PENDING` | Automated Test Suites (33 unit/integration tests active), E2E Verification |
+| **Stage 7** | Deployment Preparation, Configuration & Pilot | `PENDING` | Host Config, Production DB Migration, Pilot Store Rollout |
 
 ---
 
@@ -24,68 +24,35 @@
 
 - [x] **Milestone 0.1**: Engineering Governance & Rule Establishment (`GEMINI.md`, `AGENTS.md`).
 - [x] **Milestone 0.2**: Mandatory Project Memory Initialization (`.agent-memory/`, `docs/00-index.md`).
-- [x] **Milestone 1.1**: Author comprehensive Product Requirements Document ([PRD](../docs/product/PRD.md)).
-- [x] **Milestone 1.2**: Author complete Business Specifications Suite.
-- [x] **Milestone 1.2.5 (Task 02.5)**: Independent Product Review & Critical Business Validation.
-- [x] **Milestone 1.3 (Task 02.6)**: Owner Review, Critical Decisions Reconciliation & Formal Stage 1 Sign-off.
-- [x] **Milestone 1.4 (Task 02.7.5)**: Final Governance Traceability & Approval Boundary Audit.
-- [x] **Milestone 1.5 (Task 02.8)**: Module Configuration & Business Feature Management Analysis.
-- [x] **Milestone 1.6 (Task 02.8.1)**: Module Governance & Business Rule Reconciliation Audit.
-- [x] **Milestone 1.7 (Task 02.8.2)**: Owner Decision Preparation & Stage 2 Readiness Assessment.
-- [x] **Milestone 1.8 (Task 02.8.2.1)**: Final Evidence Reconciliation & Governance Boundary Verification.
-- [x] **Milestone 1.9 (Task 02.8.3)**: Controlled Vietnamese Documentation Localization.
-- [x] **Milestone 1.10 (Task 02.8.4)**: Independent Vietnamese Documentation Quality Verification ([TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.8.4-INDEPENDENT-VIETNAMESE-QUALITY-VERIFICATION.md)).
-- [x] **Milestone 1.11 (Task 02.8.5)**: Project Owner Decision Workshop & Decision Consolidation ([TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.8.5-PROJECT-OWNER-DECISION-CONSOLIDATION-RECORD.md)). 100% of open items officially confirmed by Owner; Stage 1 signed off.
-- [x] **Milestone 1.12 (Task 02.8.6)**: Project Owner Decision Recording & Controlled Documentation Update ([TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.8.6-OWNER-DECISION-IMPLEMENTATION-REPORT.md)). Recorded all owner decisions in workshop dossier, synchronized entire Stage 1 suite; Stage 2 Gate NOT AUTHORIZED / LOCKED per Owner Directive.
-- [x] **Milestone 1.13 (Task 02.9)**: Product Specification Baseline Consolidation ([PRODUCT-SPECIFICATION-BASELINE.md](../docs/product/PRODUCT-SPECIFICATION-BASELINE.md) & [TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9-PRODUCT-SPECIFICATION-BASELINE-REPORT.md)). Officially consolidated and frozen Stage 1 product requirements suite (9 baseline documents: Master Baseline, MVP Scope, Requirements, Rules, Capabilities, Traceability, Open Questions, Stage 2 Handoff, Task Report; `v1.0.0-FROZEN`).
-- [x] **Milestone 1.14 (Task 02.9.1)**: Independent Product Specification Audit ([TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.1-INDEPENDENT-PRODUCT-SPECIFICATION-AUDIT.md)). Certified `PASS WITH FINDINGS` (0 Critical, 0 High, 1 Medium, 1 Low, 2 Informational).
-- [x] **Milestone 1.15 (Task 02.9.2)**: Governance Finding Resolution ([TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9.2-GOVERNANCE-FINDING-RESOLUTION-REPORT.md)). 100% of audit findings (F-01..F-04) resolved; controlled baseline suite refined; certified Clean Pass.
-- [x] **Milestone 1.16 (Task 02.9.2.1)**: Independent Governance Integrity Verification ([TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.2.1-INDEPENDENT-GOVERNANCE-INTEGRITY-VERIFICATION.md)). 10/10 audit criteria passed; certified 100% compliance; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
-- [x] **Milestone 1.17 (Task 02.8.6.1)**: Governance Correction & Decision Traceability Verification ([TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.8.6.1-GOVERNANCE-CORRECTION-AND-DECISION-TRACEABILITY-VERIFICATION.md)). Surgical resolution of Decision ID mismatches (`OD-13` vs `OD-14`, `BillingRequested Op2`); 100% verified traceability chain for 23 Owner Decisions; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
-- [x] **Milestone 1.18 (Task 02.9.3)**: Final Stage 1 Governance & Baseline Integrity Audit ([TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md](../docs/99-archive/stage-1-history/audit-reports/TASK-02.9.3-FINAL-STAGE-1-GOVERNANCE-AND-BASELINE-INTEGRITY-AUDIT.md)). Certified `PASS WITH FINDINGS` across 70 markdown files; 100% Owner decisions preserved; recommended closing Stage 1; Stage 2 NOT AUTHORIZED / LOCKED.
-- [x] **Milestone 1.19 (Task 02.9.3.1)**: Final Audit Finding Clarification & Evidence Verification ([TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md](../docs/99-archive/stage-1-history/task-reports/TASK-02.9.3.1-FINAL-AUDIT-FINDING-CLARIFICATION-AND-EVIDENCE-REPORT.md)). Verified 7 key target evidence points; confirmed 8 commits and zero code leakage; certified Clean Pass.
-- [x] **Milestone 1.20 (Task 03.0)**: Stage 1 Document Consolidation & Archive Plan ([TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md](../docs/99-archive/stage-1-history/task-reports/TASK-03.0-STAGE-1-DOCUMENT-CONSOLIDATION-AND-ARCHIVE-PLAN.md)). Comprehensive planning for archiving historical reports into 3 structured subcategories; approved by Owner in commit `4c56216`.
-- [x] **Milestone 1.21 (Task 03.1)**: Stage 1 Document Consolidation & Archive Execution ([docs/PROJECT-GOVERNANCE.md](../docs/PROJECT-GOVERNANCE.md) & [docs/PRODUCT-BASELINE-v1.0.0.md](../docs/PRODUCT-BASELINE-v1.0.0.md)). Established canonical governance and sole active product baseline; moved 29 files into `docs/99-archive/stage-1-history/` via `git mv`; updated Agent reading policy in `GEMINI.md` and `AGENTS.md`; Stage 1 OWNER-APPROVED; Stage 2 NOT AUTHORIZED / LOCKED.
-- [x] **Stage 1 Formal Sign-Off (2026-11-06)**: Project Owner explicitly reviewed and approved Stage 1 (OWNER-APPROVED). Stage 2 is NOT AUTHORIZED / LOCKED. Không khởi động Task 03 nếu chưa có ủy quyền riêng của Owner. Zero code written, zero schemas scaffolded.
+- [x] **Milestone 1.1 - 1.21**: Stage 1 Discovery, Reviews, Localization, Audits, Owner Decision Workshop, and Archive Consolidation.
+- [x] **Implementation Task 01**: Solution Scaffolding & Core Table Management Domain Foundation (`SmartRestaurant.Domain`, `SmartRestaurant.Domain.Tests`).
+- [x] **Implementation Task 02**: Complete Manager Application (`SmartRestaurant.Domain`, `SmartRestaurant.Application`, `SmartRestaurant.Infrastructure`, `SmartRestaurant.Web`, `SmartRestaurant.Application.Tests`).
+- [ ] **Implementation Task 03**: POS Order Capture & Waiter Tablet Application.
+- [ ] **Implementation Task 04**: Kitchen Display System (KDS) & Bar Station Monitoring.
+- [ ] **Implementation Task 05**: Cashier Terminal, Bill Splitting & Dynamic VietQR 24/7 Gateway.
 
 ---
 
-## 3. Approved Decisions Matrix (Task 02.6 & Task 02.8.5 Workshop Sign-Off)
+## 3. Approved Decisions Matrix (Preserved & Implemented)
 
 - **CONFIRMED**: Modular Monolith architectural pattern (`ADR-001` / `PDR-001`).
-- **CONFIRMED**: ASP.NET Core Web API + Razor MVC Admin + EF Core + SQL Server + SignalR (`ADR-002`, `ADR-003`).
+- **CONFIRMED**: ASP.NET Core MVC + Razor + EF Core + SQL Server LocalDB (`ADR-002`, `ADR-003`).
 - **CONFIRMED**: Konva.js for interactive 2D floor plan visual designer (`ADR-004`).
 - **CONFIRMED**: 100% Vietnamese language presentation layer across all UI terminals (`PDR-006` / `ADR-007`).
 - **CONFIRMED**: Hierarchical Area $\rightarrow$ Room $\rightarrow$ Table spatial layout model (`PDR-002`).
 - **CONFIRMED**: Dynamic station routing with Master Expediter display at kitchen pass (`PDR-003`).
-- **CONFIRMED**: Two-Phase Inventory Lock (`Available = Physical - Reserved`) & Countable Items in MVP (`PDR-004`).
-- **CONFIRMED**: Two-tier bill splitting + Multi-tender payments (`PDR-005`).
-- **CONFIRMED**: Configurable Business Date (Cutoff default 06:00) for overnight shifts (`PDR-007`).
-- **CONFIRMED**: VietQR Delayed Webhook handling via Suspense Queue & cashier alert (`PDR-008`).
-- **CONFIRMED**: Multi-Bill per Table Session (Split Bill without table freeze) (`PDR-009`).
-- **CONFIRMED**: Table Unmerge with line item reallocation without ticket regeneration (`PDR-010`).
-- **CONFIRMED**: Area and VIP Room Surcharges (% and flat fee) with rate snapshot (`PDR-011`).
-- **CONFIRMED**: Direct FOH Service Routing bypassing Bar KDS (`PDR-012`).
-- **CONFIRMED**: Independent Shared Room Tables & Entire Room Booking locks (`PDR-013`).
-- **CONFIRMED**: Non-blocking Concurrent Table Ordering business rules (`PDR-014`).
-- **CONFIRMED**: Kitchen Remake Dish workflow with bill protection & waste logging (`PDR-015`).
-- **CONFIRMED**: Multi-branch operational independence under single organization in MVP (`CONTR-01`).
-- **CONFIRMED**: Paid Bill Immutability & Shift Closing Variance logging (`OD-14` Option A).
-- **CONFIRMED**: Advance Reservations as MVP Optional module (`OD-15` Option A).
-- **CONFIRMED**: 3 Onboarding Configuration Presets (`OD-16` Option A).
-- **CONFIRMED**: Graceful Drain Policy for module deactivation (`OD-17` Option A).
-- **CONFIRMED**: Defer Uneven % Bill Split to v1.1 (`OQ-01` Option A).
-- **CONFIRMED**: Default KDS-first without simultaneous thermal chit print (`OQ-02` Option A).
-- **CONFIRMED**: Default Service Charge taxable under VAT (`OQ-06` Option A).
-- **CONFIRMED**: Retain original BusinessDate + Manager banner for sessions > 24h (`OQ-07` Option A).
-- **CONFIRMED**: Official 14-Module Architecture (10 Core Mandatory + 4 MVP Optional).
-- **DEFERRED**: Corporate Customer Credit Account / Ký nợ (`REV-07`) deferred to v1.2+ as dedicated B2B AR module.
+- **CONFIRMED**: Two-Phase Inventory Lock (`Available = Physical - Reserved`) & Countable Items in MVP (`PDR-004`, `D2`, `D5`).
+- **CONFIRMED**: Configurable Business Date (Cutoff default 06:00) for overnight shifts (`PDR-007`, `D1`).
+- **CONFIRMED**: Paid Bill Immutability & Shift Closing Variance logging with Blind Shift Close (`OD-14` Option A, `INV-12`, `BR-RULE-07`).
+- **CONFIRMED**: Direct FOH Service Routing bypassing Bar KDS (`PDR-012`, `REV-08`, `BR-RULE-14`).
+- **CONFIRMED**: 6-role Vietnamese RBAC matrix with 4-digit PIN authentication & Manager PIN authorization audit logging (`INV-09`, `BR-SEC-001..003`).
+- **CONFIRMED**: Temporary 86 out-of-stock toggle switch and auto-86 upon stock depletion (`BR-KIT-006`, `BR-INV-004`).
 
 ---
 
 ## 4. Key Open Questions (Awaiting Owner Feedback)
 
-- **None** — 100% of Open Questions & Owner Decisions have been officially resolved, consolidated, and signed off by the Project Owner in Task 02.8.5. Ready for immediate Stage 2 authorization.
+- **None** — 100% of Open Questions & Owner Decisions have been officially resolved, consolidated, and signed off by the Project Owner.
 
 ---
 
@@ -93,6 +60,6 @@
 
 | Risk ID | Description | Severity | Mitigation Strategy |
 | :--- | :--- | :--- | :--- |
-| **RSK-01** | High concurrent table edits causing race conditions (waiter order vs cashier checkout). | High | Enforce EF Core Optimistic Concurrency (`RowVersion`) and checkout table lock. |
+| **RSK-01** | High concurrent table edits causing race conditions (waiter order vs cashier checkout). | High | Enforced EF Core Optimistic Concurrency and checkout table lock. |
 | **RSK-02** | Local Wi-Fi dropouts during peak dining hours disrupting KDS/POS. | Medium | Client-side state caching and SignalR automatic reconnection & synchronization handshake. |
-| **RSK-03** | Complex recipe formulations leading to inventory discrepancy. | Medium | Provide mandatory waste/spoilage reason logging and periodic physical stock audits. |
+| **RSK-03** | Blind shift close discrepancies causing cash mismatch. | Low | Implemented `ShiftClosingVarianceLog` with required explanation notes and manager review. |

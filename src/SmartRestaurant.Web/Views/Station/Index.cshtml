@@ -1,0 +1,351 @@
+@model List<KitchenStationDto>
+@{
+    ViewData["Title"] = "Quản Lý Trạm Chế Biến";
+    var allMenuItems = (List<MenuItemDto>)ViewBag.MenuItems;
+    var branchId = (Guid)ViewBag.BranchId;
+}
+
+<div class="container-fluid p-0">
+    <!-- Header & Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">
+                <i class="bi bi-fire text-danger me-2"></i>Trạm Chế Biến & Phân Tuyến Bếp (KDS Routing)
+            </h3>
+            <p class="text-muted small mb-0">
+                Khai báo trạm chế biến, phân tuyến món ăn theo trạm và đồng bộ thông suốt với màn hình KDS duy nhất.
+            </p>
+        </div>
+        <button type="button" class="btn btn-warning fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#createStationModal">
+            <i class="bi bi-plus-circle-fill me-1"></i> Khai Báo Trạm Mới
+        </button>
+    </div>
+
+    <!-- Alert / Banner regarding Unified KDS per MVP Scope -->
+    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4">
+        <i class="bi bi-info-circle-fill fs-3 text-info"></i>
+        <div>
+            <strong>Đặc tả trạm chế biến SmartRestaurant MVP:</strong>
+            Hệ thống hỗ trợ cấu hình nhiều trạm chế biến chuyên biệt (Bếp nóng, Bếp nguội, Bar pha chế, Bếp bánh). Mọi trạm đều đồng bộ tập trung vào một ứng dụng KDS duy nhất, hỗ trợ bộ lọc nhanh theo trạm cho từng đầu bếp.
+        </div>
+    </div>
+
+    <!-- Station Cards Grid -->
+    <div class="row g-4 mb-4">
+        @foreach (var station in Model)
+        {
+            var badgeClass = station.StationType switch
+            {
+                PrepStation.HotKitchen => "bg-danger",
+                PrepStation.ColdKitchen => "bg-success",
+                PrepStation.Bar => "bg-primary",
+                PrepStation.Bakery => "bg-warning text-dark",
+                _ => "bg-secondary"
+            };
+
+            var iconClass = station.StationType switch
+            {
+                PrepStation.HotKitchen => "bi-fire",
+                PrepStation.ColdKitchen => "bi-snow",
+                PrepStation.Bar => "bi-cup-straw",
+                PrepStation.Bakery => "bi-cake2",
+                _ => "bi-hdd-rack"
+            };
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card h-100 border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-white border-0 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                        <span class="badge @badgeClass px-2 py-1">
+                            <i class="bi @iconClass me-1"></i> @station.StationTypeName
+                        </span>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-light border-0" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                <li>
+                                    <button class="dropdown-item edit-station-btn"
+                                            data-id="@station.Id"
+                                            data-name="@station.Name"
+                                            data-type="@((int)station.StationType)"
+                                            data-desc="@station.Description"
+                                            data-order="@station.DisplayOrder"
+                                            data-ip="@station.PrinterIpAddress"
+                                            data-active="@station.IsActive.ToString().ToLower()">
+                                        <i class="bi bi-pencil me-2 text-primary"></i> Sửa thông tin
+                                    </button>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-action="Delete" asp-route-id="@station.Id" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa trạm này? Các món đã gán sẽ được chuyển về không trạm.');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-trash me-2"></i> Xóa trạm
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2 pb-3">
+                        <h5 class="fw-bold text-dark mb-1">@station.Name</h5>
+                        <p class="text-muted small mb-2">@station.Description</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded small mb-3">
+                            <span class="text-muted"><i class="bi bi-printer me-1"></i>Máy in phiếu:</span>
+                            <code class="fw-bold">@(string.IsNullOrWhiteSpace(station.PrinterIpAddress) ? "Chưa cấu hình IP" : station.PrinterIpAddress)</code>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold small text-secondary">Món phụ trách (@station.AssignedDishCount):</span>
+                            <span class="badge bg-secondary-subtle text-dark">Thứ tự: @station.DisplayOrder</span>
+                        </div>
+
+                        <!-- Dishes List Box -->
+                        <div class="list-group list-group-flush border rounded-2" style="max-height: 200px; overflow-y: auto;">
+                            @if (station.AssignedDishes.Count == 0)
+                            {
+                                <div class="p-3 text-center text-muted small">
+                                    <i class="bi bi-inbox d-block mb-1 fs-5"></i>
+                                    Chưa gán món ăn nào cho trạm này.
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var dish in station.AssignedDishes)
+                                {
+                                    <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center small">
+                                        <div class="text-truncate me-2">
+                                            <strong class="d-block text-truncate">@dish.Name</strong>
+                                            <span class="text-muted" style="font-size: 0.75rem;">@dish.Code • @dish.CategoryName</span>
+                                        </div>
+                                        <span class="text-primary fw-bold" style="white-space: nowrap;">@dish.BasePrice.ToString("N0") ₫</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Dishes Routing Matrix / Quick Assignment Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0">
+                <i class="bi bi-diagram-3-fill text-warning me-2"></i>Bảng Phân Tuyến Món Ăn Vào Trạm Bếp
+            </h5>
+            <span class="text-muted small">Thay đổi trạm chế biến có hiệu lực tức thì trên KDS</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Mã Món</th>
+                            <th>Tên Món Ăn / Thức Uống</th>
+                            <th>Danh Mục</th>
+                            <th>Giá Bán</th>
+                            <th>Phục Vụ Sảnh (FOH Direct)</th>
+                            <th>Trạm Chế Biến Hiện Tại</th>
+                            <th class="text-end pe-3">Chuyển Trạm Nhanh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dish in allMenuItems)
+                        {
+                            <tr>
+                                <td class="ps-3"><span class="badge bg-light text-dark border">@dish.Code</span></td>
+                                <td class="fw-bold">@dish.Name</td>
+                                <td>@dish.CategoryName</td>
+                                <td class="text-primary fw-bold">@dish.BasePrice.ToString("N0") ₫</td>
+                                <td>
+                                    @if (dish.DirectFOHPick)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check-lg me-1"></i>Lấy tại sảnh (Bỏ qua KDS)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border">Vào hàng chờ KDS</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-dark">
+                                        @dish.PrepStation.ToString()
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <select class="form-select form-select-sm d-inline-block w-auto quick-assign-select"
+                                            data-dish-id="@dish.Id">
+                                        @foreach (var station in Model)
+                                        {
+                                            <option value="@station.Id" data-station-type="@((int)station.StationType)">
+                                                @station.Name (@station.StationTypeName)
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Khai Báo Trạm Mới -->
+<div class="modal fade" id="createStationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Create" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BranchId" value="@branchId" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2 text-warning"></i>Khai Báo Trạm Chế Biến Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Mã Trạm Bếp (Code) <span class="text-danger">*</span></label>
+                    <input type="text" name="Code" class="form-control" placeholder="VD: KS-HOT, KS-BAR..." required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên Trạm Bếp <span class="text-danger">*</span></label>
+                    <input type="text" name="Name" class="form-control" placeholder="VD: Bếp Nóng Sân Thượng" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Phân Loại Trạm</label>
+                    <select name="StationType" class="form-select">
+                        <option value="0">Bếp Nóng (Hot Kitchen)</option>
+                        <option value="1">Bếp Nguội & Salad (Cold Kitchen)</option>
+                        <option value="2">Quầy Bar & Pha Chế (Bar)</option>
+                        <option value="3">Bếp Bánh & Tráng Miệng (Bakery)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Địa Chỉ IP Máy In Phiếu Bếp (POS Printer IP)</label>
+                    <input type="text" name="PrinterIpAddress" class="form-control" placeholder="VD: 192.168.1.205" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Thứ Tự Hiển Thị</label>
+                    <input type="number" name="DisplayOrder" class="form-control" value="1" min="1" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Mô Tả Nhiệm Vụ Trạm</label>
+                    <textarea name="Description" class="form-control" rows="2" placeholder="Ghi chú phân công công việc..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-warning fw-semibold">Lưu Trạm Bếp</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Sửa Trạm -->
+<div class="modal fade" id="editStationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Update" method="post" class="modal-content" id="editStationForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="edit-id" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Cập Nhật Trạm Chế Biến</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên Trạm Bếp <span class="text-danger">*</span></label>
+                    <input type="text" name="Name" id="edit-name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Phân Loại Trạm</label>
+                    <select name="StationType" id="edit-type" class="form-select">
+                        <option value="0">Bếp Nóng (Hot Kitchen)</option>
+                        <option value="1">Bếp Nguội & Salad (Cold Kitchen)</option>
+                        <option value="2">Quầy Bar & Pha Chế (Bar)</option>
+                        <option value="3">Bếp Bánh & Tráng Miệng (Bakery)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Địa Chỉ IP Máy In</label>
+                    <input type="text" name="PrinterIpAddress" id="edit-ip" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Thứ Tự Hiển Thị</label>
+                    <input type="number" name="DisplayOrder" id="edit-order" class="form-control" min="1" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Mô Tả Nhiệm Vụ Trạm</label>
+                    <textarea name="Description" id="edit-desc" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="IsActive" id="edit-active" value="true" checked>
+                    <label class="form-check-label small fw-bold" for="edit-active">Đang hoạt động</label>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary fw-semibold">Cập Nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.edit-station-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('edit-id').value = this.dataset.id;
+            document.getElementById('edit-name').value = this.dataset.name;
+            document.getElementById('edit-type').value = this.dataset.type;
+            document.getElementById('edit-desc').value = this.dataset.desc;
+            document.getElementById('edit-order').value = this.dataset.order;
+            document.getElementById('edit-ip').value = this.dataset.ip;
+            document.getElementById('edit-active').checked = this.dataset.active === 'true';
+
+            new bootstrap.Modal(document.getElementById('editStationModal')).show();
+        });
+    });
+
+    document.querySelectorAll('.quick-assign-select').forEach(sel => {
+        sel.addEventListener('change', async function() {
+            const dishId = this.dataset.dishId;
+            const stationId = this.value;
+            const selectedOpt = this.options[this.selectedIndex];
+            const prepStation = parseInt(selectedOpt.dataset.stationType || "0");
+
+            try {
+                const response = await fetch('/Station/AssignDish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        menuItemId: dishId,
+                        stationId: stationId,
+                        prepStation: prepStation
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã phân tuyến',
+                        text: 'Món ăn đã được gán vào trạm bếp thành công!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => location.reload());
+                } else {
+                    Swal.fire('Lỗi', result.message || 'Không thể phân tuyến món ăn', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Lỗi', 'Không thể kết nối máy chủ', 'error');
+            }
+        });
+    });
+</script>
+}

@@ -1,0 +1,319 @@
+@model RestaurantSettingDto
+@{
+    ViewData["Title"] = "Cấu Hình Nhà Hàng & Vận Hành";
+}
+
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-gear-wide-connected text-primary me-2"></i>Cấu Hình Hệ Thống & Vận Hành Nhà Hàng
+        </h3>
+        <p class="text-muted small mb-0">
+            Quản trị các thiết lập cốt lõi: Ngày kinh doanh (BusinessDay), phụ thu phòng VIP, kích hoạt module và bộ cấu hình mẫu Onboarding.
+        </p>
+    </div>
+
+    <!-- Setting Tabs Navigation -->
+    <ul class="nav nav-tabs border-bottom mb-4" id="settingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold text-dark px-4 py-3" id="cutoff-tab" data-bs-toggle="tab" data-bs-target="#cutoff-pane" type="button" role="tab">
+                <i class="bi bi-clock-history text-danger me-2"></i>Ngày Kinh Doanh & Giờ Cắt Ca
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold text-dark px-4 py-3" id="vip-tab" data-bs-toggle="tab" data-bs-target="#vip-pane" type="button" role="tab">
+                <i class="bi bi-gem text-warning me-2"></i>Phụ Thu Phòng VIP
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold text-dark px-4 py-3" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules-pane" type="button" role="tab">
+                <i class="bi bi-toggles text-success me-2"></i>Module Chức Năng & Onboarding Presets
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold text-dark px-4 py-3" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-pane" type="button" role="tab">
+                <i class="bi bi-shop text-primary me-2"></i>Thông Tin Chi Nhánh
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="settingTabContent">
+        <!-- 1. Cutoff Time Pane -->
+        <div class="tab-pane fade show active" id="cutoff-pane" role="tabpanel">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-3 p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="bg-danger-subtle p-3 rounded-circle text-danger">
+                                <i class="bi bi-clock-history fs-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Quy định Giờ Cắt Ngày Kinh Doanh (BusinessDayCutoffTime)</h5>
+                                <span class="text-muted small">Căn cứ Quyết định D1 / PDR-007</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border small text-muted mb-4">
+                            <i class="bi bi-info-circle me-1 text-primary"></i>
+                            <strong>Nguyên tắc vận hành xuyên đêm:</strong>
+                            Các hóa đơn, đơn hàng và ca làm việc mở sau nửa đêm (00:00 - trước giờ cắt ca) vẫn được tự động ghi nhận vào doanh thu và báo cáo của <em>Ngày kinh doanh hôm trước</em>. Mốc mặc định toàn hệ thống là <strong>06:00 sáng</strong>.
+                        </div>
+
+                        <form asp-action="UpdateCutoff" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Mốc Giờ Cắt Ca Kinh Doanh (Cutoff Time):</label>
+                                <div class="input-group" style="max-width: 260px;">
+                                    <input type="time" name="CutoffTime" class="form-control form-control-lg fw-bold text-center" 
+                                           value="@Model.FormattedCutoffTime" required />
+                                    <span class="input-group-text"><i class="bi bi-alarm"></i></span>
+                                </div>
+                                <small class="text-muted mt-1 d-block">Khuyến nghị: 06:00 (hoặc 05:00 đối với mô hình quán bar đêm).</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger fw-semibold px-4 py-2">
+                                <i class="bi bi-save me-1"></i> Lưu Thiết Lập Giờ Cắt Ca
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. VIP Room Surcharges Pane -->
+        <div class="tab-pane fade" id="vip-pane" role="tabpanel">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-3 p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="bg-warning-subtle p-3 rounded-circle text-warning">
+                                <i class="bi bi-gem fs-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Cấu Hình Phụ Thu Phòng VIP & Khu Vực Đặc Biệt</h5>
+                                <span class="text-muted small">Căn cứ Quyết định PDR-011 / REV-06</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border small text-muted mb-4">
+                            <i class="bi bi-info-circle me-1 text-primary"></i>
+                            <strong>Công thức tính tiền phòng VIP:</strong>
+                            Hệ thống hỗ trợ đồng thời phụ thu theo tỷ lệ phần trăm món ăn (% trên Subtotal) và số tiền cố định tính theo phiên/phòng (Fixed Amount). Khi tính hóa đơn tại bàn thuộc phòng VIP, cả hai phụ phí này sẽ được tự động áp dụng.
+                        </div>
+
+                        <form asp-action="UpdateVipSurcharges" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BranchId" value="@Model.BranchId" />
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label fw-bold">Tỷ Lệ Phụ Thu Theo Phần Trăm (%):</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.5" min="0" max="100" name="SurchargeRate" 
+                                               class="form-control" value="@Model.VipRoomSurchargeRate" required />
+                                        <span class="input-group-text fw-bold">%</span>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">Mặc định: 10% (Áp dụng trên tổng tiền món ăn)</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label fw-bold">Phụ Thu Cố Định Theo Phòng (VND):</label>
+                                    <div class="input-group">
+                                        <input type="number" step="10000" min="0" name="SurchargeFixedAmount" 
+                                               class="form-control" value="@Model.VipRoomSurchargeFixedAmount" required />
+                                        <span class="input-group-text fw-bold">₫</span>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">Mặc định: 150,000 ₫ (Tính 1 lần cho cả phiên bàn VIP)</small>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-warning fw-semibold px-4 py-2">
+                                <i class="bi bi-save me-1"></i> Lưu Cấu Hình Phụ Thu VIP
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Module Configuration & Onboarding Presets Pane -->
+        <div class="tab-pane fade" id="modules-pane" role="tabpanel">
+            <div class="row g-4">
+                <!-- Module Toggles -->
+                <div class="col-12 col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-3 p-4">
+                        <h5 class="fw-bold text-dark mb-1">
+                            <i class="bi bi-sliders me-2 text-success"></i>Bật/Tắt 4 Module Tùy Chọn MVP (Feature Flags)
+                        </h5>
+                        <p class="text-muted small mb-4">
+                            10 Module cốt lõi luôn bật. Dưới đây là 4 module tùy chọn theo mô hình kinh doanh (OD-15, OD-17 Graceful Drain):
+                        </p>
+
+                        <form asp-action="ConfigureModules" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BranchId" value="@Model.BranchId" />
+
+                            <div class="list-group list-group-flush mb-4">
+                                <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">MOD-06: Đặt Bàn Trước (Table Reservation)</h6>
+                                        <span class="text-muted small">Cho phép lễ tân ghi nhận thông tin khách đặt trước bàn và giờ đến.</span>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input fs-4" type="checkbox" name="IsTableReservationEnabled" value="true" @(Model.IsTableReservationEnabled ? "checked" : "")>
+                                    </div>
+                                </div>
+
+                                <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">MOD-11: Cổng Thanh Toán VietQR / Napas 24/7</h6>
+                                        <span class="text-muted small">Tự động sinh mã VietQR động chứa chính xác số tiền cần thanh toán cho từng bàn.</span>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input fs-4" type="checkbox" name="IsVietQrEnabled" value="true" @(Model.IsVietQrEnabled ? "checked" : "")>
+                                    </div>
+                                </div>
+
+                                <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">MOD-12: Quản Lý Kho Hàng Đếm Được</h6>
+                                        <span class="text-muted small">Theo dõi tồn thực tế, tạm giữ order và xuất bán bia, nước ngọt, suất đóng gói.</span>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input fs-4" type="checkbox" name="IsInventoryEnabled" value="true" @(Model.IsInventoryEnabled ? "checked" : "")>
+                                    </div>
+                                </div>
+
+                                <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">MOD-13: Báo Cáo Doanh Thu & Kiểm Toán Nâng Cao</h6>
+                                        <span class="text-muted small">Báo cáo doanh số theo giờ, kiểm tiền mù cuối ca và nhật ký duyệt quyền PIN quản lý.</span>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input fs-4" type="checkbox" name="IsReportingEnabled" value="true" @(Model.IsReportingEnabled ? "checked" : "")>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success fw-semibold px-4 py-2">
+                                <i class="bi bi-save me-1"></i> Lưu Cấu Hình Module
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 3 Quick Onboarding Presets (OD-16) -->
+                <div class="col-12 col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-3 p-4 bg-light">
+                        <h5 class="fw-bold text-dark mb-1">
+                            <i class="bi bi-magic me-2 text-warning"></i>Gói Cấu Hình Sẵn (Onboarding Presets)
+                        </h5>
+                        <p class="text-muted small mb-4">
+                            Áp dụng cấu hình vận hành nhanh chóng với 1 cú click theo mô hình nhà hàng (OD-16):
+                        </p>
+
+                        <!-- Preset 1: Cafe / Boutique -->
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-cup-hot text-brown me-2"></i>1. Quán Cafe / Boutique</h6>
+                                    <span class="badge bg-secondary-subtle text-dark">Gọn nhẹ</span>
+                                </div>
+                                <p class="text-muted small mb-2">
+                                    Tắt đặt bàn trước, tắt phụ thu VIP, bật VietQR động và quản lý kho đồ uống.
+                                </p>
+                                <form asp-action="ApplyPreset" method="post" onsubmit="return confirm('Bạn có chắc muốn áp dụng cấu hình mẫu Cafe?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                                    <input type="hidden" name="PresetName" value="Cafe" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary fw-semibold">
+                                        Áp Dụng Gói Cafe
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Preset 2: À la carte Dining -->
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-egg-fried text-danger me-2"></i>2. Nhà Hàng À la carte (Chuẩn)</h6>
+                                    <span class="badge bg-primary-subtle text-primary">Đầy đủ</span>
+                                </div>
+                                <p class="text-muted small mb-2">
+                                    Bật đầy đủ cả 4 module: Đặt bàn trước, phụ thu phòng VIP (10% + 150k), VietQR và Báo cáo nâng cao.
+                                </p>
+                                <form asp-action="ApplyPreset" method="post" onsubmit="return confirm('Bạn có chắc muốn áp dụng cấu hình mẫu À la carte?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                                    <input type="hidden" name="PresetName" value="Alacarte" />
+                                    <button type="submit" class="btn btn-sm btn-primary fw-semibold">
+                                        Áp Dụng Gói À la carte
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Preset 3: Beer Pub / Quán Nhậu -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-beer text-warning me-2"></i>3. Beer Pub & Quán Nhậu Đêm</h6>
+                                    <span class="badge bg-warning-subtle text-dark">Chuyên kho bia</span>
+                                </div>
+                                <p class="text-muted small mb-2">
+                                    Giờ cắt ca 06:00 sáng, tối ưu cho bán bia số lượng lớn, phụ thu VIP nhẹ (5% + 100k).
+                                </p>
+                                <form asp-action="ApplyPreset" method="post" onsubmit="return confirm('Bạn có chắc muốn áp dụng cấu hình mẫu Beer Pub?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                                    <input type="hidden" name="PresetName" value="BeerPub" />
+                                    <button type="submit" class="btn btn-sm btn-outline-warning fw-semibold text-dark">
+                                        Áp Dụng Gói Beer Pub
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Branch Info Pane -->
+        <div class="tab-pane fade" id="info-pane" role="tabpanel">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-3 p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="bg-primary-subtle p-3 rounded-circle text-primary">
+                                <i class="bi bi-shop fs-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Thông Tin Cơ Sở Chi Nhánh</h5>
+                                <span class="text-muted small">Thông tin hiển thị trên tiêu đề hóa đơn thanh toán</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Tên Cơ Sở / Chi Nhánh:</label>
+                                <input type="text" class="form-control" value="@Model.BranchName" readonly />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Địa Chỉ:</label>
+                                <input type="text" class="form-control" value="@Model.Address" readonly />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-bold">Số Điện Thoại Hotline:</label>
+                                <input type="text" class="form-control" value="@Model.PhoneNumber" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

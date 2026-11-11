@@ -1,0 +1,403 @@
+@model FloorPlanLayoutDto
+@{
+    ViewData["Title"] = "Quản Lý Sơ Đồ Bàn 2D";
+}
+
+<div class="container-fluid p-0">
+    <!-- Top Action Toolbar -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <!-- Area Selector Tabs -->
+            <ul class="nav nav-pills gap-2">
+                @foreach (var area in Model.Areas)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-2 @(area.Id == Model.CurrentAreaId ? "active bg-warning text-dark fw-bold" : "bg-light text-dark")"
+                           asp-action="Index" asp-route-areaId="@area.Id">
+                            <i class="bi bi-geo-alt-fill me-1"></i> @area.Name
+                            <span class="badge bg-secondary-subtle text-dark ms-1">@area.TableCount bàn</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#manageRoomsModal">
+                    <i class="bi bi-door-open me-1"></i> Quản Lý Phòng / VIP
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createAreaModal">
+                    <i class="bi bi-plus-circle me-1"></i> Thêm Khu Vực
+                </button>
+                <button type="button" class="btn btn-warning btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#createTableModal">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm Bàn Mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Legend -->
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3 p-2 bg-white rounded shadow-sm border small">
+        <span class="text-muted fw-bold me-2"><i class="bi bi-palette-fill me-1"></i>Trạng thái bàn:</span>
+        <span class="badge bg-success px-2 py-1"><i class="bi bi-check-circle me-1"></i>Trống (Available)</span>
+        <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-person-fill me-1"></i>Có Khách (Occupied)</span>
+        <span class="badge bg-info text-dark px-2 py-1"><i class="bi bi-receipt me-1"></i>Tạm Tính (BillingRequested)</span>
+        <span class="badge bg-primary px-2 py-1"><i class="bi bi-calendar-event me-1"></i>Đã Đặt (Reserved)</span>
+        <span class="badge bg-danger px-2 py-1"><i class="bi bi-brush me-1"></i>Cần Dọn Dẹp (Cleaning)</span>
+        <span class="ms-auto text-muted"><i class="bi bi-arrows-move me-1"></i>Kéo thả bàn trên canvas để lưu vị trí</span>
+    </div>
+
+    <!-- 2D Canvas & Inspector Grid -->
+    <div class="row g-3">
+        <!-- Visual Canvas Column -->
+        <div class="col-12 col-xl-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-2 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-dark"><i class="bi bi-aspect-ratio me-2 text-primary"></i>Mặt Bằng 2D: @Model.CurrentAreaName</span>
+                    <small class="text-muted">Canvas Konva.js — Tọa độ thực lưu tự động</small>
+                </div>
+                <div class="card-body p-0 position-relative bg-white" style="height: 600px; overflow: hidden;">
+                    <!-- Konva Canvas Container -->
+                    <div id="floorplan-container" style="width: 100%; height: 100%; background-image: radial-gradient(#dee2e6 1px, transparent 1px); background-size: 20px 20px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Inspector Column -->
+        <div class="col-12 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-info-circle me-2 text-warning"></i>Chi Tiết Bàn Ăn</h6>
+                </div>
+                <div class="card-body p-3" id="table-inspector">
+                    <div class="text-center text-muted py-5" id="no-table-selected">
+                        <i class="bi bi-hand-index-thumb fs-1 d-block mb-2 text-secondary"></i>
+                        <span>Chạm hoặc click vào một bàn trên sơ đồ để xem và chỉnh sửa trạng thái.</span>
+                    </div>
+
+                    <div id="table-details" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h4 class="mb-0 fw-bold text-dark" id="inspect-code">Bàn 01</h4>
+                                <span class="text-muted small" id="inspect-name">Bàn Ăn 4 Chỗ</span>
+                            </div>
+                            <span class="badge px-3 py-2 fs-6" id="inspect-status-badge">Trống</span>
+                        </div>
+
+                        <div class="list-group list-group-flush mb-4 small">
+                            <div class="list-group-item px-0 d-flex justify-content-between">
+                                <span class="text-muted">Sức chứa tối đa:</span>
+                                <strong id="inspect-capacity">4 khách</strong>
+                            </div>
+                            <div class="list-group-item px-0 d-flex justify-content-between">
+                                <span class="text-muted">Hình dạng:</span>
+                                <strong id="inspect-shape">Chữ nhật</strong>
+                            </div>
+                            <div class="list-group-item px-0 d-flex justify-content-between">
+                                <span class="text-muted">Phiên hiện tại:</span>
+                                <strong id="inspect-session">—</strong>
+                            </div>
+                            <div class="list-group-item px-0 d-flex justify-content-between">
+                                <span class="text-muted">Tạm tính hóa đơn:</span>
+                                <strong class="text-primary fw-bold" id="inspect-total">0 ₫</strong>
+                            </div>
+                        </div>
+
+                        <!-- Status Quick Action Buttons -->
+                        <h6 class="fw-bold text-dark small mb-2">Chuyển Trạng Thái Vận Hành:</h6>
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-warning btn-sm text-start" onclick="quickChangeStatus(1)">
+                                <i class="bi bi-person-fill me-2"></i> Mở Bàn (Có Khách - Occupied)
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm text-start" onclick="quickChangeStatus(4)">
+                                <i class="bi bi-receipt me-2"></i> Báo Thanh Toán (BillingRequested)
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm text-start" onclick="quickChangeStatus(3)">
+                                <i class="bi bi-brush me-2"></i> Giải Phóng Cần Dọn (CleaningNeeded)
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="quickChangeStatus(0)">
+                                <i class="bi bi-check-circle me-2"></i> Đã Dọn Xong / Trống (Available)
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm text-start" onclick="quickChangeStatus(2)">
+                                <i class="bi bi-calendar-event me-2"></i> Đặt Trước (Reserved)
+                            </button>
+                        </div>
+
+                        <!-- Edit & Delete Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light btn-sm flex-grow-1 border" onclick="openEditTableModal()">
+                                <i class="bi bi-pencil me-1"></i> Sửa Bàn
+                            </button>
+                            <form asp-action="DeleteTable" method="post" id="deleteTableForm" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bàn này không?');">
+                                <input type="hidden" name="tableId" id="delete-table-id" />
+                                <input type="hidden" name="areaId" value="@Model.CurrentAreaId" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Table -->
+<div class="modal fade" id="createTableModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CreateTable" method="post">
+                <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                <input type="hidden" name="DiningAreaId" value="@Model.CurrentAreaId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2 text-warning"></i>Thêm Bàn Ăn Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mã Bàn (Code) <span class="text-danger">*</span></label>
+                        <input type="text" name="Code" class="form-control" placeholder="Ví dụ: T01, SV-05" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Hiển Thị <span class="text-danger">*</span></label>
+                        <input type="text" name="Name" class="form-control" placeholder="Ví dụ: Bàn 01 - Cửa sổ" required />
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Sức Chứa (Khách) <span class="text-danger">*</span></label>
+                            <input type="number" name="Capacity" class="form-control" value="4" min="1" max="50" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Hình Dạng</label>
+                            <select name="Shape" class="form-select">
+                                <option value="0">Chữ Nhật</option>
+                                <option value="1">Tròn</option>
+                                <option value="2">Vuông</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Thuộc Phòng Riêng (Nếu có)</label>
+                        <select name="DiningRoomId" class="form-select">
+                            <option value="">-- Không thuộc phòng riêng (Khu vực sảnh chung) --</option>
+                            @if (ViewBag.Rooms != null)
+                            {
+                                foreach (var r in (List<DiningRoomDto>)ViewBag.Rooms)
+                                {
+                                    <option value="@r.Id">@r.Name @(r.IsVip ? " [VIP]" : "")</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-warning fw-semibold">Thêm Bàn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Area -->
+<div class="modal fade" id="createAreaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CreateArea" method="post">
+                <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2 text-primary"></i>Thêm Khu Vực Ăn Uống</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Khu Vực <span class="text-danger">*</span></label>
+                        <input type="text" name="Name" class="form-control" placeholder="Ví dụ: Tầng Thượng - Rooftop" required />
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Loại Khu Vực</label>
+                            <select name="Type" class="form-select">
+                                <option value="0">Trong Nhà (Indoor)</option>
+                                <option value="1">Sân Vườn (Outdoor)</option>
+                                <option value="2">Phòng VIP</option>
+                                <option value="3">Quầy Bar</option>
+                                <option value="4">Tầng Thượng (Rooftop)</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Thứ Tự Hiển Thị</label>
+                            <input type="number" name="DisplayOrder" class="form-control" value="1" min="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Tạo Khu Vực</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Edit Table -->
+<div class="modal fade" id="editTableModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdateTable" method="post">
+                <input type="hidden" name="TableId" id="edit-table-id" />
+                <input type="hidden" name="DiningAreaId" value="@Model.CurrentAreaId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil me-2 text-warning"></i>Cập Nhật Bàn Ăn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Hiển Thị</label>
+                        <input type="text" name="Name" id="edit-table-name" class="form-control" required />
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Sức Chứa</label>
+                            <input type="number" name="Capacity" id="edit-table-capacity" class="form-control" min="1" max="50" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Hình Dạng</label>
+                            <select name="Shape" id="edit-table-shape" class="form-select">
+                                <option value="0">Chữ Nhật</option>
+                                <option value="1">Tròn</option>
+                                <option value="2">Vuông</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-warning fw-semibold">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Manage Rooms -->
+<div class="modal fade" id="manageRoomsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-door-open-fill me-2 text-primary"></i>Quản Lý Phòng Ăn & VIP: @Model.CurrentAreaName</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Existing Rooms List -->
+                <h6 class="fw-bold text-dark mb-2">Danh sách phòng trong khu vực:</h6>
+                <div class="table-responsive mb-4">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tên Phòng</th>
+                                <th>Phân Loại</th>
+                                <th>Tỷ Lệ Phụ Thu (%)</th>
+                                <th>Phụ Thu Cố Định (VND)</th>
+                                <th class="text-end">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.Rooms != null && ((List<DiningRoomDto>)ViewBag.Rooms).Count > 0)
+                            {
+                                foreach (var room in (List<DiningRoomDto>)ViewBag.Rooms)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@room.Name</td>
+                                        <td>
+                                            @if (room.IsVip)
+                                            {
+                                                <span class="badge bg-warning text-dark"><i class="bi bi-gem me-1"></i>Phòng VIP</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark border">Phòng Tiêu Chuẩn</span>
+                                            }
+                                        </td>
+                                        <td>@(room.SurchargeRate.HasValue ? $"{room.SurchargeRate}%" : "0%")</td>
+                                        <td>@(room.SurchargeFixedAmount.HasValue ? $"{room.SurchargeFixedAmount:N0} ₫" : "0 ₫")</td>
+                                        <td class="text-end">
+                                            <form asp-action="DeleteRoom" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="roomId" value="@room.Id" />
+                                                <input type="hidden" name="areaId" value="@Model.CurrentAreaId" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-3">Khu vực này chưa có phòng riêng nào.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Room Form -->
+                <div class="card bg-light border-0 p-3 rounded-3">
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle me-1 text-success"></i>Tạo Phòng Mới Trong Khu Vực Này</h6>
+                    <form asp-action="CreateRoom" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="DiningAreaId" value="@Model.CurrentAreaId" />
+                        <div class="row g-2 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-bold">Tên Phòng <span class="text-danger">*</span></label>
+                                <input type="text" name="Name" class="form-control" placeholder="VD: Phòng VIP Hoàng Gia 3" required />
+                            </div>
+                            <div class="col-12 col-md-6 d-flex align-items-center pt-md-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="IsVip" id="isVipCheck" value="true" checked>
+                                    <label class="form-check-label small fw-bold" for="isVipCheck">Thiết lập là Phòng VIP (Có phụ thu)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Phụ Thu Theo Tỷ Lệ (%)</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.5" min="0" max="100" name="SurchargeRate" class="form-control" value="10" />
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Phụ Thu Cố Định (VND)</label>
+                                <div class="input-group">
+                                    <input type="number" step="10000" min="0" name="SurchargeFixedAmount" class="form-control" value="150000" />
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm fw-semibold">
+                            <i class="bi bi-plus-lg me-1"></i> Lưu Phòng Mới
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Konva.js 2D Canvas Engine -->
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script>
+        const tableData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Tables));
+        const currentAreaId = '@Model.CurrentAreaId';
+    </script>
+    <script src="~/js/floorplan-designer.js"></script>
+}

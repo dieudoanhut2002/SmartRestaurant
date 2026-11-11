@@ -1,0 +1,117 @@
+@model List<KitchenWasteLogDto>
+@{
+    ViewData["Title"] = "Sổ Ghi Nhận Hao Phí Nhà Bếp (WasteLog)";
+    var menuItems = ViewBag.MenuItems as List<MenuItemDto> ?? [];
+}
+
+<div class="container-fluid p-0">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-trash3-fill me-2 text-danger"></i>Sổ Ghi Nhận Hao Phí Nhà Bếp (KitchenWasteLog)</h5>
+                <small class="text-muted">Quy tắc bắt buộc INV-06 / BR-RULE-03 / REV-11: Mọi món ăn hủy sau nấu hoặc làm lại đều phải lưu vết đối soát thất thoát</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Báo Cáo Doanh Thu
+                </a>
+                <button type="button" class="btn btn-danger fw-semibold btn-sm" data-bs-toggle="modal" data-bs-target="#createWasteModal">
+                    <i class="bi bi-plus-circle me-1"></i> Ghi Nhận Hao Phí Mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waste Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Thời Gian Ghi Sổ</th>
+                            <th>Tên Món Ăn Tổn Thất</th>
+                            <th class="text-center">Số Lượng</th>
+                            <th class="text-end">Ước Tính Tổn Thất</th>
+                            <th>Lý Do Hủy / Lỗi Bếp</th>
+                            <th class="pe-3">Người Ghi Nhận</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-check-circle fs-1 d-block mb-2 text-success"></i>
+                                    Tuyệt vời! Không có sự cố hao phí món ăn nào được ghi nhận.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 small text-muted font-monospace">@log.LoggedAt.ToString("HH:mm:ss - dd/MM/yyyy")</td>
+                                <td class="fw-bold text-dark">@log.MenuItemName</td>
+                                <td class="text-center"><span class="badge bg-danger-subtle text-danger fs-6">@log.Quantity</span></td>
+                                <td class="text-end fw-bold text-danger">@log.EstimatedLoss.ToString("N0") ₫</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@log.Reason</span>
+                                </td>
+                                <td class="pe-3 small text-muted">@log.StaffName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Waste -->
+<div class="modal fade" id="createWasteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="LogWaste" method="post">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-octagon me-2"></i>Ghi Nhận Hao Phí Món Ăn</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Món Ăn Bị Tổn Thất <span class="text-danger">*</span></label>
+                        <select name="menuItemId" class="form-select" required>
+                            @foreach (var item in menuItems)
+                            {
+                                <option value="@item.Id">@item.Code — @item.Name (@item.BasePrice.ToString("N0") ₫)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Số Lượng Hủy <span class="text-danger">*</span></label>
+                            <input type="number" name="quantity" class="form-control text-center" value="1" min="1" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Ước Tính Tổn Thất (VNĐ)</label>
+                            <input type="number" name="estimatedLoss" class="form-control" value="50000" min="0" step="1000" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Lý Do Hao Phí / Tổn Thất <span class="text-danger">*</span></label>
+                        <select name="reason" class="form-select" required>
+                            <option value="Cháy khét trong quá trình nấu">Cháy khét trong quá trình nấu</option>
+                            <option value="Khách đổi ý sau khi bếp đã bắt đầu nấu">Khách đổi ý sau khi bếp đã bắt đầu nấu</option>
+                            <option value="Hỏng nguyên liệu đầu vào">Hỏng nguyên liệu đầu vào</option>
+                            <option value="Làm lại món do lỗi bếp (Remake Dish 0đ)">Làm lại món do lỗi bếp (Remake Dish 0đ)</option>
+                            <option value="Đổ vỡ trong quá trình tiếp thực bưng bê">Đổ vỡ trong quá trình tiếp thực bưng bê</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger fw-semibold">Ghi Vào WasteLog</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

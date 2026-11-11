@@ -1,0 +1,381 @@
+@model List<InventoryItemDto>
+@{
+    ViewData["Title"] = "Quản Lý Kho Hàng Đếm Được";
+    var summary = (InventorySummaryDto)ViewBag.Summary;
+    var transactions = (List<InventoryTransactionDto>)ViewBag.Transactions;
+    var branchId = (Guid)ViewBag.BranchId;
+}
+
+<div class="container-fluid p-0">
+    <!-- Header & Action Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">
+                <i class="bi bi-boxes text-warning me-2"></i>Quản Lý Kho Hàng Đếm Được (MVP Inventory)
+            </h3>
+            <p class="text-muted small mb-0">
+                Theo dõi 4 trạng thái tồn kho minh bạch: Tồn thực tế (Physical), Tạm giữ bàn (Reserved), Đã tiêu thụ (Consumed), Hao hụt (Waste).
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#transactionsModal">
+                <i class="bi bi-clock-history me-1"></i> Nhật Ký Biến Động Kho
+            </button>
+            <button type="button" class="btn btn-primary btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#createItemModal">
+                <i class="bi bi-plus-lg me-1"></i> Thêm Mặt Hàng Kho
+            </button>
+        </div>
+    </div>
+
+    <!-- Inventory Invariant Rule Banner (INV-03 / D2) -->
+    <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-3 mb-4">
+        <i class="bi bi-shield-check fs-2 text-warning"></i>
+        <div>
+            <strong>Nguyên tắc bất biến Kho Hàng (INV-03 / D2):</strong>
+            <code>Tồn Khả Dụng (Available) = Tồn Thực Tế (Physical) - Đang Tạm Giữ (Reserved)</code>.
+            Khi khách gọi món, hệ thống tạm giữ tồn kho để đảm bảo không bị bán trùng (over-selling). Không thể điều chỉnh tồn thực tế thấp hơn số lượng đang tạm giữ cho bàn active.
+        </div>
+    </div>
+
+    <!-- 6 KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <span class="text-muted small fw-semibold">Tổng Mặt Hàng</span>
+                <h3 class="fw-bold text-dark mt-1 mb-0">@summary.TotalItems</h3>
+                <small class="text-secondary mt-1 d-block"><i class="bi bi-check-circle me-1"></i>Đang theo dõi</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white border-start border-warning border-4">
+                <span class="text-muted small fw-semibold">Cảnh Báo Thiếu Hàng</span>
+                <h3 class="fw-bold @(summary.LowStockItems > 0 ? "text-danger" : "text-success") mt-1 mb-0">@summary.LowStockItems</h3>
+                <small class="text-muted mt-1 d-block"><i class="bi bi-exclamation-triangle me-1"></i>Dưới định mức</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <span class="text-muted small fw-semibold">Tồn Thực Tế (Physical)</span>
+                <h3 class="fw-bold text-primary mt-1 mb-0">@summary.TotalPhysicalCount</h3>
+                <small class="text-muted mt-1 d-block"><i class="bi bi-box-seam me-1"></i>Trong tủ / kệ</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <span class="text-muted small fw-semibold">Đang Tạm Giữ (Reserved)</span>
+                <h3 class="fw-bold text-warning mt-1 mb-0">@summary.TotalReservedCount</h3>
+                <small class="text-muted mt-1 d-block"><i class="bi bi-hourglass-split me-1"></i>Bàn đang order</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <span class="text-muted small fw-semibold">Khả Dụng Bán (Available)</span>
+                <h3 class="fw-bold text-success mt-1 mb-0">@summary.TotalAvailableCount</h3>
+                <small class="text-muted mt-1 d-block"><i class="bi bi-cart-check me-1"></i>Physical - Reserved</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <span class="text-muted small fw-semibold">Hao Hụt / Hủy (Waste)</span>
+                <h3 class="fw-bold text-secondary mt-1 mb-0">@summary.TotalWasteCount</h3>
+                <small class="text-muted mt-1 d-block"><i class="bi bi-trash3 me-1"></i>Vỡ, hỏng, đổ</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Items Table -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0">
+                <i class="bi bi-table me-2 text-primary"></i>Danh Sách Mặt Hàng Kho Đếm Được
+            </h5>
+            <span class="badge bg-light text-dark border">@Model.Count mặt hàng</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Mã Hàng</th>
+                            <th>Tên Mặt Hàng</th>
+                            <th>Nhóm Kho</th>
+                            <th>ĐVT</th>
+                            <th class="text-center">Tồn Thực Tế</th>
+                            <th class="text-center">Đang Tạm Giữ</th>
+                            <th class="text-center">Khả Dụng Bán</th>
+                            <th class="text-center">Đã Bán</th>
+                            <th class="text-center">Hao Hụt</th>
+                            <th class="text-center">Ngưỡng Tối Thiểu</th>
+                            <th>Trạng Thái</th>
+                            <th class="text-end pe-3">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3"><span class="badge bg-light text-dark border">@item.ItemCode</span></td>
+                                <td class="fw-bold text-dark">@item.ItemName</td>
+                                <td><span class="badge bg-secondary-subtle text-dark">@item.CategoryName</span></td>
+                                <td>@item.Unit</td>
+                                <td class="text-center fw-bold text-primary">@item.PhysicalStock</td>
+                                <td class="text-center fw-bold text-warning">@item.ReservedStock</td>
+                                <td class="text-center">
+                                    <span class="badge @(item.IsLowStock ? "bg-danger" : "bg-success") px-2 py-1 fs-6">
+                                        @item.AvailableStock
+                                    </span>
+                                </td>
+                                <td class="text-center text-muted">@item.ConsumedStock</td>
+                                <td class="text-center text-danger">@item.WasteStock</td>
+                                <td class="text-center text-muted">@item.MinimumThreshold</td>
+                                <td>
+                                    @if (item.IsLowStock)
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Sắp hết hàng
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check-circle me-1"></i>Đủ hàng
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-3">
+                                    <button type="button" class="btn btn-sm btn-outline-success receive-stock-btn"
+                                            data-id="@item.Id"
+                                            data-name="@item.ItemName"
+                                            data-unit="@item.Unit">
+                                        <i class="bi bi-box-arrow-in-down me-1"></i>Nhập
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-warning adjust-stock-btn"
+                                            data-id="@item.Id"
+                                            data-name="@item.ItemName"
+                                            data-physical="@item.PhysicalStock"
+                                            data-reserved="@item.ReservedStock"
+                                            data-unit="@item.Unit">
+                                        <i class="bi bi-sliders me-1"></i>Kiểm Kê
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nhập Kho -->
+<div class="modal fade" id="receiveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Receive" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BranchId" value="@branchId" />
+            <input type="hidden" name="InventoryItemId" id="receive-item-id" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-in-down me-2 text-success"></i>Nhập Hàng Vào Kho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Mặt hàng nhập kho:</label>
+                    <h5 class="fw-bold text-dark" id="receive-item-name">—</h5>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Số Lượng Nhập Thêm <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" name="Quantity" class="form-control" min="1" value="24" required />
+                        <span class="input-group-text" id="receive-unit-addon">Lon</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Người Thực Hiện</label>
+                    <input type="text" name="PerformedBy" class="form-control" value="Đặng Thu Thảo (Thủ Kho)" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Lý Do / Nguồn Nhập</label>
+                    <input type="text" name="Reason" class="form-control" value="Nhập bổ sung từ nhà phân phối định kỳ" required />
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-success fw-semibold">Xác Nhận Nhập Kho</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Kiểm Kê / Cân Kho -->
+<div class="modal fade" id="adjustModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Adjust" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BranchId" value="@branchId" />
+            <input type="hidden" name="InventoryItemId" id="adjust-item-id" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-sliders me-2 text-warning"></i>Kiểm Kê Cân Kho Thực Tế</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Mặt hàng kiểm kê:</label>
+                    <h5 class="fw-bold text-dark" id="adjust-item-name">—</h5>
+                    <div class="small text-muted">
+                        Số lượng đang tạm giữ cho bàn active: <strong class="text-warning" id="adjust-reserved-count">0</strong>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Số Lượng Thực Tế Đếm Được <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" name="NewPhysicalStock" id="adjust-new-stock" class="form-control" min="0" required />
+                        <span class="input-group-text" id="adjust-unit-addon">Lon</span>
+                    </div>
+                    <small class="text-danger mt-1 d-block" id="adjust-warning" style="display:none;">
+                        * Số lượng thực tế không được nhỏ hơn số lượng đang tạm giữ cho khách!
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Người Kiểm Kê</label>
+                    <input type="text" name="PerformedBy" class="form-control" value="Đặng Thu Thảo (Thủ Kho)" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Lý Do Điều Chỉnh</label>
+                    <input type="text" name="Reason" class="form-control" value="Kiểm kê kiểm đếm đầu ca định kỳ" required />
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-warning fw-semibold">Lưu Kết Quả Kiểm Kê</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Khai Báo Mặt Hàng Kho Mới -->
+<div class="modal fade" id="createItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Create" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BranchId" value="@branchId" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2 text-primary"></i>Khai Báo Mặt Hàng Kho Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Mã Mặt Hàng (Item Code) <span class="text-danger">*</span></label>
+                    <input type="text" name="ItemCode" class="form-control" placeholder="VD: INV-DU05, INV-TP02..." required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên Mặt Hàng Kho <span class="text-danger">*</span></label>
+                    <input type="text" name="ItemName" class="form-control" placeholder="VD: Rượu Vang Đỏ Thượng Hạng" required />
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Nhóm Kho</label>
+                        <input type="text" name="CategoryName" class="form-control" value="Bia & Nước Giải Khát" />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Đơn Vị Tính (ĐVT)</label>
+                        <input type="text" name="Unit" class="form-control" value="Chai" />
+                    </div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Tồn Thực Tế Ban Đầu</label>
+                        <input type="number" name="InitialPhysicalStock" class="form-control" value="50" min="0" />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Ngưỡng Báo Thiếu</label>
+                        <input type="number" name="MinimumThreshold" class="form-control" value="10" min="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary fw-semibold">Lưu Mặt Hàng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Xem Nhật Ký Biến Động Kho -->
+<div class="modal fade" id="transactionsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2 text-secondary"></i>Nhật Ký Biến Động Kho Hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th class="ps-3">Thời Điểm</th>
+                                <th>Mặt Hàng</th>
+                                <th>Loại Nghiệp Vụ</th>
+                                <th class="text-center">Số Lượng</th>
+                                <th class="text-center">Tồn Trước -> Sau</th>
+                                <th>Lý Do</th>
+                                <th>Thực Hiện</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tx in transactions)
+                            {
+                                <tr>
+                                    <td class="ps-3 text-muted">@tx.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td><strong>@tx.ItemName</strong> <small class="text-muted">(@tx.ItemCode)</small></td>
+                                    <td><span class="badge bg-secondary-subtle text-dark">@tx.TypeName</span></td>
+                                    <td class="text-center fw-bold @(tx.Quantity >= 0 ? "text-success" : "text-danger")">
+                                        @(tx.Quantity > 0 ? "+" + tx.Quantity : tx.Quantity.ToString())
+                                    </td>
+                                    <td class="text-center text-muted">@tx.PreviousPhysicalStock -> @tx.NewPhysicalStock</td>
+                                    <td>@tx.Reason</td>
+                                    <td><span class="badge bg-light text-dark border">@tx.PerformedBy</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.receive-stock-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('receive-item-id').value = this.dataset.id;
+            document.getElementById('receive-item-name').innerText = this.dataset.name;
+            document.getElementById('receive-unit-addon').innerText = this.dataset.unit;
+            new bootstrap.Modal(document.getElementById('receiveModal')).show();
+        });
+    });
+
+    document.querySelectorAll('.adjust-stock-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const reserved = parseInt(this.dataset.reserved || "0");
+            document.getElementById('adjust-item-id').value = this.dataset.id;
+            document.getElementById('adjust-item-name').innerText = this.dataset.name;
+            document.getElementById('adjust-reserved-count').innerText = reserved;
+            document.getElementById('adjust-new-stock').value = this.dataset.physical;
+            document.getElementById('adjust-new-stock').min = reserved;
+            document.getElementById('adjust-unit-addon').innerText = this.dataset.unit;
+            new bootstrap.Modal(document.getElementById('adjustModal')).show();
+        });
+    });
+</script>
+}

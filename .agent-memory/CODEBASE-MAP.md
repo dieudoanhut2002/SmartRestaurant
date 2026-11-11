@@ -25,10 +25,15 @@ SmartRestaurant/
 │   │   └── workflows/          # Core operational workflows (FOH, POS, BOH, Cashier)
 │   └── 99-archive/             # Sealed historical archive (strictly read-only)
 │       └── stage-1-history/
-│           ├── README.md       # Archive repository index
-│           ├── task-reports/   # 14 task execution reports
-│           ├── audit-reports/  # 10 independent audit reports
-│           └── superseded-documents/ # 5 superseded early drafts
+├── src/                        # Core Application Source Code (.NET 8 LTS)
+│   ├── SmartRestaurant.Domain/         # Clean POCO domain entities, enums, domain exceptions
+│   ├── SmartRestaurant.Application/    # Use cases, DTOs, service interfaces & implementations
+│   ├── SmartRestaurant.Infrastructure/ # EF Core DbContext, entity configs, LocalDB seeder
+│   └── SmartRestaurant.Web/            # ASP.NET Core MVC Manager Application, Razor views, Konva.js
+├── tests/                      # Automated Unit & Integration Test Suites
+│   ├── SmartRestaurant.Domain.Tests/   # Domain invariant & state transition unit tests
+│   └── SmartRestaurant.Application.Tests/ # Service contracts, PIN authorization & shift tests
+├── SmartRestaurant.slnx        # Solution file
 ├── .gitignore                  # .NET & IDE exclusion rules
 ├── AGENTS.md                   # Engineering standards & permanent instructions
 ├── GEMINI.md                   # Permanent project instructions & governance
@@ -37,50 +42,51 @@ SmartRestaurant/
 
 ---
 
-## 2. Planned Solution Architecture (Stage 5 Target)
+## 2. Active Solution Architecture
 
 ```
-SmartRestaurant.sln
+SmartRestaurant.slnx
 ├── src/
-│   ├── SmartRestaurant.Domain/         # Core POCO Entities, Value Objects, Enums, Exceptions
-│   │   ├── Entities/
-│   │   ├── Enums/
-│   │   └── Exceptions/
-│   ├── SmartRestaurant.Application/    # Use Cases, DTOs, Service Interfaces, FluentValidation
-│   │   ├── Common/
-│   │   ├── Features/
-│   │   └── Interfaces/
-│   ├── SmartRestaurant.Infrastructure/ # EF Core DbContext, Migrations, SignalR Hubs, External APIs
-│   │   ├── Data/
-│   │   │   ├── AppDbContext.cs
-│   │   │   └── Configurations/
-│   │   ├── Hubs/
-│   │   └── Services/
-│   └── SmartRestaurant.Web/            # ASP.NET Core MVC / Web API, Razor Views, Controllers
-│       ├── Controllers/
-│       ├── ViewModels/
-│       ├── Views/
-│       └── wwwroot/
+│   ├── SmartRestaurant.Domain/
+│   │   ├── Common/ (BaseEntity, IAggregateRoot)
+│   │   ├── Entities/ (Branch, DiningArea, DiningRoom, RestaurantTable, KitchenStation, MenuItem, MenuItemVariant, ModifierGroup, ModifierOption, InventoryItem, InventoryTransaction, StaffMember, WorkShift, ShiftClosingVarianceLog, ManagerPinAuditLog, KitchenWasteLog, DiningSession)
+│   │   ├── Enums/ (AreaType, TableShape, TableStatus, PrepStation, StaffRole, ShiftStatus, DiningSessionStatus, InventoryTransactionType)
+│   │   └── Exceptions/ (DomainException, DomainValidationException, DomainNotFoundException, InvalidTableStateTransitionException)
+│   ├── SmartRestaurant.Application/
+│   │   ├── Common/Interfaces/ (IAppDbContext)
+│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos)
+│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService)
+│   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService)
+│   │   └── DependencyInjection.cs
+│   ├── SmartRestaurant.Infrastructure/
+│   │   ├── Data/ (AppDbContext, DatabaseSeeder)
+│   │   ├── Data/Configurations/ (EntityConfigurations)
+│   │   └── DependencyInjection.cs
+│   └── SmartRestaurant.Web/ (Manager Application Portal)
+│       ├── Controllers/ (DashboardController, FloorPlanController, MenuController, StationController, InventoryController, SettingController, StaffController, ShiftController, ReportController)
+│       ├── Views/ (Dashboard, FloorPlan, Menu, Station, Inventory, Setting, Staff, Shift, Report, Shared)
+│       ├── wwwroot/ (css/admin.css, js/floorplan-designer.js, js/admin.js)
+│       └── Program.cs
 └── tests/
-    ├── SmartRestaurant.Domain.Tests/
-    ├── SmartRestaurant.Application.Tests/
-    └── SmartRestaurant.Infrastructure.Tests/
+    ├── SmartRestaurant.Domain.Tests/ (DiningAreaTests, RestaurantTableTests)
+    └── SmartRestaurant.Application.Tests/ (FloorPlanServiceTests, MenuServiceTests, KitchenStationServiceTests, InventoryServiceTests, SettingServiceTests, StaffAndShiftServiceTests)
 ```
 
 ---
 
-## 3. Core Module Boundaries & Responsibilities
+## 3. Manager Application Features & Endpoints
 
-| Module | Primary Responsibility | Key Entities (Target) |
-| :--- | :--- | :--- |
-| **Organization & Branches** | Multi-branch tenant configuration & branch-specific rules. | `Organization`, `Branch` |
-| **Floor & Tables** | Dining areas, Konva.js visual coordinates, table state transitions. | `DiningArea`, `RestaurantTable`, `TableSession` |
-| **Menu & BOM Catalog** | Hierarchical menu, dish variants, modifier groups, raw material BOM. | `Category`, `MenuItem`, `ModifierGroup`, `RecipeBOM` |
-| **Orders & Table Service** | Rapid order capture, table order lifecycle, line item prep status. | `Order`, `OrderItem`, `OrderItemModifier` |
-| **Kitchen Display (KDS)** | Station ticket queues, timer SLAs, preparation acknowledgement. | `KitchenTicket`, `KitchenStation` |
-| **Billing & Payments** | Subtotal, discounts, tax calculation, VietQR payments, split/merge bills. | `Invoice`, `Payment`, `Shift`, `CashDrawer` |
-| **Inventory & Purchasing** | Raw materials, unit conversion, stock deduction, waste tracking. | `Ingredient`, `InventoryTransaction`, `WasteLog` |
-| **Identity & RBAC** | Staff accounts, roles, granular permission claims. | `AppUser`, `AppRole` |
+| Feature Domain | Primary Controller | Primary View / UI | Core Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Dashboard** | `DashboardController` | `Views/Dashboard/Index.cshtml` | KPIs (Revenue, Occupancy, Open Shifts, Low Stock), Chart.js hourly revenue, Top selling dishes, Recent PIN/Waste activity |
+| **Sơ đồ bàn 2D** | `FloorPlanController` | `Views/FloorPlan/Index.cshtml` | Konva.js visual canvas, area tabs, dining room & VIP surcharge management, table drag & drop position persistence, quick table status toggles, add/edit table |
+| **Thực đơn & Món** | `MenuController` | `Views/Menu/Index.cshtml` | Category tabs, dish CRUD, portion variants (S/M/L), modifier groups & options (mức cay, đường đá, topping), 1-click "86" toggle, stock adjustment |
+| **Trạm Chế Biến** | `StationController` | `Views/Station/Index.cshtml` | Kitchen stations catalog (`HotKitchen`, `ColdKitchen`, `Bar`, `Bakery`), printer IPs, dish routing matrix, unified KDS support |
+| **Quản Lý Kho** | `InventoryController` | `Views/Inventory/Index.cshtml` | Countable items tracking, 4 states (`Physical`, `Reserved`, `Consumed`, `Waste`) + invariant `Available = Physical - Reserved`, stock receipt, stock adjustment, audit log |
+| **Cấu Hình Nhà Hàng** | `SettingController` | `Views/Setting/Index.cshtml` | Business day cutoff (`06:00`), VIP room surcharges (% and fixed amount), 4 MVP optional module toggles, 3 onboarding presets (`Cafe`, `Alacarte`, `BeerPub`) |
+| **Nhân viên & PIN** | `StaffController` | `Views/Staff/Index.cshtml` | 6 standard RBAC roles, staff directory, 4-digit PIN management & verification, manager PIN authorization tester |
+| **Ca & Két tiền** | `ShiftController` | `Views/Shift/Index.cshtml` | Open shift with cash float, blind cash close modal (`CloseShiftBlind`), variance calculation, variance audit log table |
+| **Báo cáo & Kiểm toán** | `ReportController` | `Views/Report/Index.cshtml` | Daily sales by `BusinessDate` (06:00 cutoff), payment tender breakdown (Cash/VietQR/Card), `WasteLog`, `ManagerPinAuditLog` |
 
 ---
 

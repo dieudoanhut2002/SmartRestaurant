@@ -1,0 +1,548 @@
+@model List<MenuItemDto>
+@{
+    ViewData["Title"] = "Quản Lý Thực Đơn & Món Ăn";
+    var categories = ViewBag.Categories as List<MenuCategoryDto> ?? [];
+    var selectedCatId = ViewBag.SelectedCategoryId as Guid?;
+    var search = ViewBag.SearchTerm as string;
+}
+
+<div class="container-fluid p-0">
+    <!-- Top Action Toolbar -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <!-- Search & Filters -->
+            <form method="get" asp-action="Index" class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 480px;">
+                @if (selectedCatId.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@selectedCatId.Value" />
+                }
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Tìm theo tên hoặc mã món ăn..." value="@search" />
+                    <button class="btn btn-warning fw-semibold" type="submit">Tìm</button>
+                </div>
+            </form>
+
+            <!-- Buttons -->
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#manageModifiersModal">
+                    <i class="bi bi-tags me-1"></i> Nhóm Tùy Chọn & Topping
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                    <i class="bi bi-folder-plus me-1"></i> Thêm Nhóm Thực Đơn
+                </button>
+                <button type="button" class="btn btn-warning btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#createItemModal">
+                    <i class="bi bi-plus-lg me-1"></i> Thêm Món Mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a asp-action="Index" class="btn btn-sm @(!selectedCatId.HasValue ? "btn-warning fw-bold" : "btn-white border text-dark")">
+            Tất Cả Món (@Model.Count)
+        </a>
+        @foreach (var cat in categories)
+        {
+            <a asp-action="Index" asp-route-categoryId="@cat.Id"
+               class="btn btn-sm @(selectedCatId == cat.Id ? "btn-warning fw-bold" : "btn-white border text-dark")">
+                @cat.Name <span class="badge bg-secondary-subtle text-dark ms-1">@cat.ItemCount</span>
+            </a>
+        }
+    </div>
+
+    <!-- Menu Items Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3" style="width: 70px;">Ảnh</th>
+                            <th>Mã Món</th>
+                            <th>Tên Món Ăn</th>
+                            <th>Nhóm Thực Đơn</th>
+                            <th class="text-end">Đơn Giá</th>
+                            <th class="text-center">Trạm Chế Biến</th>
+                            <th class="text-center">Sảnh / FOH</th>
+                            <th class="text-center">Tồn Kho</th>
+                            <th class="text-center">Trạng Thái (86)</th>
+                            <th class="text-end pe-3" style="width: 120px;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="10" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                    Không tìm thấy món ăn nào phù hợp với bộ lọc hiện tại.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="rounded bg-light border d-flex align-items-center justify-content-center text-muted" style="width: 48px; height: 48px; overflow: hidden;">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" alt="@item.Name" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='';this.parentElement.innerHTML='<i class=\'bi bi-cup-hot fs-4\'></i>';" />
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-cup-hot fs-4"></i>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-dark-subtle text-dark font-monospace">@item.Code</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Name</div>
+                                    <small class="text-muted text-truncate d-inline-block" style="max-width: 250px;">@item.Description</small>
+                                    @if (item.Variants.Count > 0)
+                                    {
+                                        <div class="mt-1">
+                                            @foreach (var v in item.Variants)
+                                            {
+                                                <span class="badge bg-light text-dark border me-1 small">
+                                                    @v.Name (+@v.PriceAdjustment.ToString("N0")₫)
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-dark">@item.CategoryName</span>
+                                </td>
+                                <td class="text-end fw-bold text-primary">
+                                    @item.BasePrice.ToString("N0") ₫
+                                </td>
+                                <td class="text-center">
+                                    @switch (item.PrepStation)
+                                    {
+                                        case PrepStation.HotKitchen:
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                                <i class="bi bi-fire me-1"></i>Bếp Nóng
+                                            </span>
+                                            break;
+                                        case PrepStation.ColdKitchen:
+                                            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">
+                                                <i class="bi bi-snow me-1"></i>Bếp Nguội
+                                            </span>
+                                            break;
+                                        case PrepStation.Bar:
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                                <i class="bi bi-cup-straw me-1"></i>Quầy Bar
+                                            </span>
+                                            break;
+                                        case PrepStation.Bakery:
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                <i class="bi bi-cake2 me-1"></i>Tráng Miệng
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.DirectFOHPick)
+                                    {
+                                        <span class="badge bg-primary text-white" title="Bỏ qua KDS, phục vụ trực tiếp tại sảnh">
+                                            <i class="bi bi-lightning-fill me-1"></i>Trực tiếp Sảnh
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Qua Bếp</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsCountable)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2"
+                                                onclick="openStockModal('@item.Id', '@item.Name', @item.InStockQuantity)">
+                                            <strong>@item.InStockQuantity</strong> phần <i class="bi bi-pencil ms-1"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Không giới hạn</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check form-switch d-inline-block">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                               checked="@item.IsAvailable"
+                                               onchange="toggleAvailability('@item.Id', this)"
+                                               title="Bật/Tắt báo tạm hết món (86)" />
+                                    </div>
+                                    <span class="badge @(item.IsAvailable ? "bg-success-subtle text-success" : "bg-danger text-white") ms-1">
+                                        @(item.IsAvailable ? "Sẵn sàng" : "Tạm hết (86)")
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm add-variant-btn"
+                                                data-item-id="@item.Id" data-item-name="@item.Name" title="Thêm biến thể / khẩu phần (S/M/L)">
+                                            <i class="bi bi-diagram-2"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                onclick="openEditItemModal('@item.Id', '@item.CategoryId', '@item.Name', @item.BasePrice, '@item.Description', '@item.ImageUrl', @((int)item.PrepStation), @(item.DirectFOHPick ? "true" : "false"), @(item.IsCountable ? "true" : "false"))">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <form asp-action="DeleteItem" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa món này khỏi thực đơn?');">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="categoryId" value="@selectedCatId" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Menu Item -->
+<div class="modal fade" id="createItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-action="CreateItem" method="post">
+                <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2 text-warning"></i>Thêm Món Ăn Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Mã Món (SKU) <span class="text-danger">*</span></label>
+                            <input type="text" name="Code" class="form-control" placeholder="Ví dụ: MC-05, DU-08" required />
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Tên Món Ăn <span class="text-danger">*</span></label>
+                            <input type="text" name="Name" class="form-control" placeholder="Ví dụ: Sườn Nướng Sốt Mật Ong" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nhóm Thực Đơn <span class="text-danger">*</span></label>
+                            <select name="CategoryId" class="form-select" required>
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Id" selected="@(selectedCatId == cat.Id)">@cat.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Đơn Giá Bán (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" name="BasePrice" class="form-control" placeholder="150000" min="0" step="1000" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trạm Bếp Chế Biến</label>
+                            <select name="PrepStation" class="form-select">
+                                <option value="1">Bếp Nóng (Hot Kitchen)</option>
+                                <option value="2">Bếp Nguội / Salad (Cold Kitchen)</option>
+                                <option value="3">Quầy Pha Chế (Bar)</option>
+                                <option value="4">Bếp Bánh / Tráng Miệng (Bakery)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số Lượng Tồn Ban Đầu</label>
+                            <input type="number" name="InStockQuantity" class="form-control" value="100" min="0" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Mô Tả Chi Tiết / Thành Phần</label>
+                            <textarea name="Description" class="form-control" rows="2" placeholder="Thành phần chính, hương vị, khẩu vị gợi ý..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="DirectFOHPick" value="true" id="checkFoh">
+                                <label class="form-check-label fw-semibold" for="checkFoh">
+                                    Mặt hàng lấy ngay tại sảnh (DirectFOHPick — Bỏ qua hàng đợi KDS, phục vụ trực tiếp như bia lon/nước ngọt)
+                                </label>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input class="form-check-input" type="checkbox" name="IsCountable" value="true" id="checkCountable" checked>
+                                <label class="form-check-label fw-semibold" for="checkCountable">
+                                    Quản lý số lượng tồn kho đếm được trong MVP (Khóa tồn kho hai pha per D2/D5)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-warning fw-semibold">Lưu Món Ăn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Category -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CreateCategory" method="post">
+                <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-folder-plus me-2 text-primary"></i>Thêm Nhóm Thực Đơn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên Nhóm <span class="text-danger">*</span></label>
+                        <input type="text" name="Name" class="form-control" placeholder="Ví dụ: Món Nướng Đặc Biệt" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mô Tả Nhóm</label>
+                        <input type="text" name="Description" class="form-control" placeholder="Mô tả danh mục hiển thị" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Thứ Tự Hiển Thị</label>
+                        <input type="number" name="DisplayOrder" class="form-control" value="1" min="0" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Tạo Nhóm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Stock Adjustment -->
+<div class="modal fade" id="stockModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold" id="stock-modal-title">Cập Nhật Tồn Kho</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label small">Số lượng tồn kho mới:</label>
+                <input type="hidden" id="stock-item-id" />
+                <input type="number" id="stock-quantity-input" class="form-control text-center fs-4 fw-bold" min="0" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="saveStock()">Cập Nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Quản Lý Nhóm Tùy Chọn & Topping -->
+<div class="modal fade" id="manageModifiersModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-tags-fill me-2 text-primary"></i>Quản Lý Tùy Chọn Món & Topping (Modifier Groups)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Modifier Groups Accordion / List -->
+                <div class="accordion mb-4" id="modifierAccordion">
+                    @if (ViewBag.ModifierGroups != null && ((List<ModifierGroupDto>)ViewBag.ModifierGroups).Count > 0)
+                    {
+                        var mIndex = 0;
+                        foreach (var group in (List<ModifierGroupDto>)ViewBag.ModifierGroups)
+                        {
+                            mIndex++;
+                            <div class="accordion-item border rounded-3 mb-2">
+                                <h2 class="accordion-header" id="heading-@mIndex">
+                                    <button class="accordion-button @(mIndex > 1 ? "collapsed" : "") py-2 px-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@mIndex">
+                                        <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                            <span><i class="bi bi-tag me-2 text-warning"></i>@group.Name</span>
+                                            <div>
+                                                <span class="badge @(group.IsRequired ? "bg-danger" : "bg-secondary") me-2">
+                                                    @(group.IsRequired ? "Bắt buộc chọn" : "Tùy chọn thêm")
+                                                </span>
+                                                <span class="badge bg-light text-dark border">
+                                                    Chọn từ @group.MinSelections đến @group.MaxSelections
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse-@mIndex" class="accordion-collapse collapse @(mIndex == 1 ? "show" : "")" data-bs-parent="#modifierAccordion">
+                                    <div class="accordion-body p-3">
+                                        <!-- Options Table -->
+                                        <div class="table-responsive mb-3">
+                                            <table class="table table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Tên Lựa Chọn / Topping</th>
+                                                        <th class="text-end">Giá Cộng Thêm</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (group.Options.Count == 0)
+                                                    {
+                                                        <tr><td colspan="2" class="text-center text-muted">Chưa có tùy chọn nào.</td></tr>
+                                                    }
+                                                    @foreach (var opt in group.Options)
+                                                    {
+                                                        <tr>
+                                                            <td>@opt.Name</td>
+                                                            <td class="text-end text-primary fw-bold">+@opt.AdditionalPrice.ToString("N0") ₫</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Add Option Form -->
+                                        <form asp-action="AddModifierOption" method="post" class="d-flex gap-2">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="ModifierGroupId" value="@group.Id" />
+                                            <input type="text" name="Name" class="form-control form-control-sm" placeholder="Tên tùy chọn mới (VD: Thêm Trân Châu)..." required />
+                                            <input type="number" step="1000" name="AdditionalPrice" class="form-control form-control-sm" style="max-width: 150px;" placeholder="Giá (+VND)" value="0" min="0" />
+                                            <button type="submit" class="btn btn-sm btn-success text-nowrap">
+                                                <i class="bi bi-plus-lg"></i> Thêm
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-light text-center text-muted">Chưa có nhóm tùy chọn món nào.</div>
+                    }
+                </div>
+
+                <!-- Create New Modifier Group Box -->
+                <div class="card bg-light border-0 p-3 rounded-3">
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-plus-circle me-1 text-primary"></i>Tạo Nhóm Tùy Chọn Mới</h6>
+                    <form asp-action="CreateModifierGroup" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="BranchId" value="@ViewBag.BranchId" />
+                        <div class="row g-2 mb-2">
+                            <div class="col-12 col-md-6">
+                                <input type="text" name="Name" class="form-control form-control-sm" placeholder="Tên nhóm (VD: Mức Đá & Đường, Topping Lẩu)..." required />
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <input type="number" name="MinSelections" class="form-control form-control-sm" placeholder="Tối thiểu chọn" value="0" min="0" />
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <input type="number" name="MaxSelections" class="form-control form-control-sm" placeholder="Tối đa chọn" value="1" min="1" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary fw-semibold">
+                            <i class="bi bi-save me-1"></i> Lưu Nhóm Tùy Chọn
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Thêm Biến Thể / Size Món -->
+<div class="modal fade" id="addVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="AddVariant" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="MenuItemId" id="variant-item-id" />
+            <input type="hidden" name="categoryId" value="@selectedCatId" />
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-diagram-2 me-2 text-primary"></i>Thêm Khẩu Phần / Size Cho Món</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Món ăn áp dụng:</label>
+                    <h5 class="fw-bold text-dark" id="variant-item-name">—</h5>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Tên Biến Thể / Size <span class="text-danger">*</span></label>
+                    <input type="text" name="Name" class="form-control" placeholder="VD: Khẩu phần Lớn (350g), Size L, Nồi 4-6 người..." required />
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Giá Chênh Lệch (+VND)</label>
+                        <input type="number" step="1000" name="PriceAdjustment" class="form-control" value="0" />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Mã SKU Phụ</label>
+                        <input type="text" name="Sku" class="form-control" placeholder="VD: MC01-L" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary fw-semibold">Lưu Biến Thể</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function toggleAvailability(id, checkbox) {
+            try {
+                const response = await fetch(`/Menu/ToggleAvailability?id=${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Đã cập nhật trạng thái món ăn',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else {
+                    checkbox.checked = !checkbox.checked;
+                }
+            } catch (err) {
+                checkbox.checked = !checkbox.checked;
+            }
+        }
+
+        function openStockModal(id, name, qty) {
+            document.getElementById('stock-item-id').value = id;
+            document.getElementById('stock-modal-title').textContent = `Tồn kho: ${name}`;
+            document.getElementById('stock-quantity-input').value = qty;
+            new bootstrap.Modal(document.getElementById('stockModal')).show();
+        }
+
+        async function saveStock() {
+            const id = document.getElementById('stock-item-id').value;
+            const qty = parseInt(document.getElementById('stock-quantity-input').value) || 0;
+
+            const response = await fetch('/Menu/UpdateStock', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ menuItemId: id, quantity: qty })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                location.reload();
+            }
+        }
+
+        document.querySelectorAll('.add-variant-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('variant-item-id').value = this.dataset.itemId;
+                document.getElementById('variant-item-name').innerText = this.dataset.itemName;
+                new bootstrap.Modal(document.getElementById('addVariantModal')).show();
+            });
+        });
+    </script>
+}
