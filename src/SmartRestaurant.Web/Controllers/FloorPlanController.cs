@@ -14,8 +14,12 @@ public class FloorPlanController(
     public async Task<IActionResult> Index(Guid? areaId, CancellationToken ct)
     {
         var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);
-        var branchId = branch?.Id ?? Guid.Empty;
+        if (branch == null)
+        {
+            return View(new FloorPlanLayoutDto(Guid.Empty, "Chưa có khu vực", [], []));
+        }
 
+        var branchId = branch.Id;
         var layout = await floorPlanService.GetFloorPlanLayoutAsync(branchId, areaId, ct);
         var rooms = await floorPlanService.GetRoomsByAreaAsync(layout.CurrentAreaId, ct);
 

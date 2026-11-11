@@ -537,3 +537,21 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - `dotnet test`: 45 Passed, 0 Failed, 0 Skipped (100% passing).
   - HTTP Server: Verified serving 200 OK across all routes (`/Dashboard`, `/FloorPlan`, `/Menu`, `/Station`, `/Inventory`, `/Staff`, `/Shift`, `/Report`, `/Setting`).
 - **Status**: Completed & Verified.
+
+---
+
+### [2026-11-11] — Fix FloorPlan 2D Canvas Table Rendering Across All 3 Areas
+- **Issue**: Tables in test data (Area 1: 6 tables, Area 2: 7 tables, Area 3: 3 tables) were not rendering on the Konva.js 2D Canvas.
+- **Root Causes Identified**:
+  1. **Casing Serialization Mismatch**: `System.Text.Json.JsonSerializer.Serialize(Model.Tables)` serialized DTOs in PascalCase (`PositionX`, `PositionY`, `Code`, `Width`, `Height`, `Id`, `Status`, `Shape`) while `floorplan-designer.js` accessed camelCase properties (`t.positionX`, `t.positionY`, `t.code`), causing all tables to collapse onto default (50, 50) coordinates with undefined text.
+  2. **Script Execution Timing Bug**: `document.addEventListener('DOMContentLoaded', ...)` in scripts placed at the end of `<body>` did not fire if the document was already in `interactive` or `complete` state.
+  3. **Offline / CDN Dependency**: `konva@9/konva.min.js` was linked via external CDN unpkg.com, which failed if offline or blocked.
+- **Fixes Applied**:
+  1. Configured `System.Text.JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }` in `FloorPlan/Index.cshtml`.
+  2. Updated `floorplan-designer.js` to defensively support both camelCase and PascalCase (`t.positionX ?? t.PositionX`, `t.code || t.Code`, etc.).
+  3. Handled DOM readiness check `if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initFloorPlan); } else { initFloorPlan(); }`.
+  4. Bundled `konva.min.js` locally in `src/SmartRestaurant.Web/wwwroot/lib/konva/konva.min.js` with CDN fallback.
+  5. Set explicit container height `600px` on `#floorplan-container`.
+  6. Added automated unit test `GetFloorPlanLayout_AfterSeeding_ShouldContainAllAreasAndTables` (46/46 tests passing).
+- **Verification**: Verified real HTTP rendering of all 3 areas (Area 1: 6 tables, Area 2: 7 tables, Area 3: 3 tables) with exact coordinates, sizes, shapes, and statuses.
+- **Status**: Resolved & Verified.

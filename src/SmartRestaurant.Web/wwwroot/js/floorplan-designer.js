@@ -1,12 +1,21 @@
 // SmartRestaurant — Konva.js Floor Plan 2D Designer
-document.addEventListener('DOMContentLoaded', function () {
+function initFloorPlan() {
     const container = document.getElementById('floorplan-container');
-    if (!container || typeof Konva === 'undefined' || typeof tableData === 'undefined') {
+    if (!container) return;
+    if (typeof Konva === 'undefined') {
+        console.error('Konva library is not loaded');
+        return;
+    }
+    if (typeof tableData === 'undefined' || !Array.isArray(tableData)) {
+        console.warn('tableData is not defined or not an array');
         return;
     }
 
-    const width = container.offsetWidth || 800;
-    const height = container.offsetHeight || 600;
+    // Clear any previous Konva stage if re-initializing
+    container.innerHTML = '';
+
+    const width = container.clientWidth || container.offsetWidth || 850;
+    const height = container.clientHeight || container.offsetHeight || 600;
 
     // Initialize Konva Stage
     const stage = new Konva.Stage({
@@ -25,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         0: '#198754', // Available (Green)
         1: '#ffc107', // Occupied (Yellow)
         2: '#0d6efd', // Reserved (Blue)
-        3: '#dc3545', // CleaningNeeded (Red/Orange)
+        3: '#dc3545', // CleaningNeeded (Red)
         4: '#6f42c1', // BillingRequested (Purple)
         5: '#6c757d'  // OutOfService (Gray)
     };
@@ -39,21 +48,34 @@ document.addEventListener('DOMContentLoaded', function () {
         5: 'Ngừng Phục Vụ'
     };
 
-    // Render Tables
+    // Render Tables supporting both camelCase and PascalCase
     tableData.forEach(function (t) {
+        const id = t.id || t.Id;
+        const code = t.code || t.Code || 'Bàn';
+        const name = t.name || t.Name || code;
+        const capacity = t.capacity ?? t.Capacity ?? 4;
+        const status = t.status ?? t.Status ?? 0;
+        const shape = t.shape ?? t.Shape ?? 0;
+        const posX = t.positionX ?? t.PositionX ?? 50;
+        const posY = t.positionY ?? t.PositionY ?? 50;
+        const w = (t.width ?? t.Width ?? 90) > 0 ? (t.width ?? t.Width ?? 90) : 90;
+        const h = (t.height ?? t.Height ?? 80) > 0 ? (t.height ?? t.Height ?? 80) : 80;
+        const rotation = t.rotation ?? t.Rotation ?? 0;
+        const sessionCode = t.currentSessionCode || t.CurrentSessionCode;
+        const sessionTotal = t.currentSessionTotal ?? t.CurrentSessionTotal;
+
         const group = new Konva.Group({
-            x: t.positionX || 50,
-            y: t.positionY || 50,
+            x: posX,
+            y: posY,
+            rotation: rotation,
             draggable: true,
-            id: t.id
+            id: id
         });
 
-        const color = statusColors[t.status] || '#198754';
-        const w = t.width > 0 ? t.width : 90;
-        const h = t.height > 0 ? t.height : 80;
+        const color = statusColors[status] || '#198754';
 
         let shapeNode;
-        if (t.shape === 1) { // Round
+        if (shape === 1) { // Round
             const radius = Math.min(w, h) / 2;
             shapeNode = new Konva.Circle({
                 x: radius,
@@ -73,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 y: 0,
                 width: w,
                 height: h,
-                cornerRadius: t.shape === 2 ? 8 : 12,
+                cornerRadius: shape === 2 ? 8 : 12,
                 fill: '#ffffff',
                 stroke: color,
                 strokeWidth: 4,
@@ -89,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             x: 0,
             y: h / 2 - 16,
             width: w,
-            text: t.code,
+            text: code,
             fontSize: 16,
             fontFamily: 'sans-serif',
             fontStyle: 'bold',
@@ -102,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
             x: 0,
             y: h / 2 + 6,
             width: w,
-            text: `${t.capacity} chỗ`,
+            text: `${capacity} chỗ`,
             fontSize: 11,
             fontFamily: 'sans-serif',
             fill: '#6c757d',
@@ -113,14 +135,30 @@ document.addEventListener('DOMContentLoaded', function () {
         group.add(codeText);
         group.add(capText);
 
+        const tableItem = {
+            id: id,
+            code: code,
+            name: name,
+            capacity: capacity,
+            status: status,
+            shape: shape,
+            positionX: posX,
+            positionY: posY,
+            width: w,
+            height: h,
+            rotation: rotation,
+            currentSessionCode: sessionCode,
+            currentSessionTotal: sessionTotal
+        };
+
         // Click / Touch interaction
         group.on('click tap', function () {
-            selectTable(t);
+            selectTable(tableItem);
         });
 
         // Drag end: save coordinates to server via AJAX
         group.on('dragend', function () {
-            saveTablePosition(t.id, group.x(), group.y(), w, h, group.rotation());
+            saveTablePosition(id, group.x(), group.y(), w, h, group.rotation());
         });
 
         // Hover cursor
@@ -138,25 +176,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function selectTable(table) {
         selectedTable = table;
-        document.getElementById('no-table-selected').style.display = 'none';
-        document.getElementById('table-details').style.display = 'block';
+        const noSel = document.getElementById('no-table-selected');
+        const details = document.getElementById('table-details');
+        if (noSel) noSel.style.display = 'none';
+        if (details) details.style.display = 'block';
 
-        document.getElementById('inspect-code').textContent = table.code;
-        document.getElementById('inspect-name').textContent = table.name;
-        document.getElementById('inspect-capacity').textContent = `${table.capacity} khách`;
-        document.getElementById('inspect-shape').textContent = table.shape === 1 ? 'Bàn Tròn' : (table.shape === 2 ? 'Bàn Vuông' : 'Bàn Chữ Nhật');
-        document.getElementById('inspect-session').textContent = table.currentSessionCode || 'Chưa mở phiên';
-        document.getElementById('inspect-total').textContent = table.currentSessionTotal ? table.currentSessionTotal.toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+        const codeEl = document.getElementById('inspect-code');
+        if (codeEl) codeEl.textContent = table.code;
+
+        const nameEl = document.getElementById('inspect-name');
+        if (nameEl) nameEl.textContent = table.name;
+
+        const capEl = document.getElementById('inspect-capacity');
+        if (capEl) capEl.textContent = `${table.capacity} khách`;
+
+        const shapeEl = document.getElementById('inspect-shape');
+        if (shapeEl) shapeEl.textContent = table.shape === 1 ? 'Bàn Tròn' : (table.shape === 2 ? 'Bàn Vuông' : 'Bàn Chữ Nhật');
+
+        const sessEl = document.getElementById('inspect-session');
+        if (sessEl) sessEl.textContent = table.currentSessionCode || 'Chưa mở phiên';
+
+        const totEl = document.getElementById('inspect-total');
+        if (totEl) totEl.textContent = table.currentSessionTotal ? table.currentSessionTotal.toLocaleString('vi-VN') + ' ₫' : '0 ₫';
 
         const badge = document.getElementById('inspect-status-badge');
-        badge.textContent = statusNames[table.status] || 'Trống';
-        badge.style.backgroundColor = statusColors[table.status] || '#198754';
-        badge.className = 'badge px-3 py-2 fs-6 text-white';
+        if (badge) {
+            badge.textContent = statusNames[table.status] || 'Trống';
+            badge.style.backgroundColor = statusColors[table.status] || '#198754';
+            badge.className = 'badge px-3 py-2 fs-6 text-white';
+        }
 
-        document.getElementById('delete-table-id').value = table.id;
+        const delId = document.getElementById('delete-table-id');
+        if (delId) delId.value = table.id;
     }
 
     async function saveTablePosition(tableId, x, y, width, height, rotation) {
+        if (!tableId) return;
         try {
             await fetch('/FloorPlan/UpdatePosition', {
                 method: 'POST',
@@ -176,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.quickChangeStatus = async function (newStatus) {
-        if (!selectedTable) return;
+        if (!selectedTable || !selectedTable.id) return;
         try {
             const response = await fetch('/FloorPlan/UpdateStatus', {
                 method: 'POST',
@@ -197,15 +252,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.openEditTableModal = function () {
         if (!selectedTable) return;
-        document.getElementById('edit-table-id').value = selectedTable.id;
-        document.getElementById('edit-table-name').value = selectedTable.name;
-        document.getElementById('edit-table-capacity').value = selectedTable.capacity;
-        document.getElementById('edit-table-shape').value = selectedTable.shape;
+        const editId = document.getElementById('edit-table-id');
+        if (editId) editId.value = selectedTable.id;
+        const editName = document.getElementById('edit-table-name');
+        if (editName) editName.value = selectedTable.name;
+        const editCap = document.getElementById('edit-table-capacity');
+        if (editCap) editCap.value = selectedTable.capacity;
+        const editShape = document.getElementById('edit-table-shape');
+        if (editShape) editShape.value = selectedTable.shape;
         new bootstrap.Modal(document.getElementById('editTableModal')).show();
     };
 
     // Auto-select first table if available
     if (tableData.length > 0) {
-        selectTable(tableData[0]);
+        const first = tableData[0];
+        selectTable({
+            id: first.id || first.Id,
+            code: first.code || first.Code,
+            name: first.name || first.Name,
+            capacity: first.capacity ?? first.Capacity ?? 4,
+            status: first.status ?? first.Status ?? 0,
+            shape: first.shape ?? first.Shape ?? 0,
+            currentSessionCode: first.currentSessionCode || first.CurrentSessionCode,
+            currentSessionTotal: first.currentSessionTotal ?? first.CurrentSessionTotal
+        });
     }
-});
+}
+
+// Ensure execution whether DOM is already ready or loading
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloorPlan);
+} else {
+    initFloorPlan();
+}

@@ -121,4 +121,24 @@ public class FloorPlanServiceTests
         var updated = await service.GetTableByIdAsync(table.Id);
         updated!.Status.Should().Be(TableStatus.Occupied);
     }
+
+    [Fact]
+    public async Task GetFloorPlanLayout_AfterSeeding_ShouldContainAllAreasAndTables()
+    {
+        // Arrange
+        using var context = TestDbContextFactory.Create(nameof(GetFloorPlanLayout_AfterSeeding_ShouldContainAllAreasAndTables));
+        await SmartRestaurant.Infrastructure.Data.DatabaseSeeder.SeedAsync(context);
+        var branch = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstAsync(context.Branches);
+        var service = new FloorPlanService(context);
+
+        // Act
+        var layout = await service.GetFloorPlanLayoutAsync(branch.Id);
+
+        // Assert
+        layout.Areas.Should().HaveCount(3);
+        layout.Areas[0].TableCount.Should().Be(6);
+        layout.Areas[1].TableCount.Should().Be(7);
+        layout.Areas[2].TableCount.Should().Be(3);
+        layout.Tables.Should().HaveCount(6);
+    }
 }
