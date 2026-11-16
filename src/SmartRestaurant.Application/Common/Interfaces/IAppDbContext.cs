@@ -23,6 +23,7 @@ public interface IAppDbContext
     DbSet<KitchenStation> KitchenStations { get; }
     DbSet<InventoryItem> InventoryItems { get; }
     DbSet<InventoryTransaction> InventoryTransactions { get; }
+    DbSet<SystemLicense> SystemLicenses { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

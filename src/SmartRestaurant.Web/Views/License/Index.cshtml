@@ -1,0 +1,330 @@
+@model SmartRestaurant.Application.DTOs.LicenseSummaryDto
+@{
+    ViewData["Title"] = "Bản Quyền Hệ Thống";
+    var identity = ViewBag.InstallationIdentity as SmartRestaurant.Application.DTOs.InstallationIdentityDto;
+}
+
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">
+                <i class="bi bi-shield-lock-fill text-warning me-2"></i>Bản Quyền & Giấy Phép Phần Mềm
+            </h3>
+            <p class="text-muted mb-0">
+                Nền tảng kiểm thực chữ ký số bất đối xứng (ECDSA P-256), khóa theo máy chủ cài đặt (InstallationId) và vận hành ngoại tuyến có thời gian ân hạn.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="ExportInstallationInfo" class="btn btn-outline-secondary">
+                <i class="bi bi-download me-1"></i> Tải Hồ Sơ Máy Chủ
+            </a>
+            <a asp-action="ExportRehostRequest" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left-right me-1"></i> Xuất Yêu Cầu Đổi Máy
+            </a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activateLicenseModal">
+                <i class="bi bi-key-fill me-1"></i> Nạp Giấy Phép (.lic)
+            </button>
+        </div>
+    </div>
+
+    @if (Model.IsDevelopmentMode)
+    {
+        <div class="alert alert-info border-info-subtle shadow-sm rounded-3 d-flex align-items-center mb-4">
+            <i class="bi bi-code-slash fs-2 text-info me-3"></i>
+            <div>
+                <h5 class="fw-bold mb-1 text-info">Chế Độ Phát Triển (Development Mode) Đang Hoạt Động</h5>
+                <div class="small text-secondary">
+                    Hệ sinh thái SmartRestaurant đang chạy ở chế độ phát triển nội bộ theo Chỉ thị Chủ Dự Án (§4).
+                    Toàn bộ các phân hệ Manager, POS và KDS hoạt động bình thường, không đòi hỏi License Server thương mại và không cản trở tiến độ lập trình.
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- License Overview Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Main Status Card -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-patch-check-fill fs-5 text-primary"></i>
+                        <h5 class="card-title fw-bold mb-0">Chứng Nhận Bản Quyền Hiện Tại</h5>
+                    </div>
+                    <span class="@Model.StateBadgeClass fs-6 px-3 py-2 rounded-pill">
+                        @Model.StateText
+                    </span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6 border-end-md">
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Đơn Vị Sở Hữu / Khách Hàng</label>
+                                <div class="fs-5 fw-bold text-dark">@Model.CustomerId</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Mã Giấy Phép (License ID)</label>
+                                <span class="font-monospace bg-light border px-2 py-1 rounded text-dark fw-bold">
+                                    @Model.LicenseId
+                                </span>
+                            </div>
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Gói Bản Quyền</label>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                        <i class="bi bi-tag-fill me-1"></i>@Model.Edition
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Hạn Bản Quyền</label>
+                                    <div class="fw-bold text-dark">@Model.ExpiresAt.ToString("dd/MM/yyyy")</div>
+                                    @if (Model.DaysRemaining.HasValue)
+                                    {
+                                        <small class="@(Model.DaysRemaining <= 15 ? "text-danger fw-bold" : "text-muted")">
+                                            (Còn @Model.DaysRemaining ngày)
+                                        </small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <!-- Installation Binding -->
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Ràng Buộc Máy Chủ (InstallationId)</label>
+                                <span class="font-monospace bg-light border px-2 py-1 rounded text-dark small d-block text-truncate" title="@Model.InstallationId">
+                                    @Model.InstallationId
+                                </span>
+                                <small class="text-success mt-1 d-block">
+                                    <i class="bi bi-shield-check me-1"></i>Khóa bất đối xứng bảo vệ trên máy chủ trung tâm
+                                </small>
+                            </div>
+
+                            <!-- Offline Allowance Status -->
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Vận Hành Ngoại Tuyến (Offline Allowance)</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-wifi-off text-secondary fs-4"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark">Hạn mức ngoại tuyến: 30 ngày</div>
+                                        <small class="text-muted">Còn lại: <strong>@(Model.OfflineDaysRemaining ?? 30) ngày</strong> an toàn</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Expiry Grace Period -->
+                            <div>
+                                <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Chu Kỳ Ân Hạn Hết Hạn (Expiry Grace)</label>
+                                <span class="badge bg-light text-secondary border">
+                                    <i class="bi bi-hourglass-split me-1"></i>7 ngày ân hạn sau khi hết hạn chính thức
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-top py-2 px-4 d-flex justify-content-between align-items-center text-muted small">
+                    <div>
+                        <i class="bi bi-cpu me-1"></i>Thuật toán ký số: <strong>ECDSA P-256 / SHA-256</strong>
+                    </div>
+                    <div>
+                        <i class="bi bi-shield-lock me-1"></i>Kiểm soát đồng hồ: <strong>Clock Rollback Detection kích hoạt</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Identity Quick Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-hdd-network-fill fs-5 text-warning"></i>
+                        <h5 class="card-title fw-bold mb-0">Định Danh Máy Chủ Cài Đặt</h5>
+                    </div>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <p class="text-muted small mb-2">
+                        Mã InstallationId ngẫu nhiên bền vững được sinh khi cài đặt và lưu bảo vệ bằng DPAPI trên máy chủ nhà hàng:
+                    </p>
+
+                    <div class="bg-dark text-warning p-2 rounded-3 font-monospace text-center small fw-bold mb-3 user-select-all" id="installationIdBox">
+                        @(identity?.InstallationId ?? Model.InstallationId)
+                    </div>
+
+                    <p class="text-muted small mb-2">
+                        Mã phần cứng máy chủ (Hardware Fingerprint):
+                    </p>
+                    <div class="bg-light border text-dark p-2 rounded-3 font-monospace text-center small fw-bold mb-3 user-select-all" id="hardwareFingerprintBox">
+                        @(identity?.HardwareFingerprint ?? "N/A")
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="btnCopyInstallId">
+                            <i class="bi bi-clipboard-check me-1"></i> Sao Chép Mã InstallationId
+                        </button>
+                    </div>
+
+                    <div class="mt-auto border-top pt-3 text-muted small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tên máy chủ:</span>
+                            <strong class="text-dark">@(identity?.MachineName ?? Environment.MachineName)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Số lõi CPU:</span>
+                            <strong class="text-dark">@(identity?.ProcessorCount ?? Environment.ProcessorCount) Cores</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Hệ điều hành:</span>
+                            <span class="text-truncate text-dark text-end" style="max-width: 170px;" title="@(identity?.OperatingSystem)">
+                                @(identity?.OperatingSystem)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Entitlements Matrix -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-grid-3x3-gap-fill fs-5 text-success"></i>
+                <h5 class="card-title fw-bold mb-0">Danh Mục Tính Năng Được Cấp Phép (Feature Entitlements)</h5>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                @{
+                    var modules = new[]
+                    {
+                        new { Code = "TableManagement", Name = "Quản Lý Mặt Bằng & Bàn Ăn", Icon = "bi-table", Desc = "Sắp xếp phân khu, phòng VIP và trạng thái bàn" },
+                        new { Code = "FloorPlan2D", Name = "Thiết Kế Sơ Đồ 2D Canvas", Icon = "bi-map", Desc = "Kéo thả tọa độ bàn trực quan bằng Konva.js" },
+                        new { Code = "Menu", Name = "Thực Đơn, Định Lượng & Modifiers", Icon = "bi-cup-hot", Desc = "Định lượng phần ăn S/M/L, nhóm tùy chọn, công tắc 86" },
+                        new { Code = "KitchenKDS", Name = "Điều Phối Trạm Bếp & Màn Hình KDS", Icon = "bi-fire", Desc = "KDS Bếp nóng, Bếp lạnh, Bar, Expediter ra món" },
+                        new { Code = "Inventory", Name = "Quản Lý Kho Hàng Đếm Được", Icon = "bi-boxes", Desc = "Khóa tồn kho 2 pha, lon/chai và cảnh báo định mức" },
+                        new { Code = "StaffRBAC", Name = "Phân Quyền Nhân Viên & Mã PIN", Icon = "bi-person-badge", Desc = "6 vai trò chuẩn và ủy quyền Quản lý qua PIN" },
+                        new { Code = "Reporting", Name = "Báo Cáo Doanh Thu & Kiểm Toán", Icon = "bi-graph-up-arrow", Desc = "Báo cáo theo Ngày kinh doanh (06:00), sổ hao phí" },
+                        new { Code = "VietQR", Name = "Cổng Thanh Toán Mã Động VietQR", Icon = "bi-qr-code-scan", Desc = "Mã VietQR động Napas 24/7 và sổ treo đối soát" }
+                    };
+                }
+
+                @foreach (var mod in modules)
+                {
+                    var isLicensed = Model.IsDevelopmentMode ||
+                                     Model.Features.Count == 0 ||
+                                     Model.Features.Any(m => m.Equals("*", StringComparison.OrdinalIgnoreCase) ||
+                                                             m.Equals(mod.Code, StringComparison.OrdinalIgnoreCase));
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="p-3 rounded-3 border @(isLicensed ? "border-success-subtle bg-success-subtle bg-opacity-10" : "border-secondary-subtle bg-light text-muted") h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="avatar @(isLicensed ? "bg-success text-white" : "bg-secondary text-white") rounded p-2">
+                                    <i class="bi @mod.Icon fs-5"></i>
+                                </div>
+                                @if (isLicensed)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Khả Dụng
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border">
+                                        <i class="bi bi-lock-fill me-1"></i>Chưa Mở
+                                    </span>
+                                }
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">@mod.Name</h6>
+                            <p class="small text-muted mb-0">@mod.Desc</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Nạp Giấy Phép Bản Quyền Mới -->
+<div class="modal fade" id="activateLicenseModal" tabindex="-1" aria-labelledby="activateLicenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-dark text-white py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-key-fill text-warning fs-5"></i>
+                    <h5 class="modal-title fw-bold mb-0" id="activateLicenseModalLabel">Nạp Giấy Phép Bản Quyền Phần Mềm (.lic)</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Activate" method="post" enctype="multipart/form-data" id="licenseActivationForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4">
+                    <div class="alert alert-info border-info-subtle d-flex align-items-center mb-3">
+                        <i class="bi bi-shield-check fs-4 text-info me-3"></i>
+                        <div class="small">
+                            Hệ thống kiểm thực chữ ký số ECDSA P-256 hoàn toàn ngoại tuyến. Nếu giấy phép mới không hợp lệ, hệ thống sẽ tự động từ chối và bảo toàn giấy phép hợp lệ cũ.
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills nav-fill mb-3" id="activationTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold" id="file-tab" data-bs-toggle="pill" data-bs-target="#tab-file" type="button" role="tab">
+                                <i class="bi bi-file-earmark-arrow-up me-1"></i> Tải Tệp Giấy Phép (.lic)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="text-tab" data-bs-toggle="pill" data-bs-target="#tab-text" type="button" role="tab">
+                                <i class="bi bi-textarea-t me-1"></i> Dán Chuỗi Bản Quyền
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="activationTabContent">
+                        <div class="tab-pane fade show active p-3 border rounded bg-light" id="tab-file" role="tabpanel">
+                            <label for="licenseFileInput" class="form-label fw-bold">Chọn tệp giấy phép (.lic) từ máy tính:</label>
+                            <input class="form-control" type="file" id="licenseFileInput" name="licenseFile" accept=".lic,.txt,.json">
+                        </div>
+
+                        <div class="tab-pane fade p-3 border rounded bg-light" id="tab-text" role="tabpanel">
+                            <label for="licenseTextInput" class="form-label fw-bold">Dán toàn bộ chuỗi bản quyền:</label>
+                            <textarea class="form-control font-monospace small" id="licenseTextInput" name="licenseText" rows="6" placeholder="-----BEGIN SMARTRESTAURANT LICENSE-----&#10;...&#10;-----END SMARTRESTAURANT LICENSE-----"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-3 px-4">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold" id="btnSubmitActivation">
+                        <i class="bi bi-check2-circle me-1"></i> Xác Nhận & Cài Đặt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnCopy = document.getElementById('btnCopyInstallId');
+            const box = document.getElementById('installationIdBox');
+
+            if (btnCopy && box) {
+                btnCopy.addEventListener('click', function () {
+                    const text = box.innerText.trim();
+                    navigator.clipboard.writeText(text).then(function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã Sao Chép!',
+                            text: 'Mã InstallationId: ' + text,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+}

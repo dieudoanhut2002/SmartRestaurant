@@ -25,6 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<KitchenStation> KitchenStations => Set<KitchenStation>();
     public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
     public DbSet<InventoryTransaction> InventoryTransactions => Set<InventoryTransaction>();
+    public DbSet<SystemLicense> SystemLicenses => Set<SystemLicense>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -49,27 +49,29 @@ SmartRestaurant.slnx
 ├── src/
 │   ├── SmartRestaurant.Domain/
 │   │   ├── Common/ (BaseEntity, IAggregateRoot)
-│   │   ├── Entities/ (Branch, DiningArea, DiningRoom, RestaurantTable, KitchenStation, MenuItem, MenuItemVariant, ModifierGroup, ModifierOption, InventoryItem, InventoryTransaction, StaffMember, WorkShift, ShiftClosingVarianceLog, ManagerPinAuditLog, KitchenWasteLog, DiningSession)
-│   │   ├── Enums/ (AreaType, TableShape, TableStatus, PrepStation, StaffRole, ShiftStatus, DiningSessionStatus, InventoryTransactionType)
-│   │   └── Exceptions/ (DomainException, DomainValidationException, DomainNotFoundException, InvalidTableStateTransitionException)
+│   │   ├── Entities/ (Branch, DiningArea, DiningRoom, RestaurantTable, KitchenStation, MenuItem, MenuItemVariant, ModifierGroup, ModifierOption, InventoryItem, InventoryTransaction, StaffMember, WorkShift, ShiftClosingVarianceLog, ManagerPinAuditLog, KitchenWasteLog, DiningSession, SystemLicense)
+│   │   ├── Enums/ (AreaType, TableShape, TableStatus, PrepStation, StaffRole, ShiftStatus, DiningSessionStatus, InventoryTransactionType, LicenseState, LicenseType, LicenseStatus)
+│   │   ├── ValueObjects/ (GracePolicy)
+│   │   └── Exceptions/ (DomainException, DomainValidationException, DomainNotFoundException, InvalidTableStateTransitionException, LicenseValidationException, LicenseTamperedException, LicenseLimitExceededException)
 │   ├── SmartRestaurant.Application/
 │   │   ├── Common/Interfaces/ (IAppDbContext)
-│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos)
-│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService)
+│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos, LicenseDtos)
+│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService, ILicenseService, ILicenseSignatureValidator, IInstallationIdentityService, ILicenseStorageService, ILicenseClockService)
 │   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService)
 │   │   └── DependencyInjection.cs
 │   ├── SmartRestaurant.Infrastructure/
 │   │   ├── Data/ (AppDbContext, DatabaseSeeder)
 │   │   ├── Data/Configurations/ (EntityConfigurations)
+│   │   ├── Licensing/ (LicenseClockService, LicenseSignatureValidator, InstallationIdentityService, LicenseStorageService, LicenseService)
 │   │   └── DependencyInjection.cs
 │   └── SmartRestaurant.Web/ (Manager Application Portal)
-│       ├── Controllers/ (DashboardController, FloorPlanController, MenuController, StationController, InventoryController, SettingController, StaffController, ShiftController, ReportController)
-│       ├── Views/ (Dashboard, FloorPlan, Menu, Station, Inventory, Setting, Staff, Shift, Report, Shared)
+│       ├── Controllers/ (DashboardController, FloorPlanController, MenuController, StationController, InventoryController, SettingController, StaffController, ShiftController, ReportController, LicenseController)
+│       ├── Views/ (Dashboard, FloorPlan, Menu, Station, Inventory, Setting, Staff, Shift, Report, License, Shared)
 │       ├── wwwroot/ (css/admin.css, js/floorplan-designer.js, js/admin.js)
 │       └── Program.cs
 └── tests/
-    ├── SmartRestaurant.Domain.Tests/ (DiningAreaTests, RestaurantTableTests)
-    └── SmartRestaurant.Application.Tests/ (FloorPlanServiceTests, MenuServiceTests, KitchenStationServiceTests, InventoryServiceTests, SettingServiceTests, StaffAndShiftServiceTests)
+    ├── SmartRestaurant.Domain.Tests/ (DiningAreaTests, RestaurantTableTests, SystemLicenseTests)
+    └── SmartRestaurant.Application.Tests/ (FloorPlanServiceTests, MenuServiceTests, KitchenStationServiceTests, InventoryServiceTests, SettingServiceTests, StaffAndShiftServiceTests, LicenseFoundationTests, TestLicenseSigner)
 ```
 
 ---
@@ -87,6 +89,7 @@ SmartRestaurant.slnx
 | **Nhân viên & PIN** | `StaffController` | `Views/Staff/Index.cshtml` | 6 standard RBAC roles, staff directory, 4-digit PIN management & verification, manager PIN authorization tester |
 | **Ca & Két tiền** | `ShiftController` | `Views/Shift/Index.cshtml` | Open shift with cash float, blind cash close modal (`CloseShiftBlind`), variance calculation, variance audit log table |
 | **Báo cáo & Kiểm toán** | `ReportController` | `Views/Report/Index.cshtml` | Daily sales by `BusinessDate` (06:00 cutoff), payment tender breakdown (Cash/VietQR/Card), `WasteLog`, `ManagerPinAuditLog` |
+| **Bản Quyền Hệ Thống** | `LicenseController` | `Views/License/Index.cshtml` | Offline Cryptographic Verification (RSA-2048/SHA-256), machine fingerprint extraction, table limit capacity bar, subsystem entitlement checks, license upload & manual activation |
 
 ---
 

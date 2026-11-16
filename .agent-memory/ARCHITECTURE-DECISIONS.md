@@ -169,3 +169,15 @@ This file tracks the formal architectural and technical decisions made for **Sma
 - **Decision**: Implement a dedicated Remake Dish action with Manager PIN and mandatory error categorization. Triggers a high-priority purple KDS card without increasing customer bill total; logs scrap to the kitchen Waste Register.
 - **Consequences**:
   - Customer bill accuracy and transparent kitchen error auditing.
+
+---
+
+### ADR-017: Offline Cryptographic Software Licensing Foundation
+- **Status**: `CONFIRMED` (Owner Directive 2026-11-13)
+- **Date**: 2026-11-13
+- **Context**: SmartRestaurant operates in on-premise restaurant environments requiring software license protection, offline cryptographic verification, persistent central server installation binding, and feature gating without continuous cloud connectivity dependencies.
+- **Decision**: Implement an offline asymmetric cryptographic licensing foundation using ECDSA P-256 and SHA-256. The application embeds only the Issuer Public Key for signature validation. The License model contains LicenseId, CustomerId, InstallationId, ProductCode, Edition, Features, IssuedAt, ValidFrom, ExpiresAt, LicenseVersion, and GracePolicy. The system enforces 9 lifecycle states (`Uninitialized`, `Active`, `ExpiringSoon`, `OfflineGrace`, `ExpiredGrace`, `Expired`, `VerificationRequired`, `Invalid`, `Suspended`), persistent InstallationId with machine keypair (protected by Windows DPAPI), multi-signal hardware fingerprinting, clock rollback detection, atomic file storage (guaranteeing that an invalid replacement license never destroys a valid license), and an explicit Development Mode without commercial license dependencies.
+- **Consequences**:
+  - Fully offline operational capability (up to 30 days configurable offline allowance + 7 days expiry grace).
+  - High tamper resistance: any tampering with payload or signature invalidates verification.
+  - Safe, unblocked developer and Antigravity workflow via Development Mode (`LicenseOptions:Mode = Development`).

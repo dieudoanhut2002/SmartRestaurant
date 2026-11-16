@@ -3,7 +3,7 @@
 - **Task Identifier**: TASK-IMPLEMENTATION-03
 - **Task Title**: POS Order Capture & Waiter Tablet Application
 - **Lifecycle Stage**: Stage 5 — Iterative Implementation by Approved Milestone
-- **Current Status**: **MANAGER APPLICATION (TASK 02) COMPLETED & FULLY VERIFIED**. All 7 core management domains (A: Dashboard, B: Spatial 2D Floor Plan & VIP Rooms, C: Menu Catalog & Modifiers, D: Kitchen Stations & KDS Routing, E: Staff & PIN RBAC, F: Inventory 4-State Tracking, G: Restaurant Config & Presets) have been built, compiled with 0 warnings/0 errors, verified HTTP 200 on all endpoints, and 45/45 automated unit/integration tests passing.
+- **Current Status**: **MANAGER APPLICATION (TASK 02) & OWNER DIRECTIVE (LICENSE FOUNDATION) COMPLETED & FULLY VERIFIED**. All 7 core management domains and the Offline Cryptographic Licensing Foundation (RSA-2048/SHA-256 digital signature, machine hardware fingerprinting, table limits, subsystem entitlement, and `/License` UI) have been built, compiled with 0 warnings/0 errors, verified HTTP 200 on all endpoints, and 67/67 automated unit/integration tests passing.
 - **Approval Requirements**: Awaiting Project Owner review and authorization to proceed to Task 03 (POS Application) or Task 04 (KDS Application).
 
 ---

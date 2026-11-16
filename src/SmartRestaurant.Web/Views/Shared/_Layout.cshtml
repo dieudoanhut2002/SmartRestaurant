@@ -53,6 +53,9 @@
                 <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Setting" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Setting" asp-action="Index">
                     <i class="bi bi-gear-fill me-2"></i> Cấu Hình Vận Hành
                 </a>
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "License" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="License" asp-action="Index">
+                    <i class="bi bi-shield-lock-fill me-2 text-warning"></i> Bản Quyền Hệ Thống
+                </a>
             </nav>
 
             <div class="mt-auto pt-4 border-top border-secondary text-secondary small">
@@ -61,6 +64,7 @@
                     <span class="text-light">Chi Nhánh 1 (Trung Tâm)</span>
                 </div>
                 <div>Giờ cắt ca: <strong class="text-warning">06:00 sáng</strong></div>
+                <div>Bản quyền: <strong class="text-success">Đã Kích Hoạt</strong></div>
                 <div>Phiên bản: <strong class="text-light">v1.0.0-FROZEN</strong></div>
             </div>
         </aside>

@@ -236,3 +236,23 @@ public class InventoryTransactionConfiguration : IEntityTypeConfiguration<Invent
         builder.HasQueryFilter(t => !t.IsDeleted);
     }
 }
+
+public class SystemLicenseConfiguration : IEntityTypeConfiguration<SystemLicense>
+{
+    public void Configure(EntityTypeBuilder<SystemLicense> builder)
+    {
+        builder.HasKey(l => l.Id);
+        builder.Property(l => l.LicenseId).HasMaxLength(100).IsRequired();
+        builder.Property(l => l.CustomerId).HasMaxLength(200).IsRequired();
+        builder.Property(l => l.InstallationId).HasMaxLength(100).IsRequired();
+        builder.Property(l => l.ProductCode).HasMaxLength(50).IsRequired();
+        builder.Property(l => l.Edition).HasMaxLength(50).IsRequired();
+        builder.Property(l => l.FeaturesJson).IsRequired();
+        builder.Property(l => l.DigitalSignature).IsRequired();
+        builder.Property(l => l.RawDocument).IsRequired();
+        builder.OwnsOne(l => l.GracePolicy);
+        builder.HasIndex(l => l.IsActive);
+        builder.HasIndex(l => l.LicenseId);
+        builder.HasQueryFilter(l => !l.IsDeleted);
+    }
+}

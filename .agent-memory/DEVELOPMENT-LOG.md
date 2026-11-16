@@ -555,3 +555,53 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   6. Added automated unit test `GetFloorPlanLayout_AfterSeeding_ShouldContainAllAreasAndTables` (46/46 tests passing).
 - **Verification**: Verified real HTTP rendering of all 3 areas (Area 1: 6 tables, Area 2: 7 tables, Area 3: 3 tables) with exact coordinates, sizes, shapes, and statuses.
 - **Status**: Resolved & Verified.
+
+---
+
+### [2026-11-13] — Owner Directive: License Foundation Implementation
+- **Objective**: Deliver a complete, enterprise-grade, offline cryptographic software licensing foundation (`Offline Cryptographic Verification`) using ECDSA P-256/SHA-256 digital signatures, persistent InstallationId with machine keypair (protected by Windows DPAPI), multi-signal hardware fingerprinting (`SR-FPRT-XXXX-XXXX-XXXX-XXXX`), 9 lifecycle states, offline grace allowance (30 days), expiry grace (7 days), clock rollback detection, atomic storage replacement preserving valid licenses against invalid inputs, subsystem feature entitlements (`IsFeatureEnabled`), and a separated Development Mode (`LicenseOptions:Mode = Development`) ensuring no interference with Manager/POS/KDS development.
+- **Deliverables**:
+  - **Domain Expansion (`SmartRestaurant.Domain`)**:
+    - Enums: `LicenseState` (`Uninitialized`, `Active`, `ExpiringSoon`, `OfflineGrace`, `ExpiredGrace`, `Expired`, `VerificationRequired`, `Invalid`, `Suspended`), `LicenseType`, `LicenseStatus`.
+    - Value Object: `GracePolicy` (`OfflineAllowanceDays` default 30, `ExpiryGraceDays` default 7, `ExpiringSoonDays` default 14).
+    - Entity: `SystemLicense` (inherits `BaseEntity`) with `LicenseId`, `CustomerId`, `InstallationId`, `ProductCode`, `Edition`, `Features`, `IssuedAt`, `ValidFrom`, `ExpiresAt`, `LicenseVersion`, `GracePolicy`, and domain evaluation logic (`EvaluateState`, `IsFeatureEnabled`).
+    - Exceptions: `LicenseValidationException`, `LicenseTamperedException`, `LicenseLimitExceededException`.
+  - **Application Abstractions & DTOs (`SmartRestaurant.Application`)**:
+    - DTOs: `LicenseModel`, `GracePolicyDto`, `StoredLicenseDocument`, `LicenseStateMetadata`, `InstallationIdentityDto`, `LicenseValidationResult`, `LicenseSummaryDto`, `LicenseActivationResultDto`, `LicenseOptions`.
+    - Interfaces: `ILicenseClockService`, `ILicenseSignatureValidator`, `IInstallationIdentityService`, `ILicenseStorageService`, `ILicenseService`.
+  - **Infrastructure & Cryptography (`SmartRestaurant.Infrastructure`)**:
+    - `LicenseClockService`: UTC-based clock with rollback sanity validation (`currentTimeUtc < lastKnownTrustedUtc - tolerance`).
+    - `LicenseSignatureValidator`: ECDSA P-256 with SHA-256 signature verification using configured Issuer Public Key. Zero private signing keys in production code/binaries.
+    - `InstallationIdentityService`: Persistent random `InstallationId` generation, local machine ECDSA P-256 keypair, DPAPI / protected storage, composite hardware fingerprinting, and `ExportRehostRequestAsync`.
+    - `LicenseStorageService`: Atomic file replacement (`active_license.lic`) and DPAPI-protected metadata (`license_state.dat`). Guarantees invalid replacement license cannot destroy valid existing license.
+    - `LicenseService`: Core licensing orchestrator supporting Development Mode (`Edition = Development`, unrestricted) and Production Mode (strict validation), feature entitlement checking (`IsFeatureEnabled`), and atomic installation.
+    - `EntityConfigurations`: Updated `SystemLicenseConfiguration` with `OwnsOne(l => l.GracePolicy)`.
+  - **Manager Web Portal (`SmartRestaurant.Web`)**:
+    - Controller: `LicenseController` with `GET /License`, `GET /License/InstallationIdentity`, `POST /License/Activate`, `GET /License/ExportInstallationInfo`, and `GET /License/ExportRehostRequest`.
+    - View: `Views/License/Index.cshtml` with visual state badge, Development Mode banner, InstallationId & Hardware Fingerprint card, feature entitlements matrix, and activation modal.
+    - Configuration: Configured `"Licensing"` section in `appsettings.json` with Mode `"Development"` and ECDSA P-256 public key.
+  - **Automated Test Suite**:
+    - `TestLicenseSigner.cs`: Test-only ECDSA P-256 signing utility strictly isolated inside test project.
+    - `SystemLicenseTests.cs`: 14 domain unit tests (35/35 Domain tests passing).
+    - `LicenseFoundationTests.cs`: 14 comprehensive tests covering valid signature, invalid signature, tampered payload, expired license, not yet valid, installation ID mismatch, unsupported version, valid offline operation, offline allowance exceeded, clock rollback detection, feature entitlement checks, license renewal, invalid replacement preservation, and Development Mode (39/39 Application tests passing).
+    - **Total Test Suite: 74/74 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+    - Verified full solution build with 0 warnings and 0 errors.
+    - Verified real HTTP 200 execution across all 13 manager routes.
+- **Status**: Completed & Verified.
+
+---
+
+### [2026-11-13] — License Business Workflows & Operations Guide Documentation
+- **Objective**: Author a comprehensive, official operational manual and business workflow guide for the SmartRestaurant License Foundation per Project Owner directive.
+- **Deliverables**:
+  - Authored `docs/LICENSE-GUIDE.md` (Sổ Tay Hướng Dẫn Nghiệp Vụ & Vận Hành Bản Quyền):
+    - System architecture & principles (On-premise, 12-month annual subscription, ECDSA P-256 digital signature, Windows DPAPI, Anti-Rollback trusted clock, Safe Replacement Invariant).
+    - Workflow 1: Initial Issuance & Activation (Installation Identity, Vendor-side asymmetric signing, atomic ingestion).
+    - Workflow 2: Daily Operation & Offline Validation (Trusted clock checks, 30-day offline allowance).
+    - Workflow 3: License State Lifecycle & Grace Periods (9 states from `Uninitialized` to `Active`, `ExpiringSoon`, `OfflineGrace`, `ExpiredGrace`, `Expired`, `VerificationRequired`).
+    - Workflow 4: Renewal & Atomic Safe Replacement Invariant (Error in renewed license never overwrites valid existing license).
+    - Workflow 5: Server Migration & Rehost Request (`RehostRequest` flow).
+    - Workflow 6: Feature Entitlement Checks & Development Mode (`IsFeatureEnabled`, unrestricted dev mode).
+    - System component directory and code references across Domain, Application, Infrastructure, Web, and Test suites.
+- **Verification**: `dotnet build SmartRestaurant.slnx` succeeded with 0 errors and 0 warnings.
+- **Status**: Completed & Verified.
