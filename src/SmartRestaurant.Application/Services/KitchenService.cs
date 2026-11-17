@@ -48,7 +48,6 @@ public class KitchenService(IAppDbContext dbContext) : IKitchenService
     {
         IQueryable<KitchenTicket> query = _dbContext.KitchenTickets
             .Where(t => t.Status != KitchenTicketStatus.Completed && t.Status != KitchenTicketStatus.Cancelled);
-        List<KitchenTicket> t = await query.ToListAsync();
         if (stationId.HasValue && stationId.Value != Guid.Empty)
         {
             query = query.Where(t => t.KitchenStationId == stationId.Value);

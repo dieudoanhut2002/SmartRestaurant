@@ -735,3 +735,18 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Live HTTP verification: Sent live POST request `/Order/Fire` against local Kestrel host with real SQL Server LocalDB (`SmartRestaurantDb_v6`), returning HTTP 200 with `"success": true, "message": "Đã báo bếp thành công đợt 2!"`.
   - Zero warnings, zero errors across all 9 projects.
 - **Status**: Completed, Fully Fixed & Verified.
+
+---
+
+### [2026-11-17] — Bug Fix: Resolution of CS0136 Variable Scope Collision in KitchenService.cs
+- **Objective**: Fix compilation error `CS0136: A local or parameter named 't' cannot be declared in this scope because that name is used in an enclosing local scope to define a local or parameter` in `KitchenService.cs` (row 94).
+- **Root Cause Analysis**:
+  - In `KitchenService.GetActiveTicketsAsync`, an unused and redundant line `List<KitchenTicket> t = await query.ToListAsync();` was placed at line 51 before applying the optional `stationId` filter and final ordering.
+  - This declared a local variable `t` at the method's root scope, which conflicted with the `foreach (KitchenTicket? t in tickets)` iteration variable at line 94, triggering compiler error CS0136.
+- **Remediation**:
+  - Removed the unused statement `List<KitchenTicket> t = await query.ToListAsync();` from `KitchenService.cs`.
+- **Verification Results**:
+  - Solution build: **0 Warnings, 0 Errors** across all 9 projects in `SmartRestaurant.slnx`.
+  - Automated test suite: **108/108 Tests Passing (100% pass rate, 0 failed, 0 skipped)** across `SmartRestaurant.Domain.Tests` (41/41) and `SmartRestaurant.Application.Tests` (67/67).
+- **Status**: Completed, Fully Fixed & Verified.
+
