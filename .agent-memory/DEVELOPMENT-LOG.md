@@ -880,3 +880,47 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 
 
 
+
+---
+
+### [2026-11-17] — Phase 2 Implementation: Advanced Business Intelligence, Real-Time Sales Heatmap & Recipe BOM Margin Analytics (TASK-ANALYTICS-DASHBOARD-01)
+- **Objective**: Design and implement an Executive Business Intelligence (BI) Analytics Dashboard in the Manager Portal (`SmartRestaurant.Web`), featuring real-time hourly sales peak load heatmaps, payment tender channel distribution, table turnover & dining duration metrics, KDS ticket preparation SLA compliance, BCG menu engineering classification with recipe BOM gross margin, and UTF-8 BOM CSV exports for Microsoft Excel.
+- **Architectural Deliverables**:
+  - **Application DTOs (`src/SmartRestaurant.Application/DTOs/DashboardAndReportDtos.cs`)**:
+    - `HourlySalesAnalyticsDto`: Tracks 24-hour revenue, order count, guest traffic, and peak load tags ("Cao điểm", "Đông đúc", "Bình thường").
+    - `TableTurnoverMetricDto`: Tracks table turnover (turns count), average dining duration (minutes), and total revenue generated per table.
+    - `KdsSlaPerformanceDto`: Measures KDS ticket preparation speed, breakdown (<10m, 10-20m, >20m), SLA compliance percentage, and average completion minutes.
+    - `MenuEngineeringItemDto`: BCG Matrix evaluation (Star, Plowhorse, Puzzle, Dog), selling price, estimated recipe BOM COGS (35% benchmark), unit gross margin amount & percentage, sales quantity, and total dish profitability.
+    - `ExecutiveBiDashboardDto`: Comprehensive executive payload aggregating revenue, profit, AOV, tender channels, turnover, SLA, heatmap, and BCG matrix.
+  - **Report Application Service (`src/SmartRestaurant.Application/Services/ReportService.cs`)**:
+    - `GetExecutiveBiDashboardAsync`: Aggregates live SQL sales data, computes hourly heatmaps, groups table turnover rates, monitors KDS kitchen ticket SLAs, calculates BCG matrix item profitability, and supplies realistic preview fallbacks for newly opened branches.
+    - `ExportSalesReportCsvAsync`: Generates UTF-8 with BOM (`\uFEFF`) CSV export of sales revenue and category breakdown.
+    - `ExportMenuEngineeringCsvAsync`: Generates UTF-8 with BOM (`\uFEFF`) CSV export of the full BCG menu engineering matrix.
+  - **Manager Web Portal UI (`SmartRestaurant.Web`)**:
+    - `ReportController.cs`: Added `Analytics`, `ExportDailySalesCsv`, and `ExportMenuEngineeringCsv` actions with explicit type imports.
+    - `Views/Report/Analytics.cshtml`: Modern responsive dashboard with date range filter, 4 executive KPI cards, Chart.js 24-hour peak load combo chart, payment tender channel doughnut, category sales distribution chart, KDS SLA progress bars, BCG menu engineering matrix with colored status badges, and table turnover performance table.
+    - `Views/Report/Index.cshtml`: Integrated quick action links to BI Analytics Dashboard and CSV exports.
+    - `Views/Shared/_Layout.cshtml`: Added "Phân Tích BI & Hiệu Suất" link to the primary sidebar navigation.
+  - **Automated Test Suite (`tests/SmartRestaurant.Application.Tests/ReportServiceAnalyticsTests.cs`)**:
+    - 5 automated unit tests testing live data aggregation, empty branch preview fallback, default date auto-resolution, and UTF-8 BOM CSV export integrity.
+- **Verification Results**:
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Automated test suite: **121/121 Tests PASSING (100% pass rate, 0 failed, 0 skipped)** across `SmartRestaurant.Domain.Tests` (41/41) and `SmartRestaurant.Application.Tests` (80/80).
+- **Status**: Completed, Fully Tested & Verified.
+
+---
+
+### [2026-11-17] — Bugfix: Resolve SqlException Invalid object name 'Orders' in SmartRestaurant.Web
+- **Objective**: Fix `SqlException: Invalid object name 'Orders'` encountered when calling `GetExecutiveBiDashboardAsync` from `SmartRestaurant.Web`.
+- **Root Cause Analysis**:
+  - `src/SmartRestaurant.Web/appsettings.Development.json` had a stale connection string pointing to legacy database `SmartRestaurantDb_v3`, while all other projects and `appsettings.json` pointed to the authoritative, fully-migrated `SmartRestaurantDb_v6`.
+  - In `SmartRestaurantDb_v3` (created during early Stage 5 Task 02), only 19 tables existed (`Orders`, `OrderRounds`, `OrderItems`, `Invoices`, `PaymentTransactions`, etc. did not exist).
+  - When running `SmartRestaurant.Web` in `Development` mode, ASP.NET Core loaded `appsettings.Development.json` which overrode the connection string to `SmartRestaurantDb_v3`, causing SQL Server to throw `SqlException: Invalid object name 'Orders'`.
+- **Changes Applied**:
+  - Updated `src/SmartRestaurant.Web/appsettings.Development.json` to point to `SmartRestaurantDb_v6`.
+  - Rebuilt `SmartRestaurant.Web` to ensure `bin/Debug/net8.0/appsettings.Development.json` has the correct connection string.
+  - Verified `SmartRestaurantDb_v6` connectivity and table schema (29 tables including `Orders`, `OrderRounds`, `OrderItems`, `Invoices`, `PaymentTransactions`).
+- **Verification Results**:
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Automated test suite: **121/121 Tests PASSING (100% pass rate)**.
+- **Status**: Completed & Verified.

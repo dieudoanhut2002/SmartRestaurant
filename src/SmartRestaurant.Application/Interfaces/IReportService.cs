@@ -9,4 +9,7 @@ public interface IReportService
     Task<List<KitchenWasteLogDto>> GetKitchenWasteLogsAsync(Guid branchId, CancellationToken ct = default);
     Task<KitchenWasteLogDto> LogKitchenWasteAsync(Guid branchId, Guid menuItemId, int quantity, string reason, decimal estimatedLoss, Guid? staffId, string staffName, CancellationToken ct = default);
     Task<List<ManagerPinAuditLogDto>> GetManagerPinAuditLogsAsync(Guid branchId, CancellationToken ct = default);
+    Task<ExecutiveBiDashboardDto> GetExecutiveBiDashboardAsync(Guid branchId, DateTime? fromDate = null, DateTime? toDate = null, CancellationToken ct = default);
+    Task<byte[]> ExportSalesReportCsvAsync(Guid branchId, DateTime? businessDate = null, CancellationToken ct = default);
+    Task<byte[]> ExportMenuEngineeringCsvAsync(Guid branchId, CancellationToken ct = default);
 }

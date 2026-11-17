@@ -13,7 +13,7 @@ Hệ thống quản lý và vận hành nhà hàng số hóa toàn diện (Smart
 - **Đồng Bộ Dữ Liệu Thời Gian Thực (SignalR)**: Mọi thao tác đặt bàn, gọi món, bếp hoàn thành và thanh toán đều được đồng bộ tức thời giữa các thiết bị.
 - **Quản Lý Định Lượng & Kho Nguyên Liệu (BOM & Inventory)**: Quản lý công thức món ăn, tự động trừ kho nguyên liệu khi món được chế biến, cảnh báo tồn kho tối thiểu.
 - **Quản Lý Ca Làm Việc & Phân Quyền (Staff & Shift Management)**: Quản lý ca làm việc, đối soát tiền mặt đầu/cuối ca, phân quyền vai trò (Admin, Manager, Cashier, Waiter, Chef).
-- **Báo Cáo & Thống Kê (Analytics & Reports)**: Doanh thu theo ca/ngày/tháng, món bán chạy, hiệu suất bàn.
+- **Báo Cáo & Thống Kê (Analytics & Reports)**: Doanh thu theo ca/ngày/tháng, món bán chạy, hiệu suất bàn, Executive BI Dashboard (Peak Load Heatmap 24h, Ma trận thực đơn BCG & Biên lợi nhuận BOM, Tuân thủ SLA KDS bếp, xuất CSV cho Microsoft Excel).
 
 ---
 
@@ -38,7 +38,7 @@ Xem chi tiết hướng dẫn chạy và cấu hình các trạm tại [HUONGDAN
 # 1. Biên dịch toàn bộ Solution (10 projects)
 dotnet build SmartRestaurant.slnx
 
-# 2. Chạy toàn bộ 116 bài kiểm thử tự động (100% PASS)
+# 2. Chạy toàn bộ 120 bài kiểm thử tự động (100% PASS)
 dotnet test SmartRestaurant.slnx
 
 # 3. Tạo bản quyền Pilot Store 365 ngày (Offline License)

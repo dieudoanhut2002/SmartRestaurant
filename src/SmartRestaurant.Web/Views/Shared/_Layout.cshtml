@@ -47,8 +47,11 @@
                 <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Shift" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Shift" asp-action="Index">
                     <i class="bi bi-cash-stack me-2"></i> Ca & Kiểm Tiền Mù
                 </a>
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Report" asp-action="Index">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" && ViewContext.RouteData.Values["action"]?.ToString() != "Analytics" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Report" asp-action="Index">
                     <i class="bi bi-bar-chart-line-fill me-2"></i> Báo Cáo & Sổ Hao Phí
+                </a>
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" && ViewContext.RouteData.Values["action"]?.ToString() == "Analytics" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Report" asp-action="Analytics">
+                    <i class="bi bi-graph-up-arrow me-2 text-info"></i> Phân Tích BI & Hiệu Suất
                 </a>
                 <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Setting" ? "active bg-warning text-dark fw-bold" : "")" asp-controller="Setting" asp-action="Index">
                     <i class="bi bi-gear-fill me-2"></i> Cấu Hình Vận Hành

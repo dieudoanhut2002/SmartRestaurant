@@ -63,3 +63,61 @@ public record ManagerPinAuditLogDto(
     string TargetEntity,
     string Reason,
     DateTime Timestamp);
+
+public record HourlySalesAnalyticsDto(
+    int Hour,
+    string HourLabel,
+    decimal Revenue,
+    int OrderCount,
+    int GuestCount,
+    string PeakLevel);
+
+public record TableTurnoverMetricDto(
+    Guid TableId,
+    string TableCode,
+    string TableName,
+    string AreaName,
+    int TurnsCount,
+    double AverageDurationMinutes,
+    decimal TotalRevenueGenerated);
+
+public record KdsSlaPerformanceDto(
+    int TotalTickets,
+    int FastUnder10MinCount,
+    int Medium10To20MinCount,
+    int Overdue20MinCount,
+    double SlaCompliancePercent,
+    double AverageElapsedMinutes);
+
+public record MenuEngineeringItemDto(
+    Guid MenuItemId,
+    string DishCode,
+    string DishName,
+    string CategoryName,
+    decimal SellingPrice,
+    decimal EstimatedCost,
+    decimal GrossMarginAmount,
+    double MarginPercent,
+    int QuantitySold,
+    decimal TotalProfit,
+    string Classification,
+    string BadgeClass);
+
+public record ExecutiveBiDashboardDto(
+    DateTime FromDate,
+    DateTime ToDate,
+    decimal TotalRevenue,
+    decimal TotalGrossProfit,
+    double OverallMarginPercent,
+    int TotalOrders,
+    decimal AverageTicketSize,
+    double AverageTableDurationMinutes,
+    decimal CashRevenue,
+    decimal VietQrRevenue,
+    decimal CardRevenue,
+    List<HourlySalesAnalyticsDto> HourlyHeatmap,
+    List<TableTurnoverMetricDto> TopTables,
+    KdsSlaPerformanceDto SlaPerformance,
+    List<MenuEngineeringItemDto> MenuEngineering,
+    List<CategorySalesBreakdownDto> CategoryBreakdown);
+

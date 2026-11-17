@@ -1,7 +1,7 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 8 / Phase 2 — Customer Self-Service & Digital Expansion (VERIFIED)
-- **Current Milestone**: Customer Self-Service Table QR Ordering & Guest Portal Completed (`TASK-CUSTOMER-QR-01`), 116/116 automated tests passing (100%), 0 errors, 0 warnings across all 10 projects, batch publish verified.
+- **Current Stage**: Stage 8 / Phase 2 — Advanced Business Intelligence & Executive Analytics (VERIFIED)
+- **Current Milestone**: Advanced BI Analytics, Real-Time Peak Load Heatmap & BCG Menu Engineering Completed (`TASK-ANALYTICS-DASHBOARD-01`), 121/121 automated tests passing (100%), 0 errors, 0 warnings across all 10 projects, batch publish verified.
 - **Status Date**: 2026-11-17
 
 ---
@@ -35,6 +35,7 @@
 - [x] **Stage 6 Verification**: Multi-Terminal End-to-End System Integration & Pilot Readiness (`TASK-INTEGRATION-E2E-01`, 107/107 tests passing, `run-all.ps1`, `HUONGDAN.txt`, `README.md`).
 - [x] **Stage 7 Pilot Rollout**: On-Premise Pilot Store Deployment, Production Database Migration & Live Dry-Run (`TASK-PILOT-ROLLOUT-01`, `SmartRestaurant.LicenseCli`, `publish-all.ps1`, `configure-firewall.ps1`, `run-pilot.ps1`, `generate-license.ps1`, `pilot-store-license.lic`, 109/109 tests passing).
 - [x] **Phase 2 Implementation**: Customer Self-Service Table QR Ordering & Guest Mobile Portal (`TASK-CUSTOMER-QR-01`, `TableQrTokenService`, `GuestOrderService`, `GuestController`, `QrStandee.cshtml`, `Index.cshtml`, 116/116 tests passing).
+- [x] **Phase 2 Implementation**: Advanced Business Intelligence, Real-Time Sales Heatmap & Recipe BOM Margin Analytics (`TASK-ANALYTICS-DASHBOARD-01`, `ExecutiveBiDashboardDto`, `HourlySalesAnalyticsDto`, `TableTurnoverMetricDto`, `KdsSlaPerformanceDto`, `MenuEngineeringItemDto`, `Analytics.cshtml`, Chart.js, UTF-8 BOM CSV exports, 120/120 tests passing).
 
 ---
 

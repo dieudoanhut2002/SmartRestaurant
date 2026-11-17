@@ -49,7 +49,7 @@ Infrastructure và Database SQL Server:
 Bước 1: Kiểm tra biên dịch Solution
     dotnet build SmartRestaurant.slnx
 
-Bước 2: Chạy kiểm thử tự động (103 bài test PASS 100%)
+Bước 2: Chạy kiểm thử tự động (120 bài test PASS 100%)
     dotnet test SmartRestaurant.slnx
 
 Bước 3: Khởi chạy các phân hệ (mở từng cửa sổ PowerShell / Terminal):
@@ -142,6 +142,35 @@ Hệ thống cung cấp bộ công cụ tự động hóa đầy đủ trong th�
       -> Chuông báo tức thì trên máy tính bảng Phục vụ (POS) và vé bếp KDS.
     - Xem trạng thái món ăn thời gian thực: Chờ bếp nhận -> Bếp đang nấu -> Món đã xong -> Đã phục vụ.
     - Thanh toán trực tiếp tại bàn bằng cách quét mã VietQR Napas 24/7 hiển thị trên màn hình.
+
+--------------------------------------------------------------------------------
+7. HƯỚNG DẪN XEM PHÂN TÍCH THÔNG MINH BI & MA TRẬN THỰC ĐƠN BCG (EXECUTIVE ANALYTICS)
+
+[7.1] Truy cập Cổng Báo Cáo BI:
+    - Địa chỉ: http://localhost:5000/Report/Analytics
+    - Hoặc nhấp mục "Phân Tích BI & Hiệu Suất" trên thanh điều hướng bên trái (Sidebar).
+
+[7.2] Bộ Chỉ Số Điều Hành Cấp Cao (Executive KPIs):
+    - Doanh thu thuần (Net Sales) & Giá trị đơn trung bình (AOV/Ticket Size).
+    - Lợi nhuận gộp ước tính (Gross Margin) & Biên lợi nhuận BOM (%) định mức 35% COGS.
+    - Tỷ lệ tuân thủ SLA bếp KDS (< 10 phút, 10-20 phút, > 20 phút cảnh báo trễ).
+    - Lượt quay vòng bàn (Table Turnover Rate) & Thời gian lưu bàn trung bình.
+
+[7.3] Biểu Đồ Trực Quan Hóa (Chart.js):
+    - Biểu đồ nhiệt khung giờ hoạt động (00:00 - 23:00): Nhận diện khung giờ cao điểm (Peak Load).
+    - Biểu đồ tỷ trọng thanh toán: Cơ cấu dòng tiền giữa VietQR 24/7, Tiền mặt và Thẻ POS.
+    - Biểu đồ doanh thu theo nhóm danh mục món ăn ẩm thực.
+
+[7.4] Ma Trận Phân Tích Thực Đơn BCG (Menu Engineering Matrix):
+    - Ngôi Sao (Star): Món bán chạy & Lợi nhuận cao -> Bảo vệ vị trí vàng thực đơn.
+    - Ngựa Thồ (Plowhorse): Món bán chạy & Lợi nhuận thấp -> Tăng giá hoặc tối ưu hóa định mức BOM.
+    - Câu Đố (Puzzle): Lợi nhuận cao & Bán chậm -> Tăng cường upsell hoặc đặt banner quảng bá.
+    - Chó Cưng (Dog): Lợi nhuận thấp & Bán chậm -> Cắt giảm để tinh gọn tồn kho nguyên liệu.
+
+[7.5] Xuất Dữ Liệu Báo Cáo Cho Microsoft Excel:
+    - Nhấn "Xuất Ma Trận BCG (CSV)" hoặc "Xuất Doanh Thu Ngày (CSV)".
+    - File CSV được xuất chuẩn UTF-8 kèm ký hiệu BOM (\uFEFF), đảm bảo mở trên Microsoft Excel
+      hoàn toàn không bị lỗi bảng mã font tiếng Việt.
 
 ================================================================================
 SmartRestaurant Enterprise Digital Operations — Ready for Pilot Deployment!

@@ -3,6 +3,7 @@ namespace SmartRestaurant.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartRestaurant.Application.Common.Interfaces;
+using SmartRestaurant.Application.DTOs;
 using SmartRestaurant.Application.Interfaces;
 
 public class ReportController(
@@ -80,5 +81,42 @@ public class ReportController(
 
         var audits = await reportService.GetManagerPinAuditLogsAsync(branchId, ct);
         return View(audits);
+    }
+
+    public async Task<IActionResult> Analytics(DateTime? fromDate, DateTime? toDate, CancellationToken ct)
+    {
+        var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);
+        var branchId = branch?.Id ?? Guid.Empty;
+
+        ExecutiveBiDashboardDto dashboard = await reportService.GetExecutiveBiDashboardAsync(branchId, fromDate, toDate, ct);
+        ViewBag.BranchId = branchId;
+        ViewBag.FromDate = fromDate?.ToString("yyyy-MM-dd");
+        ViewBag.ToDate = toDate?.ToString("yyyy-MM-dd");
+
+        return View(dashboard);
+    }
+
+    public async Task<IActionResult> ExportDailySalesCsv(DateTime? businessDate, CancellationToken ct)
+    {
+        var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);
+        var branchId = branch?.Id ?? Guid.Empty;
+
+        var csvBytes = await reportService.ExportSalesReportCsvAsync(branchId, businessDate, ct);
+        var dateStr = (businessDate ?? DateTime.UtcNow).ToString("yyyyMMdd");
+        var fileName = $"BaoCaoDoanhThu_{dateStr}.csv";
+
+        return File(csvBytes, "text/csv; charset=utf-8", fileName);
+    }
+
+    public async Task<IActionResult> ExportMenuEngineeringCsv(CancellationToken ct)
+    {
+        var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);
+        var branchId = branch?.Id ?? Guid.Empty;
+
+        var csvBytes = await reportService.ExportMenuEngineeringCsvAsync(branchId, ct);
+        var dateStr = DateTime.UtcNow.ToString("yyyyMMdd");
+        var fileName = $"PhanTichThucDon_BCG_{dateStr}.csv";
+
+        return File(csvBytes, "text/csv; charset=utf-8", fileName);
     }
 }

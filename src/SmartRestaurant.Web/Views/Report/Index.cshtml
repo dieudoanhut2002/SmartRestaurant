@@ -16,6 +16,12 @@
                 </form>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <a asp-action="Analytics" class="btn btn-primary btn-sm">
+                    <i class="bi bi-graph-up-arrow me-1"></i> Dashboard BI & Heatmap
+                </a>
+                <a asp-action="ExportDailySalesCsv" asp-route-businessDate="@selectedDate" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Xuất CSV
+                </a>
                 <a asp-action="WasteLogs" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-trash3-fill me-1"></i> Sổ Hao Phí Nhà Bếp (WasteLog)
                 </a>
