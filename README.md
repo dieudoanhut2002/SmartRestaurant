@@ -24,7 +24,7 @@ Dự án áp dụng mô hình **Clean Architecture / Modular Monolith**:
 - `SmartRestaurant.Application`: Nghiệp vụ ứng dụng, CQRS/Services, DTOs, FluentValidation.
 - `SmartRestaurant.Infrastructure`: EF Core DbContext, Migrations, Fluent API Mapping, SignalR Hubs, VietQR Service, Background Workers.
 - `SmartRestaurant.Web`: Cổng quản lý nhà hàng (Manager Portal, Konva.js 2D, Báo cáo, Bản quyền).
-- `SmartRestaurant.Pos.Web`: Ứng dụng bồi bàn Touch Tablet POS (gọi món, báo bếp, SignalR).
+- `SmartRestaurant.Pos.Web`: Ứng dụng bồi bàn Touch Tablet POS (gọi món, báo bếp, SignalR) kiêm Cổng Tự Gọi Món Thực Khách QR Mobile (/Guest).
 - `SmartRestaurant.Kds.Web`: Màn hình điều phối chế biến Bếp & Quầy Bar (KDS, SLA timers, Expediter pass).
 - `SmartRestaurant.Cashier.Web`: Trạm thu ngân, quyết toán hóa đơn, tách bill, Dynamic VietQR 24/7, đóng ca kiểm két.
 - `SmartRestaurant.LicenseCli`: Công cụ CLI ký số ECDSA P-256 và sinh giấy phép bản quyền offline (.lic).
@@ -38,7 +38,7 @@ Xem chi tiết hướng dẫn chạy và cấu hình các trạm tại [HUONGDAN
 # 1. Biên dịch toàn bộ Solution (10 projects)
 dotnet build SmartRestaurant.slnx
 
-# 2. Chạy toàn bộ 109 bài kiểm thử tự động (100% PASS)
+# 2. Chạy toàn bộ 116 bài kiểm thử tự động (100% PASS)
 dotnet test SmartRestaurant.slnx
 
 # 3. Tạo bản quyền Pilot Store 365 ngày (Offline License)

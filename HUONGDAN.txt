@@ -121,6 +121,28 @@ Hệ thống cung cấp bộ công cụ tự động hóa đầy đủ trong th�
     - Giao diện in được thiết kế chuẩn khổ giấy 80mm ESC/POS (`Receipt.cshtml`).
     - Chọn máy in nhiệt 80mm mặc định của quầy thu ngân trong hộp thoại in.
 
+--------------------------------------------------------------------------------
+6. HƯỚNG DẪN TỰ GỌI MÓN BẰNG MÃ QR TẠI BÀN (CUSTOMER SELF-SERVICE QR ORDERING)
+
+[6.1] In Biển Standee Mã QR Đặt Bàn (Dành cho Quản lý):
+    - Đăng nhập Cổng Quản Lý: http://localhost:5000/FloorPlan
+    - Chọn bàn ăn bất kỳ trên sơ đồ 2D (ví dụ: Bàn SV-01).
+    - Tại bảng thông tin bàn bên phải, nhấn nút: "Xem & In Mã QR Đặt Bàn".
+    - Hệ thống mở trang Standee chuẩn in ấn (`QrStandee.cshtml`) hiển thị mã QR có chữ ký số HMAC.
+    - Nhấn "In Mã Để Bàn" để in ra giấy hoặc ép mica đặt tại mặt bàn ăn.
+
+[6.2] Trải nghiệm của Khách hàng (Quét QR bằng điện thoại):
+    - Khách hàng kết nối Wi-Fi nhà hàng, dùng Camera điện thoại hoặc Zalo quét mã QR.
+    - Trình duyệt điện thoại tự động mở cổng thực khách:
+      http://<IP_MÁY_CHỦ>:58329/Guest?tableId=...&token=...
+    - Xem thực đơn sinh động theo danh mục, tìm kiếm món ăn tức thì.
+    - Nhấn "Thêm" -> chọn số lượng và các ghi chú chế biến nhanh ("Ít cay", "Không hành", "Đá riêng"...).
+    - Mở giỏ hàng nổi và nhấn "Báo Bếp (Gọi Món)":
+      -> Hệ thống tự động tạo đợt gọi món `[KHÁCH TỰ GỌI ĐỢT X]`.
+      -> Chuông báo tức thì trên máy tính bảng Phục vụ (POS) và vé bếp KDS.
+    - Xem trạng thái món ăn thời gian thực: Chờ bếp nhận -> Bếp đang nấu -> Món đã xong -> Đã phục vụ.
+    - Thanh toán trực tiếp tại bàn bằng cách quét mã VietQR Napas 24/7 hiển thị trên màn hình.
+
 ================================================================================
 SmartRestaurant Enterprise Digital Operations — Ready for Pilot Deployment!
 ================================================================================

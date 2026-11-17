@@ -21,6 +21,8 @@ public static class DependencyInjection
         services.AddScoped<IKitchenService, KitchenService>();
         services.AddScoped<IVietQrService, VietQrService>();
         services.AddScoped<ICashierService, CashierService>();
+        services.AddSingleton<ITableQrTokenService, TableQrTokenService>();
+        services.AddScoped<IGuestOrderService, GuestOrderService>();
 
         return services;
     }

@@ -193,3 +193,19 @@ This file tracks the formal architectural and technical decisions made for **Sma
   - Clean separation of UI assets, touch-optimized layouts, and viewport dependencies.
   - Preserves Modular Monolith simplicity and transactional data integrity without microservice overhead.
   - SignalR Hubs are hosted in the Presentation layer. An Outbox Pattern guarantees atomic consistency across Orders, Kitchen Tickets, Inventory Reservations, and Real-time broadcasts.
+
+---
+
+### ADR-019: Customer Self-Service Table QR Ordering & HMAC-SHA256 Token Architecture
+- **Status**: `CONFIRMED`
+- **Date**: 2026-11-17
+- **Context**: Enabling dining guests to order food directly from their smartphones via table QR codes eliminates waiter bottlenecks during peak dining hours. However, public URLs could be vulnerable to URL tampering (guests at Table 1 ordering for Table 10) or off-premise denial-of-service spam if table IDs are exposed without cryptographic validation.
+- **Decision**: 
+  1. Co-locate the Guest Mobile Ordering Portal within `SmartRestaurant.Pos.Web` under the `/Guest` route. This reuses existing FOH LAN port bindings (`0.0.0.0:58329`), SignalR hubs (`PosOrderHub`, `TableHub`, `KitchenHub`), and avoids spinning up a separate web server.
+  2. Implement `ITableQrTokenService` using HMAC-SHA256 signatures (`Base64Url(HMAC_SHA256(tableId, secretKey))`). Table URLs (`/Guest?tableId={id}&token={token}`) are cryptographically signed. Any alteration of `tableId` fails token verification.
+  3. Implement `IGuestOrderService` with atomic transactional order submission (`ExecuteInTransactionAsync`), automatic `DiningSession` creation if table is available, append-only order round semantics (`[KHÁCH TỰ GỌI]`), stock reservation for countable items, and immediate zero-latency SignalR dispatch to Waiter tablets and Kitchen KDS displays via transactional Outbox messages (`GuestOrderPlaced`, `OrderFired`, `TableStatusChanged`).
+  4. Provide Manager Portal (`SmartRestaurant.Web`) table standee QR generation and high-resolution printable cards for table tops (80mm ESC/POS mini standee and standard standees).
+- **Consequences**:
+  - Secure, tamper-proof table QR ordering without requiring guest app downloads or customer login friction.
+  - Complete operational alignment with existing KDS and Waiter POS workflows; waitstaff and chefs receive immediate audio-visual notifications of self-service orders.
+

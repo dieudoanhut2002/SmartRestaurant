@@ -1,0 +1,679 @@
+@model SmartRestaurant.Pos.Web.Controllers.GuestOrderViewModel
+@{
+    Layout = null;
+    var session = Model.Session;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Thực Đơn Bàn @session.TableCode - SmartRestaurant</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --primary-dark: #e85a24;
+            --secondary-color: #2b2d42;
+            --bg-color: #f8f9fa;
+        }
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding-bottom: 90px;
+        }
+        .header-bar {
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 12px 16px;
+        }
+        .category-pills {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #fff;
+            position: sticky;
+            top: 61px;
+            z-index: 1010;
+            border-bottom: 1px solid #eee;
+            scrollbar-width: none;
+        }
+        .category-pills::-webkit-scrollbar {
+            display: none;
+        }
+        .category-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #f1f3f5;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-pill.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .menu-item-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            margin-bottom: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            transition: box-shadow 0.2s;
+        }
+        .menu-item-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        .menu-item-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .dish-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #212529;
+        }
+        .dish-desc {
+            font-size: 12px;
+            color: #6c757d;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .dish-price {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+        .floating-cart-bar {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            background: #2b2d42;
+            color: #fff;
+            border-radius: 30px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 1030;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .floating-cart-bar:active {
+            transform: scale(0.98);
+        }
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: #6c757d;
+            border: none;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background: transparent;
+        }
+        .chip-note {
+            display: inline-block;
+            background: #f1f3f5;
+            border: 1px solid #dee2e6;
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 12px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .chip-note.selected {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+        .vietqr-box {
+            background: #f8f9fa;
+            border: 2px dashed #0d6efd;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Bar -->
+    <div class="header-bar d-flex justify-content-between align-items-center">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-warning text-dark px-2 py-1 fs-6">
+                    <i class="bi bi-geo-alt-fill"></i> BÀN: @session.TableCode
+                </span>
+                <span class="badge bg-light text-secondary border">@session.AreaName</span>
+            </div>
+            <small class="text-muted" style="font-size: 11px;">SmartRestaurant Self-Service Ordering</small>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="requestBill()">
+                <i class="bi bi-receipt"></i> Gọi Tính Tiền
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs px-3 bg-white" id="mainTab" role="tablist">
+        <li class="nav-item flex-fill text-center" role="presentation">
+            <button class="nav-link active w-100 py-2" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-pane" type="button" role="tab">
+                🍽️ Thực Đơn
+            </button>
+        </li>
+        <li class="nav-item flex-fill text-center" role="presentation">
+            <button class="nav-link w-100 py-2" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">
+                📋 Món Đang Đặt <span class="badge rounded-pill bg-danger" id="orderedCountBadge">@session.OrderedItems.Count</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="mainTabContent">
+        <!-- TAB 1: THỰC ĐƠN -->
+        <div class="tab-pane fade show active" id="menu-pane" role="tabpanel">
+            
+            <!-- Category Horizontal Scroll -->
+            <div class="category-pills">
+                <a class="category-pill active" onclick="filterCategory('all', this)">Tất cả</a>
+                @foreach (var cat in Model.Categories)
+                {
+                    <a class="category-pill" onclick="filterCategory('@cat.Id', this)">@cat.Name</a>
+                }
+            </div>
+
+            <!-- Search Bar -->
+            <div class="p-3 pb-1">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0" id="searchDishInput" placeholder="Tìm tên món ăn, đồ uống..." oninput="searchDishes(this.value)">
+                </div>
+            </div>
+
+            <!-- Dishes List -->
+            <div class="px-3 pt-2" id="dishListContainer">
+                @foreach (var dish in Model.MenuItems)
+                {
+                    var isOutOfStock = !dish.IsAvailable;
+                    <div class="menu-item-card dish-card @(isOutOfStock ? "opacity-50" : "")" 
+                         data-id="@dish.Id" 
+                         data-category="@dish.CategoryId"
+                         data-name="@dish.Name.ToLowerInvariant()"
+                         data-price="@dish.BasePrice"
+                         data-title="@dish.Name"
+                         data-desc="@dish.Description"
+                         data-image="@dish.ImageUrl">
+                        
+                        <div class="menu-item-img">
+                            @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                            {
+                                <img src="@dish.ImageUrl" alt="@dish.Name" class="w-100 h-100 rounded" style="object-fit:cover;" onerror="this.onerror=null; this.parentNode.innerHTML='🍲';"/>
+                            }
+                            else
+                            {
+                                <span>🍲</span>
+                            }
+                        </div>
+
+                        <div class="menu-item-content">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="dish-title">@dish.Name</div>
+                                    @if (isOutOfStock)
+                                    {
+                                        <span class="badge bg-secondary" style="font-size: 10px;">Hết món</span>
+                                    }
+                                </div>
+                                <div class="dish-desc">@dish.Description</div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="dish-price">@dish.BasePrice.ToString("#,##0") ₫</span>
+                                @if (!isOutOfStock)
+                                {
+                                    <button class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 py-1" 
+                                            onclick="openCustomizer('@dish.Id', '@dish.Name', @dish.BasePrice)">
+                                        <i class="bi bi-plus"></i> Thêm
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- TAB 2: MÓN ĐANG ĐẶT -->
+        <div class="tab-pane fade p-3" id="orders-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold">Trạng Thái Bàn:</span>
+                    <span class="badge bg-success">@session.Status</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-muted">Tổng Tạm Tính:</span>
+                    <span class="fw-bold text-danger fs-5" id="liveBillTotal">@session.TotalBillAmount.ToString("#,##0") ₫</span>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-clock-history"></i> Món Đã Gọi Bếp Tiếp Nhận:</h6>
+            
+            <div id="orderedItemsList">
+                @if (session.OrderedItems.Count == 0)
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-journal-x fs-1 d-block mb-2 text-secondary"></i>
+                        Bàn chưa gọi món nào. Hãy chọn món từ thực đơn!
+                    </div>
+                }
+                else
+                {
+                    @foreach (var item in session.OrderedItems)
+                    {
+                        <div class="card border-0 shadow-sm rounded-3 p-3 mb-2 bg-white">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-bold">@item.ItemName <span class="text-danger">x@item.Quantity</span></div>
+                                    @if (!string.IsNullOrEmpty(item.KitchenNote))
+                                    {
+                                        <small class="text-muted d-block"><i class="bi bi-chat-left-text"></i> @item.KitchenNote</small>
+                                    }
+                                </div>
+                                <span class="@item.StatusBadgeClass">@item.StatusText</span>
+                            </div>
+                            <div class="text-end fw-bold text-secondary mt-1" style="font-size: 13px;">
+                                @item.LineTotal.ToString("#,##0") ₫
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- VietQR Direct Payment Box -->
+            @if (session.TotalBillAmount > 0 && !string.IsNullOrEmpty(session.VietQrQuickLink))
+            {
+                <div class="vietqr-box">
+                    <h6 class="fw-bold text-primary mb-1"><i class="bi bi-qr-code"></i> Thanh Toán Tức Thì Qua VietQR</h6>
+                    <small class="text-muted d-block mb-3">Quét mã bằng ứng dụng Ngân hàng để thanh toán nhanh tại bàn</small>
+                    <img src="@session.VietQrQuickLink" alt="VietQR" class="img-fluid rounded border shadow-sm" style="max-width: 220px;" />
+                    <div class="mt-2 text-danger fw-bold fs-5">@session.TotalBillAmount.ToString("#,##0") ₫</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Floating Bottom Cart Bar -->
+    <div class="floating-cart-bar" id="floatingCart" style="display: none;" onclick="openCartModal()">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-warning text-dark fs-6 rounded-pill" id="cartItemCount">0</span>
+            <span class="fw-bold" id="cartSummaryText">0 món đã chọn</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="fw-bold text-warning fs-5" id="cartTotalText">0 ₫</span>
+            <i class="bi bi-chevron-up"></i>
+        </div>
+    </div>
+
+    <!-- Dish Customizer Modal -->
+    <div class="modal fade" id="customizerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="customizerDishTitle">Tên Món</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-danger fw-bold fs-5 mb-3" id="customizerDishPrice">0 ₫</div>
+                    
+                    <label class="form-label fw-bold small text-secondary">GHI CHÚ CHẾ BIẾN CHO BẾP:</label>
+                    <div class="mb-2">
+                        <span class="chip-note" onclick="toggleNote(this, 'Ít cay')">Ít cay</span>
+                        <span class="chip-note" onclick="toggleNote(this, 'Không ớt')">Không ớt</span>
+                        <span class="chip-note" onclick="toggleNote(this, 'Không hành')">Không hành</span>
+                        <span class="chip-note" onclick="toggleNote(this, 'Ít ngọt')">Ít ngọt</span>
+                        <span class="chip-note" onclick="toggleNote(this, 'Đá riêng')">Đá riêng</span>
+                        <span class="chip-note" onclick="toggleNote(this, 'Nấu chín kỹ')">Nấu chín kỹ</span>
+                    </div>
+                    <input type="text" class="form-control rounded-3" id="customizerCustomNote" placeholder="Ghi chú khác (nếu có)...">
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <span class="fw-bold">Số lượng:</span>
+                        <div class="input-group" style="width: 130px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="adjustCustomizerQty(-1)">-</button>
+                            <input type="text" class="form-control text-center fw-bold" id="customizerQty" value="1" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="adjustCustomizerQty(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-primary w-100 py-2 rounded-pill fw-bold" onclick="addCustomizedToCart()">
+                        Thêm Vào Giỏ Hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Offcanvas / Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-bottom modal-fullscreen-sm-down">
+            <div class="modal-content rounded-top-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-cart3 me-1 text-primary"></i> Đơn Gọi Món Của Bạn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                    <div id="cartItemsList"></div>
+
+                    <div class="mt-3">
+                        <label class="form-label fw-bold small text-secondary">GHI CHÚ CHUNG CHO ĐỢT NÀY:</label>
+                        <input type="text" class="form-control rounded-3" id="cartCustomerNote" placeholder="Ví dụ: Mang nước ra trước...">
+                    </div>
+                </div>
+                <div class="modal-footer border-top d-flex justify-content-between">
+                    <div>
+                        <div class="small text-muted">Tổng tạm tính:</div>
+                        <div class="text-danger fw-bold fs-5" id="cartModalTotal">0 ₫</div>
+                    </div>
+                    <button class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill" id="btnSubmitOrder" onclick="submitOrder()">
+                        <i class="bi bi-send-fill me-1"></i> Báo Bếp (Gọi Món)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tableId = '@session.TableId';
+        const token = '@Model.Token';
+        let cart = [];
+        let currentCustomizer = null;
+
+        // Customizer modal
+        const customizerModal = new bootstrap.Modal(document.getElementById('customizerModal'));
+        const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+
+        function openCustomizer(id, name, price) {
+            currentCustomizer = { id, name, price, qty: 1, notes: [] };
+            document.getElementById('customizerDishTitle').textContent = name;
+            document.getElementById('customizerDishPrice').textContent = price.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('customizerQty').value = 1;
+            document.getElementById('customizerCustomNote').value = '';
+            document.querySelectorAll('.chip-note').forEach(c => c.classList.remove('selected'));
+            customizerModal.show();
+        }
+
+        function toggleNote(element, noteText) {
+            element.classList.toggle('selected');
+        }
+
+        function adjustCustomizerQty(delta) {
+            if (!currentCustomizer) return;
+            currentCustomizer.qty = Math.max(1, currentCustomizer.qty + delta);
+            document.getElementById('customizerQty').value = currentCustomizer.qty;
+        }
+
+        function addCustomizedToCart() {
+            if (!currentCustomizer) return;
+
+            const selectedChips = Array.from(document.querySelectorAll('.chip-note.selected')).map(c => c.textContent.trim());
+            const customText = document.getElementById('customizerCustomNote').value.trim();
+            if (customText) selectedChips.push(customText);
+
+            const kitchenNote = selectedChips.join(', ');
+
+            // Check if already in cart with same note
+            const existing = cart.find(i => i.id === currentCustomizer.id && i.kitchenNote === kitchenNote);
+            if (existing) {
+                existing.quantity += currentCustomizer.qty;
+            } else {
+                cart.push({
+                    id: currentCustomizer.id,
+                    name: currentCustomizer.name,
+                    price: currentCustomizer.price,
+                    quantity: currentCustomizer.qty,
+                    kitchenNote: kitchenNote
+                });
+            }
+
+            customizerModal.hide();
+            updateCartUI();
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: `Đã thêm ${currentCustomizer.name} vào giỏ!`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+            const floating = document.getElementById('floatingCart');
+            if (count > 0) {
+                floating.style.display = 'flex';
+                document.getElementById('cartItemCount').textContent = count;
+                document.getElementById('cartSummaryText').textContent = `${count} món đã chọn`;
+                document.getElementById('cartTotalText').textContent = total.toLocaleString('vi-VN') + ' ₫';
+            } else {
+                floating.style.display = 'none';
+            }
+        }
+
+        function openCartModal() {
+            const container = document.getElementById('cartItemsList');
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted">Giỏ hàng trống.</div>';
+            } else {
+                let html = '';
+                cart.forEach((item, idx) => {
+                    html += `
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <div>
+                                <div class="fw-bold">${item.name}</div>
+                                <div class="text-danger small">${item.price.toLocaleString('vi-VN')} ₫</div>
+                                ${item.kitchenNote ? `<small class="text-muted d-block"><i class="bi bi-chat-text"></i> ${item.kitchenNote}</small>` : ''}
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="adjustCartItem(${idx}, -1)">-</button>
+                                <span class="fw-bold px-1">${item.quantity}</span>
+                                <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="adjustCartItem(${idx}, 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            document.getElementById('cartModalTotal').textContent = total.toLocaleString('vi-VN') + ' ₫';
+            cartModal.show();
+        }
+
+        function adjustCartItem(idx, delta) {
+            cart[idx].quantity += delta;
+            if (cart[idx].quantity <= 0) {
+                cart.splice(idx, 1);
+            }
+            openCartModal();
+            updateCartUI();
+        }
+
+        async function submitOrder() {
+            if (cart.length === 0) return;
+
+            const btn = document.getElementById('btnSubmitOrder');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang gửi...';
+
+            const payload = {
+                tableId: tableId,
+                token: token,
+                customerNote: document.getElementById('cartCustomerNote').value.trim(),
+                items: cart.map(i => ({
+                    menuItemId: i.id,
+                    quantity: i.quantity,
+                    kitchenNote: i.kitchenNote
+                }))
+            };
+
+            try {
+                const res = await fetch('/Guest/SubmitOrder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    cart = [];
+                    updateCartUI();
+                    cartModal.hide();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã gửi gọi món thành công!',
+                        text: data.data.message,
+                        confirmButtonText: 'Xem món đang đặt'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Không thể gửi gọi món',
+                        text: data.message
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối',
+                    text: 'Không thể kết nối máy chủ. Vui lòng thử lại hoặc gọi nhân viên.'
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Báo Bếp (Gọi Món)';
+            }
+        }
+
+        async function requestBill() {
+            const confirm = await Swal.fire({
+                title: 'Yêu cầu tính tiền?',
+                text: 'Hệ thống sẽ thông báo cho thu ngân và nhân viên phục vụ để in phiếu thanh toán cho bàn của bạn.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            try {
+                const res = await fetch('/Guest/RequestBill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tableId: tableId, token: token })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã gửi yêu cầu tính tiền!',
+                        text: data.message
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: data.message
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối',
+                    text: 'Không thể gửi yêu cầu tính tiền. Vui lòng gọi trực tiếp nhân viên.'
+                });
+            }
+        }
+
+        function filterCategory(catId, element) {
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            element.classList.add('active');
+
+            const cards = document.querySelectorAll('.dish-card');
+            cards.forEach(card => {
+                if (catId === 'all' || card.getAttribute('data-category') === catId) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function searchDishes(keyword) {
+            const term = (keyword || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('.dish-card');
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (!term || name.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto polling status update every 6 seconds
+        setInterval(async () => {
+            try {
+                const res = await fetch(`/Guest/Status?tableId=${tableId}&token=${token}`);
+                const json = await res.json();
+                if (json.success && json.data) {
+                    document.getElementById('liveBillTotal').textContent = json.data.totalBillAmount.toLocaleString('vi-VN') + ' ₫';
+                    document.getElementById('orderedCountBadge').textContent = json.data.orderedItems.length;
+                }
+            } catch (e) { }
+        }, 6000);
+    </script>
+</body>
+</html>

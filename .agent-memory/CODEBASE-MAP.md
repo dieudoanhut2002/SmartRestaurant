@@ -65,9 +65,9 @@ SmartRestaurant.slnx
 │   │   └── Exceptions/ (DomainException, DomainValidationException, DomainNotFoundException, InvalidTableStateTransitionException, LicenseValidationException, LicenseTamperedException, LicenseLimitExceededException)
 │   ├── SmartRestaurant.Application/
 │   │   ├── Common/Interfaces/ (IAppDbContext)
-│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos, LicenseDtos, PosDtos, KdsDtos, CashierDtos)
-│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService, ILicenseService, ILicenseSignatureValidator, IInstallationIdentityService, ILicenseStorageService, ILicenseClockService, IPosOrderService, IKitchenService, ICashierService, IVietQrService)
-│   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService, PosOrderService, KitchenService, CashierService, VietQrService)
+│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos, LicenseDtos, PosDtos, KdsDtos, CashierDtos, GuestOrderDtos)
+│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService, ILicenseService, ILicenseSignatureValidator, IInstallationIdentityService, ILicenseStorageService, ILicenseClockService, IPosOrderService, IKitchenService, ICashierService, IVietQrService, ITableQrTokenService, IGuestOrderService)
+│   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService, PosOrderService, KitchenService, CashierService, VietQrService, TableQrTokenService, GuestOrderService)
 │   │   └── DependencyInjection.cs
 │   ├── SmartRestaurant.Infrastructure/
 │   │   ├── Data/ (AppDbContext, DatabaseSeeder)

@@ -770,6 +770,36 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - License validation: `SmartRestaurant.LicenseCli --inspect pilot-store-license.lic` verified valid ECDSA P-256 signature and license payload.
 - **Status**: Completed & Fully Verified. Pilot Store Operations Ready.
 
+---
+
+### [2026-11-17] — Phase 2 Implementation: Customer Self-Service Dynamic Table QR Ordering & Guest Portal (TASK-CUSTOMER-QR-01)
+- **Objective**: Design and implement the Customer Self-Service Table QR Ordering Web Application allowing dining guests to scan dynamic table QR codes with their smartphones, browse the visual digital menu, customize cooking preferences, place orders directly to KDS & Waiter POS, and track order & billing status in real time.
+- **Architectural Deliverables**:
+  - **Architectural Decision Record (`ADR-019`)**: Formulated HMAC-SHA256 URL token security model, co-located guest portal on FOH LAN host (`SmartRestaurant.Pos.Web/Guest`), atomic transaction order submission (`ExecuteInTransactionAsync`), and zero-latency SignalR dispatch via Outbox pattern.
+  - **Cryptographic Security Token Service (`ITableQrTokenService`, `TableQrTokenService`)**:
+    - Generates and validates tamper-proof HMAC-SHA256 signatures for each table ID (`Base64Url(HMAC_SHA256(tableId, secretKey))`).
+    - Detects and rejects URL parameter tampering (e.g. guests attempting to order for another table).
+  - **Guest Order Application Service (`IGuestOrderService`, `GuestOrderService`)**:
+    - `GetTableSessionAsync`: Loads table status, existing ordered items, bill total, and dynamic VietQR payment payload.
+    - `SubmitGuestOrderAsync`: Validates token, occupies available table and initializes `DiningSession` on first order, prevents 86 out-of-stock item orders, reserves stock for countable items (`Two-Phase Inventory Lock`), creates `OrderRound` with `[KHÁCH TỰ GỌI]`, creates `KitchenTicket`s grouped by station, and broadcasts `GuestOrderPlaced`, `OrderFired`, and `TableStatusChanged` events.
+    - `RequestBillAsync`: Automatically transitions table status to `BillingRequested` and triggers Outbox notification.
+    - `GetTableQrInfoAsync`: Generates standee card payload and signed scan URL.
+  - **Guest Mobile Web Ordering Portal (`SmartRestaurant.Pos.Web`)**:
+    - `GuestController.cs`: Endpoints for `Index`, `SubmitOrder`, `RequestBill`, and live polling `Status`.
+    - `Views/Guest/Index.cshtml`: Mobile-first responsive interface with table badge, horizontal category pills, instant dish search, customizer modal (quick notes: "Ít cay", "Không hành", "Đá riêng"...), floating cart bar, and live order preparation tracker.
+    - `Views/Guest/InvalidQr.cshtml`: User-friendly security rejection screen.
+  - **Manager Table Standee Printing (`SmartRestaurant.Web`)**:
+    - Added "Xem & In Mã QR Đặt Bàn" action and button on visual Floor Plan Inspector.
+    - `Views/FloorPlan/QrStandee.cshtml`: Formatted 90mm table standee card with high-resolution QR code, restaurant branding, and scanning instructions.
+  - **Automated Test Suite (`tests/SmartRestaurant.Application.Tests/GuestOrderServiceTests.cs`)**:
+    - 7 comprehensive unit/integration tests verifying token tamper detection, session loading, automatic table occupation & ticket creation, 86 item rejection, countable stock reservation, and bill request workflow.
+- **Verification Results**:
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Automated test suite: **116/116 Tests PASSING (100% pass rate, 0 failed, 0 skipped)** across `SmartRestaurant.Domain.Tests` (41/41) and `SmartRestaurant.Application.Tests` (75/75).
+  - Batch release publishing: **4 web applications published successfully to `dist/`**.
+- **Status**: Completed, Fully Tested & Verified.
+
+
 
 ---
 
@@ -818,5 +848,35 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Batch publish: **All 4 projects published successfully to `dist/`**.
   - License validation: `SmartRestaurant.LicenseCli --inspect pilot-store-license.lic` verified valid ECDSA P-256 signature and license payload.
 - **Status**: Completed & Fully Verified. Pilot Store Operations Ready.
+
+---
+
+### [2026-11-17] — Phase 2 Implementation: Customer Self-Service Dynamic Table QR Ordering & Guest Portal (TASK-CUSTOMER-QR-01)
+- **Objective**: Design and implement the Customer Self-Service Table QR Ordering Web Application allowing dining guests to scan dynamic table QR codes with their smartphones, browse the visual digital menu, customize cooking preferences, place orders directly to KDS & Waiter POS, and track order & billing status in real time.
+- **Architectural Deliverables**:
+  - **Architectural Decision Record (`ADR-019`)**: Formulated HMAC-SHA256 URL token security model, co-located guest portal on FOH LAN host (`SmartRestaurant.Pos.Web/Guest`), atomic transaction order submission (`ExecuteInTransactionAsync`), and zero-latency SignalR dispatch via Outbox pattern.
+  - **Cryptographic Security Token Service (`ITableQrTokenService`, `TableQrTokenService`)**:
+    - Generates and validates tamper-proof HMAC-SHA256 signatures for each table ID (`Base64Url(HMAC_SHA256(tableId, secretKey))`).
+    - Detects and rejects URL parameter tampering (e.g. guests attempting to order for another table).
+  - **Guest Order Application Service (`IGuestOrderService`, `GuestOrderService`)**:
+    - `GetTableSessionAsync`: Loads table status, existing ordered items, bill total, and dynamic VietQR payment payload.
+    - `SubmitGuestOrderAsync`: Validates token, occupies available table and initializes `DiningSession` on first order, prevents 86 out-of-stock item orders, reserves stock for countable items (`Two-Phase Inventory Lock`), creates `OrderRound` with `[KHÁCH TỰ GỌI]`, creates `KitchenTicket`s grouped by station, and broadcasts `GuestOrderPlaced`, `OrderFired`, and `TableStatusChanged` events.
+    - `RequestBillAsync`: Automatically transitions table status to `BillingRequested` and triggers Outbox notification.
+    - `GetTableQrInfoAsync`: Generates standee card payload and signed scan URL.
+  - **Guest Mobile Web Ordering Portal (`SmartRestaurant.Pos.Web`)**:
+    - `GuestController.cs`: Endpoints for `Index`, `SubmitOrder`, `RequestBill`, and live polling `Status`.
+    - `Views/Guest/Index.cshtml`: Mobile-first responsive interface with table badge, horizontal category pills, instant dish search, customizer modal (quick notes: "Ít cay", "Không hành", "Đá riêng"...), floating cart bar, and live order preparation tracker.
+    - `Views/Guest/InvalidQr.cshtml`: User-friendly security rejection screen.
+  - **Manager Table Standee Printing (`SmartRestaurant.Web`)**:
+    - Added "Xem & In Mã QR Đặt Bàn" action and button on visual Floor Plan Inspector.
+    - `Views/FloorPlan/QrStandee.cshtml`: Formatted 90mm table standee card with high-resolution QR code, restaurant branding, and scanning instructions.
+  - **Automated Test Suite (`tests/SmartRestaurant.Application.Tests/GuestOrderServiceTests.cs`)**:
+    - 7 comprehensive unit/integration tests verifying token tamper detection, session loading, automatic table occupation & ticket creation, 86 item rejection, countable stock reservation, and bill request workflow.
+- **Verification Results**:
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Automated test suite: **116/116 Tests PASSING (100% pass rate, 0 failed, 0 skipped)** across `SmartRestaurant.Domain.Tests` (41/41) and `SmartRestaurant.Application.Tests` (75/75).
+  - Batch release publishing: **4 web applications published successfully to `dist/`**.
+- **Status**: Completed, Fully Tested & Verified.
+
 
 

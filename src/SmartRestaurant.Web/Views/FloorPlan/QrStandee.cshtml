@@ -1,0 +1,162 @@
+@model SmartRestaurant.Application.DTOs.TableQrInfoDto
+@{
+    Layout = null;
+    var branch = ViewBag.Branch as SmartRestaurant.Domain.Entities.Branch;
+    var table = ViewBag.Table as SmartRestaurant.Domain.Entities.RestaurantTable;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Mã QR Đặt Bàn - @Model.TableCode</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .no-print {
+            margin-bottom: 20px;
+        }
+        .btn-print {
+            padding: 10px 24px;
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .standee-card {
+            width: 90mm;
+            background: #fff;
+            border: 2px solid #212529;
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+        }
+        .brand-title {
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #212529;
+            margin: 0;
+        }
+        .brand-subtitle {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 2px;
+            margin-bottom: 12px;
+        }
+        .divider {
+            border-top: 1px dashed #adb5bd;
+            margin: 12px 0;
+        }
+        .table-badge {
+            display: inline-block;
+            background: #212529;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .area-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 14px;
+        }
+        .qr-wrapper {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 12px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .qr-wrapper img {
+            display: block;
+            width: 190px;
+            height: 190px;
+        }
+        .instruction-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e63946;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .instruction-steps {
+            font-size: 11px;
+            color: #495057;
+            line-height: 1.5;
+            text-align: left;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+        .url-text {
+            font-size: 8px;
+            color: #adb5bd;
+            word-break: break-all;
+        }
+
+        @@media print {
+            body { background: #fff; padding: 0; }
+            .no-print { display: none !important; }
+            .standee-card {
+                border: 2px solid #000;
+                box-shadow: none;
+                page-break-inside: avoid;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ IN MÃ ĐỂ BÀN (PRINT STANDEE)</button>
+        <button class="btn-print" style="background:#6c757d;" onclick="window.close()">Đóng</button>
+    </div>
+
+    <div class="standee-card">
+        <div class="brand-title">@(branch?.Name ?? "SMARTRESTAURANT")</div>
+        <div class="brand-subtitle">Dịch Vụ Gọi Món Thông Minh Tại Bàn</div>
+
+        <div class="divider"></div>
+
+        <div class="table-badge">BÀN @Model.TableCode</div>
+        <div class="area-name">@Model.AreaName @(!string.IsNullOrEmpty(Model.TableName) ? $"({Model.TableName})" : "")</div>
+
+        <div class="qr-wrapper">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=@Uri.EscapeDataString(Model.QrUrl)" 
+                 alt="QR Code Bàn @Model.TableCode"
+                 onerror="this.src='https://quickchart.io/qr?text=@Uri.EscapeDataString(Model.QrUrl)&size=250';" />
+        </div>
+
+        <div class="instruction-title">✨ QUÉT MÃ ĐỂ GỌI MÓN ✨</div>
+        <div class="instruction-steps">
+            1. Mở ứng dụng <strong>Camera</strong> hoặc <strong>Zalo</strong> trên điện thoại.<br />
+            2. Hướng máy ảnh vào mã QR ở trên để mở thực đơn.<br />
+            3. Chọn món, tùy chỉnh khẩu vị và bấm <strong>Báo Bếp</strong>!
+        </div>
+
+        <div class="url-text">@Model.QrUrl</div>
+    </div>
+
+</body>
+</html>

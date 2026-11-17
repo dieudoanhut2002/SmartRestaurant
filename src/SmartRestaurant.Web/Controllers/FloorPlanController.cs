@@ -9,8 +9,34 @@ using SmartRestaurant.Domain.Enums;
 
 public class FloorPlanController(
     IFloorPlanService floorPlanService,
+    IGuestOrderService guestOrderService,
     IAppDbContext dbContext) : Controller
 {
+    [HttpGet]
+    public async Task<IActionResult> QrStandee(Guid tableId, CancellationToken ct)
+    {
+        var table = await dbContext.RestaurantTables
+            .FirstOrDefaultAsync(t => t.Id == tableId, ct);
+
+        if (table == null)
+        {
+            TempData["ErrorMessage"] = "Không tìm thấy bàn yêu cầu.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);
+
+        var posHost = Request.Host.Host;
+        var posBaseUrl = $"http://{posHost}:58329";
+
+        var qrInfo = await guestOrderService.GetTableQrInfoAsync(tableId, posBaseUrl, ct);
+
+        ViewBag.Branch = branch;
+        ViewBag.Table = table;
+
+        return View(qrInfo);
+    }
+
     public async Task<IActionResult> Index(Guid? areaId, CancellationToken ct)
     {
         var branch = await dbContext.Branches.FirstOrDefaultAsync(ct);

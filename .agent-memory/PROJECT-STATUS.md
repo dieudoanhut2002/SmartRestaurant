@@ -1,7 +1,7 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 7 — Deployment Preparation, Configuration & Pilot (COMPLETED) -> Operational Pilot Ready
-- **Current Milestone**: Production Deployment Package, LAN Multi-Terminal Tooling & Offline Licensing Completed (`TASK-PILOT-ROLLOUT-01`), 109/109 automated tests passing (100%), 0 errors, 0 warnings across all 10 projects, batch publish verified.
+- **Current Stage**: Stage 8 / Phase 2 — Customer Self-Service & Digital Expansion (VERIFIED)
+- **Current Milestone**: Customer Self-Service Table QR Ordering & Guest Portal Completed (`TASK-CUSTOMER-QR-01`), 116/116 automated tests passing (100%), 0 errors, 0 warnings across all 10 projects, batch publish verified.
 - **Status Date**: 2026-11-17
 
 ---
@@ -17,6 +17,7 @@
 | **Stage 5** | Iterative Implementation by Approved Milestone | **`COMPLETED`** | **All 5 Core Implementation Tasks COMPLETE**: Core Foundation, Manager Portal (`SmartRestaurant.Web`), Waiter POS (`SmartRestaurant.Pos.Web`), Kitchen Display (`SmartRestaurant.Kds.Web`), Cashier Terminal (`SmartRestaurant.Cashier.Web`), License Cryptographic Engine, VietQR Gateway |
 | **Stage 6** | Quality Verification & End-to-End Testing | **`COMPLETED`** | Full Automated Test Suite (107 unit/integration tests active, 100% passing), Multi-Host HTTP runtime verification, Cross-Terminal Invariant Validation (`TASK-INTEGRATION-E2E-01`) |
 | **Stage 7** | Deployment Preparation, Configuration & Pilot | **`COMPLETED`** | Host Config, Production Publish (`dist/`), Firewall Automation (`scripts/configure-firewall.ps1`), 0.0.0.0 LAN Multi-Terminal Launcher (`scripts/run-pilot.ps1`), Master License Generator CLI (`SmartRestaurant.LicenseCli`), Pilot Store License (`pilot-store-license.lic`), Complete Operations Manual (`HUONGDAN.txt`) |
+| **Stage 8** | Customer Self-Service & Digital Expansion | **`COMPLETED`** | HMAC-SHA256 Table QR Security (`ITableQrTokenService`), Guest Mobile Ordering Web Portal (`/Guest`), Standee Printing (`/FloorPlan/QrStandee`), 116/116 automated tests passing (`TASK-CUSTOMER-QR-01`) |
 
 ---
 
@@ -33,6 +34,7 @@
 - [x] **Implementation Task 05**: Cashier Terminal, Bill Splitting (Modes A & B per D4/PDR-009), Multi-Tender Settlement, Dynamic VietQR 24/7 (EMVCo & CRC16), Suspense Ledger (PDR-008), Blind Shift Close (OD-14 Option A & INV-12). All 103 automated tests passing.
 - [x] **Stage 6 Verification**: Multi-Terminal End-to-End System Integration & Pilot Readiness (`TASK-INTEGRATION-E2E-01`, 107/107 tests passing, `run-all.ps1`, `HUONGDAN.txt`, `README.md`).
 - [x] **Stage 7 Pilot Rollout**: On-Premise Pilot Store Deployment, Production Database Migration & Live Dry-Run (`TASK-PILOT-ROLLOUT-01`, `SmartRestaurant.LicenseCli`, `publish-all.ps1`, `configure-firewall.ps1`, `run-pilot.ps1`, `generate-license.ps1`, `pilot-store-license.lic`, 109/109 tests passing).
+- [x] **Phase 2 Implementation**: Customer Self-Service Table QR Ordering & Guest Mobile Portal (`TASK-CUSTOMER-QR-01`, `TableQrTokenService`, `GuestOrderService`, `GuestController`, `QrStandee.cshtml`, `Index.cshtml`, 116/116 tests passing).
 
 ---
 

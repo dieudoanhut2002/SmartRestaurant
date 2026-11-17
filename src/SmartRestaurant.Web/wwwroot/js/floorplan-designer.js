@@ -208,6 +208,9 @@ function initFloorPlan() {
 
         const delId = document.getElementById('delete-table-id');
         if (delId) delId.value = table.id;
+
+        const qrBtn = document.getElementById('btn-print-qr');
+        if (qrBtn) qrBtn.href = '/FloorPlan/QrStandee?tableId=' + table.id;
     }
 
     async function saveTablePosition(tableId, x, y, width, height, rotation) {
