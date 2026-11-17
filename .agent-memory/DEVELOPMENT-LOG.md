@@ -605,3 +605,133 @@ This file maintains a chronological, tamper-evident audit trail of executed task
     - System component directory and code references across Domain, Application, Infrastructure, Web, and Test suites.
 - **Verification**: `dotnet build SmartRestaurant.slnx` succeeded with 0 errors and 0 warnings.
 - **Status**: Completed & Verified.
+
+---
+
+### [2026-11-16] — Implementation Task 03: POS Order Capture & Waiter Tablet Application (`SmartRestaurant.Pos.Web`)
+- **Objective**: Implement the dedicated POS Waiter Tablet Web Application (`SmartRestaurant.Pos.Web`) under Modular Monolith architecture (`ADR-018`) with touch-first UI, transactional idempotency, Two-Phase Inventory reservation (`D2`), direct FOH beverage routing (`PDR-012`), non-blocking concurrent ordering (`PDR-014`), unpaid order appending (`D4`), and SignalR realtime synchronization backed by Outbox Pattern.
+- **Deliverables**:
+  - **Domain Expansion (`SmartRestaurant.Domain`)**:
+    - Entities: `Order`, `OrderRound`, `OrderItem`, `OrderItemModifier`, `KitchenTicket`, `OrderAuditHistory`, `OutboxMessage`.
+    - Enums: `OrderStatus`, `OrderItemStatus`, `KitchenTicketStatus`.
+    - Invariants enforced: `OD-13` (settled bill immutability), `D1` (BusinessDate 06:00 cutoff), `D2` (Two-Phase Inventory Lock `Available = Physical - Reserved`), `PDR-012` (`DirectFOHPick` bypasses KDS), `PDR-014` (concurrent non-blocking delta append-only ordering), `ResetToAvailable` table transition.
+  - **Application Services & DTOs (`SmartRestaurant.Application`)**:
+    - `PosDtos.cs`: `PosTableCardDto`, `PosDiningSessionDetailDto`, `PosOrderRoundDto`, `PosOrderItemDto`, `PosMenuCatalogDto`, request models (`OpenDiningSessionRequest`, `FireOrderRequest`, `TransferTableRequest`, `MergeTablesRequest`, `RequestBillRequest`).
+    - `IPosOrderService` & `PosOrderService`: Handles atomic transactions (`BeginTransactionAsync`), idempotent `FireOrder` check, inventory reservations for countable items, KDS tickets generation by station, outbox message creation, audit trail logging, and state synchronization.
+  - **Infrastructure & Data Access (`SmartRestaurant.Infrastructure`)**:
+    - EF Core entity configurations in `EntityConfigurations.cs` for all 7 new entities with global soft delete query filters.
+    - `AppDbContext`: Registered DbSets, exposed `BeginTransactionAsync`.
+    - `DatabaseSeeder`: Upgraded database schema to `SmartRestaurantDb_v4`, seeded active dining sessions with orders, rounds, order items, and outbox messages.
+  - **POS Web Application Host (`SmartRestaurant.Pos.Web`)**:
+    - New project created and added to `SmartRestaurant.slnx`.
+    - `Controllers`: `FloorController` (table overview & session actions), `OrderController` (touch POS ordering workspace & fire action), `PosCatalogController` (menu catalog & sync API).
+    - `Hubs`: `TableHub`, `KitchenHub`, `PosOrderHub` in presentation layer.
+    - `Services`: `OutboxProcessorHostedService` running in background to reliably push transactional events to SignalR clients.
+    - `Views`: `Shared/_PosLayout.cshtml` (responsive touch viewport, staff picker, digital clock, SignalR badge), `Floor/Index.cshtml` (area tabs, color-coded table cards, open table modal), `Order/Index.cshtml` (dual-panel touch workspace, fast search <100ms, item customizer modal, big "BÁO BẾP" button).
+    - `Assets`: `pos-touch.css`, `pos-ordering.js` (client cart, UUIDv4 idempotency key, draft persistence), `pos-signalr.js` (auto reconnect & state sync handshake).
+  - **Automated Test Suites**:
+    - `OrderDomainTests.cs`: 6 new tests verifying domain lifecycle, immutability, totals recalculation with VIP surcharges, and direct FOH flags (41/41 Domain tests passing).
+    - `PosOrderServiceTests.cs`: 6 comprehensive integration tests covering table occupancy, countable inventory reservation, DirectFOHPick skip KDS, idempotency duplicate prevention, billing requested append-only, and table transfer (45/45 Application tests passing).
+    - **Total Test Suite: 86/86 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+    - Build verified with 0 errors and 0 warnings across all 7 projects.
+    - Verified real HTTP 200 execution on `/Floor`, `/Order/{id}`, and `/api/pos/menu-catalog`.
+- **Status**: Completed & Fully Verified.
+
+---
+
+### [2026-11-16] — Implementation Task 04: Kitchen Display System (KDS) & Bar Station Monitoring (`SmartRestaurant.Kds.Web`)
+- **Objective**: Implement the dedicated Kitchen Display System (`SmartRestaurant.Kds.Web`) under Modular Monolith architecture (`ADR-018`) with real-time station order queue, SLA color classification (<10m green, 10-20m yellow, >20m red per BR-KIT-002), Bump bar ticket completion, Aggregated dish cooking queue, Expediter pass view for runners, Remake dish workflow with 0đ customer charge & loss logging in `KitchenWasteLog` (`OD-09` / `PDR-015`), temporary 86 out-of-stock management (`BR-KIT-006`), and SignalR realtime synchronization.
+- **Deliverables**:
+  - **Domain Expansion (`SmartRestaurant.Domain`)**:
+    - Enhanced `OrderItem` with `IsRemake`, `RemakeReason`, `MarkAsRemake(reason)`, and `SetStatus(newStatus)`.
+    - Enhanced `KitchenTicket` with `TableCode`, `IsHighPriority`, `MarkAsHighPriority()`, and `SetStatus(newStatus)`.
+    - Enhanced `MenuItem` with `SetAvailability(bool)`.
+  - **Application Layer (`SmartRestaurant.Application`)**:
+    - DTOs in `KdsDtos.cs`: `KdsTicketDto`, `KdsTicketItemDto`, `KdsAggregatedDishDto`, `KdsStationSummaryDto`, `UpdateTicketStatusRequest`, `UpdateItemStatusRequest`, `RemakeDishRequest`, `Toggle86Request`.
+    - Interface `IKitchenService` & Implementation `KitchenService`: Station filtering, high-priority ticket sort, automated ticket completion cascading, waste logging, 86 item toggling. Registered in `DependencyInjection.cs`.
+  - **KDS Web Application Host (`SmartRestaurant.Kds.Web`)**:
+    - New project created and added to `SmartRestaurant.slnx`.
+    - `Controllers`: `KdsController` (Station Ticket View, Batch Aggregated Cooking View, Expediter Pass View), `KdsApiController` (bump actions, remake, 86 toggle).
+    - `Hubs`: `KitchenHub` (`/hubs/kitchen`) with station groups (`JoinStationGroup`, `JoinExpediterGroup`).
+    - `Services`: `KdsOutboxProcessorHostedService` broadcasting `OrderFired`, `KitchenTicketUpdated`, `OrderItemStatusChanged`, `Item86Toggled`.
+    - `Views`: `Shared/_KdsLayout.cshtml` (dark theme `#10141a`, Web Audio API synthetic chime bell without external audio files, fullscreen toggle, digital clock), `Kds/Index.cshtml` (station tabs, ticket cards with SLA colors, pulse priority borders, item checklist), `Kds/Aggregated.cshtml` (batch dish aggregator), `Kds/Expediter.cshtml` (runner pass view).
+    - `Assets`: `kds-display.css`, `kds-app.js`, `kds-signalr.js`.
+  - **Automated Tests (`SmartRestaurant.Application.Tests`)**:
+    - `KitchenServiceTests.cs`: 7 unit & integration tests covering station summary, SLA sorting, batch dish aggregation, ticket cascade status, auto-completion, remake 0đ + waste log, and 86 toggle.
+    - Verified all 93 tests passing (100% pass rate). Verified real HTTP 200 execution on `/Kds`, `/Kds/Aggregated`, `/Kds/Expediter`, and `/api/kds/stations`.
+- **Status**: Completed & Fully Verified.
+
+---
+
+### [2026-11-16] — Implementation Task 05: Cashier Terminal, Bill Splitting, Multi-Tender Settlement, Dynamic VietQR 24/7 & Blind Shift Close (`SmartRestaurant.Cashier.Web`)
+- **Objective**: Implement the dedicated Cashier Web Terminal (`SmartRestaurant.Cashier.Web`) under Modular Monolith architecture (`ADR-018`) with accurate bill calculation (subtotal, VIP room surcharge rate/fixed per `PDR-011`, 8% VAT), interactive Bill Splitting (Mode A by items, Mode B equal split per `D4 / PDR-009`), Multi-Tender payment processing (Cash, VietQR, POS Card), Dynamic VietQR Napas 24/7 payload generation with EMVCo TLV format and CRC16-CCITT checksum, Suspense Ledger (`PDR-008`), Settled Bill Immutability (`OD-13`), Session Release invariant (`D4 / PDR-009 §4`), Blind Shift Closing with variance audit log (`OD-14` Option A, `INV-12`), and 80mm thermal receipt printing preview.
+- **Deliverables**:
+  - **Domain Expansion (`SmartRestaurant.Domain`)**:
+    - Enums: `PaymentMethod` (Cash, PosCard, VietQR, BankTransfer, Mixed), `InvoiceStatus` (Pending, PartiallyPaid, Paid, Cancelled, Refunded), `SuspenseLedgerStatus` (Unreconciled, Resolved, Refunded).
+    - Entities:
+      - `Invoice`: Financial snapshot, tax calculations, `ItemsJson`, `ApplyPayment`, `Cancel`, immutability guard (`OD-13`).
+      - `PaymentTransaction`: Transaction reference, amount, method, status.
+      - `SuspenseLedger`: Orphaned or delayed payment webhooks (`PDR-008`), `Resolve`, `Refund`.
+  - **Infrastructure Layer (`SmartRestaurant.Infrastructure`)**:
+    - EF Core entity configurations in `EntityConfigurations.cs` for `Invoice`, `PaymentTransaction`, `SuspenseLedger` with decimal precisions and query filters.
+    - Added DbSets to `IAppDbContext` and `AppDbContext`. Upgraded database schema to `SmartRestaurantDb_v6`.
+  - **Application Layer (`SmartRestaurant.Application`)**:
+    - DTOs in `CashierDtos.cs`: `CashierTableItemDto`, `CashierBillSummaryDto`, `SplitBillRequest`, `InvoiceDto`, `SettleInvoiceRequest`, `VietQrPayloadDto`, `ReconcileWebhookRequest`, `BlindShiftCloseRequest`, `ShiftCloseResultDto`, `SuspenseLedgerItemDto`.
+    - Interface `IVietQrService` & Implementation `VietQrService`: Zero-dependency EMVCo payload generator, CRC16-CCITT bitwise calculator, quick link provider, and checksum validator.
+    - Interface `ICashierService` & Implementation `CashierService`: Full bill calculation, standard invoice generation, split-bill execution, multi-tender settlement, session release logic, VietQR webhook reconciliation with Suspense Ledger fallback, and blind shift closing. Registered in `DependencyInjection.cs`.
+  - **Cashier Web Application Host (`SmartRestaurant.Cashier.Web`)**:
+    - New project created and added to `SmartRestaurant.slnx`.
+    - `Controllers`: `CashierController` (`Index`, `Bill`, `Split`, `Receipt`, `Shift`, `Suspense`), `PaymentApiController` (settle, split-bill, vietqr payload, vietqr webhook simulator, blind shift close, open shift).
+    - `Hubs`: `CashierHub` (`/hubs/cashier`).
+    - `Services`: `CashierOutboxProcessorHostedService` broadcasting `TableStatusChanged` and `InvoiceSettled`.
+    - `Views`: `Shared/_CashierLayout.cshtml`, `Cashier/Index.cshtml` (active billing tables), `Cashier/Bill.cshtml` (split-screen bill calculation & payment tenders with VietQR display), `Cashier/Split.cshtml` (interactive split canvas), `Cashier/Receipt.cshtml` (80mm thermal receipt with print media styles), `Cashier/Shift.cshtml` (shift overview, blind cash drop, variance log table), `Cashier/Suspense.cshtml` (unreconciled suspense transactions).
+    - `Assets`: `cashier.css`, `cashier-app.js`, `cashier-signalr.js`.
+  - **Automated Tests (`SmartRestaurant.Application.Tests`)**:
+    - `VietQrServiceTests.cs`: EMVCo string payload validation, dynamic QR flag, CRC16 checksum computation and tampering detection (2 tests).
+    - `CashierServiceTests.cs`: 8 comprehensive tests covering VIP room surcharge & VAT calculation, standard invoice creation, cash settlement with shift cash accumulation & table release, settled bill immutability (`OD-13`), split-bill partial table retention (`D4 / PDR-009 §4`), auto-settlement on VietQR webhook, delayed webhook logging to Suspense Ledger (`PDR-008`), and blind shift closing with variance audit (`OD-14` Option A & `INV-12`).
+    - **Total Test Suite: 103/103 Tests Passing (100% pass rate, 0 failed, 0 skipped)** across all test projects.
+    - Full solution build succeeded with 0 warnings and 0 errors across all 9 projects.
+    - Verified real HTTP 200 execution on `/Cashier`, `/Cashier/Shift`, and `/Cashier/Suspense`.
+- **Status**: Completed & Fully Verified.
+
+---
+
+### [2026-11-16] — Stage 6 Verification: TASK-INTEGRATION-E2E-01 End-to-End System Integration & Pilot Readiness
+- **Objective**: Execute multi-workstation end-to-end integration verification across all 4 operational hosts (`SmartRestaurant.Web`, `SmartRestaurant.Pos.Web`, `SmartRestaurant.Kds.Web`, `SmartRestaurant.Cashier.Web`), validating cross-system invariants, real-time lifecycle flow, inventory deduction, idempotency, split billing, suspense logging, blind cash shift closing, and pilot store launcher setup.
+- **Deliverables**:
+  - **Automated End-to-End Test Suite (`tests/SmartRestaurant.Application.Tests/EndToEndWorkflowTests.cs`)**:
+    - `CompleteDiningLifecycle_EndToEnd_AllInvariantsPreserved`: Simulates full 9-step dining lifecycle from cashier shift opening (1,000,000đ float) -> waiter table opening (`Occupied`) -> order placement & firing with countable beer (inventory reserved: 4 bottles) + DirectFOHPick water (bypasses KDS) -> chef cooking & bumping ticket on KDS -> expediter serving dish -> billing requested -> cashier calculation with 10% VIP surcharge + 50,000đ fixed fee + 8% VAT -> VietQR EMVCo generation & CRC16 validation -> cash settlement (2,000,000đ given, 294,680đ change) -> net cash addition to active shift -> table auto-release to `Available` -> settled bill immutability guard (`OD-13`) -> blind shift close with variance calculation (-5,320đ discrepancy) & `ShiftClosingVarianceLog` audit record.
+    - `SplitBill_ByItems_TableNotReleasedUntilFinalSubBillSettled_D4_PDR009`: Verifies table is retained in non-available state when sub-bill 1 is paid, and released only upon 100% settlement of all sub-bills.
+    - `RemakeDish_CulinaryMistake_ZeroCustomerCharge_WasteLossLogged_OD09`: Verifies culinary mistake results in 0đ customer charge, scrap logged in `KitchenWasteLog`, and priority KDS ticket.
+    - `DelayedVietQrWebhook_WhenAlreadySettled_LoggedToSuspenseLedger_PDR008`: Verifies bank webhook arriving after cash checkout is automatically safely recorded in `SuspenseLedger` with state `Unreconciled` and successfully resolved by manager.
+  - **One-Click Multi-Terminal Launcher Script (`run-all.ps1`)**:
+    - Powershell launcher script that launches all 4 workstations concurrently in independent terminals on ports `5000` (Manager), `58329` (Waiter POS), `5098` (KDS), and `5099` (Cashier).
+  - **System Documentation & Operational Manual**:
+    - Authored [`HUONGDAN.txt`](../HUONGDAN.txt) with deployment prerequisites, accounts/PIN matrix, and startup instructions.
+    - Updated [`README.md`](../README.md) with complete system architecture and operation instructions.
+- **Verification Results**:
+  - Full automated test suite: **107/107 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+  - Solution build: **0 Warnings, 0 Errors** across all 9 projects in `SmartRestaurant.slnx`.
+- **Status**: Completed & Fully Verified. Ready for Pilot Store Rollout.
+
+---
+
+### [2026-11-16] — Bug Fix: Resolution of "Lỗi Báo Bếp" (EF Core Execution Strategy User Transaction Conflict)
+- **Objective**: Diagnose and resolve the "Lỗi Báo Bếp" error encountered when submitting orders from POS Waiter Tablet to the Kitchen Display System.
+- **Root Cause Analysis**:
+  - `SmartRestaurant.Pos.Web` connects to SQL Server with `EnableRetryOnFailure` enabled, which sets the EF Core execution strategy to `SqlServerRetryingExecutionStrategy`.
+  - In `PosOrderService.FireOrderAsync`, an explicit user-initiated transaction was started directly via `await _dbContext.BeginTransactionAsync(ct)`.
+  - EF Core with `SqlServerRetryingExecutionStrategy` strictly forbids user-initiated transactions unless executed through `CreateExecutionStrategy().ExecuteAsync()`.
+  - Consequently, whenever waiters clicked "Báo Bếp", EF Core threw: `InvalidOperationException: The configured execution strategy 'SqlServerRetryingExecutionStrategy' does not support user-initiated transactions. Use the execution strategy returned by 'DbContext.Database.CreateExecutionStrategy()' to execute all the operations in the transaction as a retriable unit.`
+  - In `_PosLayout.cshtml`, hardcoded placeholder GUIDs for staff (`55555555-...`) were displayed instead of querying live active staff members from the database.
+- **Remediation & Architecture Enhancement**:
+  - `IAppDbContext` & `AppDbContext`: Added `ExecuteInTransactionAsync<TResult>(Func<Task<TResult>> operation, CancellationToken ct)` and `ExecuteInTransactionAsync(Func<Task> operation, CancellationToken ct)` using `Database.CreateExecutionStrategy().ExecuteAsync(...)` with automatic commit and rollback.
+  - `PosOrderService`: Refactored `FireOrderAsync` to wrap all write operations (Order creation if null, round increment, stock reservation, kitchen tickets, audit history, and outbox event) inside `ExecuteInTransactionAsync`, passing `table.Code` to `KitchenTicket` for display on KDS.
+  - `OrderController`: Added input validation (`request == null` guard), specific catching of `DomainValidationException` (400) and `DomainNotFoundException` (404), and server error logging with correlation ID.
+  - `_PosLayout.cshtml`: Injected `IAppDbContext` to dynamically populate active staff members with their genuine database GUIDs and auto-select waiter by default.
+  - `PosOrderServiceTests`: Added new automated integration test `FireOrderAsync_WithTransactionalExecutionStrategy_ShouldPersistRoundTicketsAndStockAtomically`.
+- **Verification Results**:
+  - Automated test suite: **108/108 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+  - Live HTTP verification: Sent live POST request `/Order/Fire` against local Kestrel host with real SQL Server LocalDB (`SmartRestaurantDb_v6`), returning HTTP 200 with `"success": true, "message": "Đã báo bếp thành công đợt 2!"`.
+  - Zero warnings, zero errors across all 9 projects.
+- **Status**: Completed, Fully Fixed & Verified.

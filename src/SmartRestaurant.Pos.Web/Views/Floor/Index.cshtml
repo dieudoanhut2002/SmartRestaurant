@@ -1,0 +1,191 @@
+@model IReadOnlyList<PosTableCardDto>
+@{
+    ViewData["Title"] = "Sơ Đồ Bàn";
+    var areas = ViewBag.Areas as List<DiningAreaDto> ?? new List<DiningAreaDto>();
+    var selectedAreaId = ViewBag.SelectedAreaId as Guid?;
+}
+
+<div class="floor-toolbar d-flex justify-content-between align-items-center">
+    <!-- Area Tabs -->
+    <div class="d-flex gap-2 overflow-x-auto">
+        <a href="/Floor" class="area-tab-btn @(!selectedAreaId.HasValue || selectedAreaId == Guid.Empty ? "active" : "") text-decoration-none">
+            Tất Cả (@Model.Count)
+        </a>
+        @foreach (var a in areas)
+        {
+            var count = Model.Count(t => t.AreaId == a.Id);
+            <a href="/Floor?areaId=@a.Id" class="area-tab-btn @(selectedAreaId == a.Id ? "active" : "") text-decoration-none">
+                @a.Name (@count)
+            </a>
+        }
+    </div>
+
+    <!-- Status Legend -->
+    <div class="d-none d-lg-flex align-items-center gap-3 text-secondary small">
+        <span class="d-flex align-items-center gap-1"><span class="badge" style="background-color: var(--color-available); width: 12px; height: 12px; border-radius: 50%;"></span> Trống</span>
+        <span class="d-flex align-items-center gap-1"><span class="badge" style="background-color: var(--color-occupied); width: 12px; height: 12px; border-radius: 50%;"></span> Có Khách</span>
+        <span class="d-flex align-items-center gap-1"><span class="badge" style="background-color: var(--color-billing); width: 12px; height: 12px; border-radius: 50%;"></span> Tạm Tính</span>
+        <span class="d-flex align-items-center gap-1"><span class="badge" style="background-color: var(--color-cleaning); width: 12px; height: 12px; border-radius: 50%;"></span> Cần Dọn</span>
+    </div>
+</div>
+
+<!-- Table Cards Grid -->
+<div class="table-grid">
+    @foreach (var table in Model)
+    {
+        string statusText = table.Status switch
+        {
+            TableStatus.Available => "Trống",
+            TableStatus.Occupied => "Có Khách",
+            TableStatus.BillingRequested => "Tạm Tính",
+            TableStatus.CleaningNeeded => "Cần Dọn",
+            _ => "Khác"
+        };
+
+        string clickAction = table.Status switch
+        {
+            TableStatus.Available => $"openTableModal('{table.TableId}', '{table.Code}', '{table.Name}', {table.Capacity})",
+            TableStatus.CleaningNeeded => $"confirmCleanTable('{table.TableId}', '{table.Code}')",
+            _ => $"location.href='/Order/{table.TableId}'"
+        };
+
+        <div id="table-card-@table.TableId" class="pos-table-card state-@table.Status" onclick="@clickAction">
+            <div>
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="table-code">@table.Code</span>
+                    <span class="badge rounded-pill status-badge @(table.Status == TableStatus.Available ? "bg-success" : table.Status == TableStatus.Occupied ? "bg-danger" : table.Status == TableStatus.BillingRequested ? "bg-primary" : "bg-warning text-dark")">
+                        @statusText
+                    </span>
+                </div>
+                <div class="table-name text-truncate">@table.Name</div>
+                @if (!string.IsNullOrEmpty(table.RoomName))
+                {
+                    <span class="badge bg-secondary opacity-75 mt-1" style="font-size: 0.7rem;"><i class="bi bi-door-closed me-1"></i>@table.RoomName</span>
+                }
+            </div>
+
+            <div class="mt-3">
+                @if (table.Status == TableStatus.Occupied || table.Status == TableStatus.BillingRequested)
+                {
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <div class="small text-secondary"><i class="bi bi-people-fill me-1"></i>@table.GuestCount khách</div>
+                        <div class="small text-secondary"><i class="bi bi-clock me-1"></i>@table.MinutesOccupied'</div>
+                    </div>
+                    <div class="table-amount mt-1">@table.TotalAmount.ToString("#,##0") ₫</div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center text-secondary small">
+                        <span><i class="bi bi-person me-1"></i>Tối đa @table.Capacity người</span>
+                        <span class="text-success"><i class="bi bi-plus-circle-fill fs-5"></i></span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal: Mở Bàn Mới -->
+<div class="modal fade" id="modalOpenTable" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="modalTableTitle">Mở Bàn Ăn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <input type="hidden" id="open-table-id" />
+                <p class="text-secondary mb-3">Nhập số lượng khách dùng bữa:</p>
+
+                <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+                    <button class="btn btn-outline-light rounded-circle" style="width: 48px; height: 48px;" onclick="adjustGuest(-1)">
+                        <i class="bi bi-dash fs-4"></i>
+                    </button>
+                    <span id="guest-count-display" class="fs-1 fw-bold text-warning" style="min-width: 60px;">2</span>
+                    <button class="btn btn-outline-light rounded-circle" style="width: 48px; height: 48px;" onclick="adjustGuest(1)">
+                        <i class="bi bi-plus fs-4"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <button class="btn btn-secondary px-3 py-2 fw-bold" onclick="setGuest(2)">2 Khách</button>
+                    <button class="btn btn-secondary px-3 py-2 fw-bold" onclick="setGuest(4)">4 Khách</button>
+                    <button class="btn btn-secondary px-3 py-2 fw-bold" onclick="setGuest(6)">6 Khách</button>
+                    <button class="btn btn-secondary px-3 py-2 fw-bold" onclick="setGuest(8)">8 Khách</button>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success px-5 py-2 fw-bold" onclick="submitOpenTable()">
+                    <i class="bi bi-check2-circle me-1"></i> XÁC NHẬN MỞ BÀN
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let currentGuestCount = 2;
+
+    function openTableModal(id, code, name, capacity) {
+        document.getElementById('open-table-id').value = id;
+        document.getElementById('modalTableTitle').textContent = `Mở Bàn ${code} — ${name}`;
+        setGuest(Math.min(capacity, 4) || 2);
+        const modal = new bootstrap.Modal(document.getElementById('modalOpenTable'));
+        modal.show();
+    }
+
+    function setGuest(val) {
+        currentGuestCount = Math.max(1, val);
+        document.getElementById('guest-count-display').textContent = currentGuestCount;
+    }
+
+    function adjustGuest(delta) {
+        setGuest(currentGuestCount + delta);
+    }
+
+    async function submitOpenTable() {
+        const tableId = document.getElementById('open-table-id').value;
+        const staffId = document.getElementById('active-staff-select').value;
+
+        try {
+            const resp = await fetch('/Floor/OpenSession', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tableId: tableId,
+                    guestCount: currentGuestCount,
+                    staffId: staffId
+                })
+            });
+
+            const res = await resp.json();
+            if (res.success) {
+                location.href = `/Order/${tableId}`;
+            } else {
+                Swal.fire('Lỗi', res.message || 'Không thể mở bàn.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Lỗi mạng', 'Không thể kết nối đến máy chủ.', 'error');
+        }
+    }
+
+    function confirmCleanTable(tableId, tableCode) {
+        Swal.fire({
+            title: `Bàn ${tableCode} đã dọn dẹp xong?`,
+            text: 'Chuyển trạng thái bàn về Trống (Available) để tiếp nhận lượt khách mới.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Đã Dọn Xong',
+            cancelButtonText: 'Chưa'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Future cleaning handler or reset
+                location.reload();
+            }
+        });
+    }
+</script>
+}

@@ -37,6 +37,17 @@ public class DiningSession : BaseEntity, IAggregateRoot
         TotalAmount = 0;
     }
 
+    public void TransferToTable(Guid newTableId)
+    {
+        if (newTableId == Guid.Empty)
+            throw new DomainValidationException("Bàn mới không được để trống.");
+        if (Status != DiningSessionStatus.Active)
+            throw new DomainValidationException("Chỉ có thể chuyển bàn khi phiên đang hoạt động.");
+
+        TableId = newTableId;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void AddAmount(decimal amount)
     {
         TotalAmount += amount;

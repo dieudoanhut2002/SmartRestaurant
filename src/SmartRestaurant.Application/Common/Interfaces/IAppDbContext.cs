@@ -24,6 +24,19 @@ public interface IAppDbContext
     DbSet<InventoryItem> InventoryItems { get; }
     DbSet<InventoryTransaction> InventoryTransactions { get; }
     DbSet<SystemLicense> SystemLicenses { get; }
+    DbSet<Order> Orders { get; }
+    DbSet<OrderRound> OrderRounds { get; }
+    DbSet<OrderItem> OrderItems { get; }
+    DbSet<OrderItemModifier> OrderItemModifiers { get; }
+    DbSet<KitchenTicket> KitchenTickets { get; }
+    DbSet<OrderAuditHistory> OrderAuditHistories { get; }
+    DbSet<OutboxMessage> OutboxMessages { get; }
+    DbSet<Invoice> Invoices { get; }
+    DbSet<PaymentTransaction> PaymentTransactions { get; }
+    DbSet<SuspenseLedger> SuspenseLedgers { get; }
 
+    Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task<TResult> ExecuteInTransactionAsync<TResult>(Func<Task<TResult>> operation, CancellationToken cancellationToken = default);
+    Task ExecuteInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

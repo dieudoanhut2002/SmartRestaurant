@@ -106,6 +106,12 @@ public class MenuItem : BaseEntity, IAggregateRoot
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void SetAvailability(bool isAvailable)
+    {
+        IsAvailable = isAvailable;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void SetStockQuantity(int quantity)
     {
         InStockQuantity = quantity >= 0 ? quantity : 0;

@@ -1,0 +1,202 @@
+@model CashierBillSummaryDto
+@{
+    ViewData["Title"] = $"Quyết Toán Bàn {Model.TableCode}";
+    var invoice = (InvoiceDto)ViewBag.Invoice;
+    var vietQr = (VietQrPayloadDto)ViewBag.VietQr;
+    var cashierId = (Guid)ViewBag.CashierId;
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-1">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách bàn
+            </a>
+            <h3 class="mb-0 fw-bold">
+                Quyết Toán: <span class="text-primary">@Model.TableCode</span> - @Model.TableName
+                <span class="badge bg-secondary fs-6 ms-2">@Model.AreaName</span>
+            </h3>
+        </div>
+        <div>
+            <span class="badge bg-dark fs-6 px-3 py-2 font-monospace">Hóa đơn: @invoice.InvoiceNumber</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Order Details & Pricing Breakdown -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fw-bold">Chi Tiết Món Ăn Bàn Đặt</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tên Món Ăn</th>
+                                    <th class="text-center">SL</th>
+                                    <th class="text-end">Đơn Giá</th>
+                                    <th class="text-end">Thành Tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">@item.ItemName</div>
+                                            @if (item.Modifiers.Any())
+                                            {
+                                                <div class="text-muted small">+ @string.Join(", ", item.Modifiers)</div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Notes))
+                                            {
+                                                <div class="text-warning small"><i class="bi bi-pencil-fill"></i> @item.Notes</div>
+                                            }
+                                        </td>
+                                        <td class="text-center font-monospace fw-bold">@item.Quantity</td>
+                                        <td class="text-end font-monospace">@item.UnitPrice.ToString("N0") ₫</td>
+                                        <td class="text-end font-monospace fw-bold">@item.TotalPrice.ToString("N0") ₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-light p-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Tổng tiền hàng:</span>
+                        <span class="font-monospace fw-bold">@Model.Subtotal.ToString("N0") ₫</span>
+                    </div>
+                    @if (Model.SurchargeAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1 text-info">
+                            <span>Phụ thu phòng VIP (@Model.SurchargeRate%):</span>
+                            <span class="font-monospace fw-bold">+@Model.SurchargeAmount.ToString("N0") ₫</span>
+                        </div>
+                    }
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1 text-success">
+                            <span>Giảm giá:</span>
+                            <span class="font-monospace fw-bold">-@Model.DiscountAmount.ToString("N0") ₫</span>
+                        </div>
+                    }
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Tiền tính thuế VAT:</span>
+                        <span class="font-monospace">@Model.TaxableAmount.ToString("N0") ₫</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Thuế suất VAT (@Model.VatRate%):</span>
+                        <span class="font-monospace">+@Model.VatAmount.ToString("N0") ₫</span>
+                    </div>
+                    <hr class="my-2" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fs-4 fw-bold">TỔNG CỘNG THANH TOÁN:</span>
+                        <span class="fs-3 fw-bold text-danger font-monospace">@Model.TotalAmount.ToString("N0") ₫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Payment Tenders -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <ul class="nav nav-pills nav-fill" id="paymentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash-pane" type="button">
+                                <i class="bi bi-cash me-1"></i> Tiền Mặt
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="vietqr-tab" data-bs-toggle="tab" data-bs-target="#vietqr-pane" type="button">
+                                <i class="bi bi-qr-code me-1"></i> VietQR 24/7
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="card-tab" data-bs-toggle="tab" data-bs-target="#card-pane" type="button">
+                                <i class="bi bi-credit-card me-1"></i> Thẻ POS
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="paymentTabContent">
+                        <!-- Tab 1: Tiền Mặt -->
+                        <div class="tab-pane fade show active" id="cash-pane">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Tiền khách đưa:</label>
+                                <div class="input-group input-group-lg">
+                                    <input type="number" class="form-control font-monospace fw-bold text-end" id="cash-given-input" value="@Model.TotalAmount" oninput="cashierApp.calculateCashChange(@Model.TotalAmount)" />
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+
+                            <!-- Fast denomination buttons -->
+                            <div class="d-grid grid-cols-3 gap-2 mb-3">
+                                <div class="btn-group w-100" role="group">
+                                    <button class="btn btn-outline-secondary" onclick="cashierApp.setCashGiven(@Model.TotalAmount)">Đủ Tiền</button>
+                                    <button class="btn btn-outline-secondary" onclick="cashierApp.addCash(50000)">+50k</button>
+                                    <button class="btn btn-outline-secondary" onclick="cashierApp.addCash(100000)">+100k</button>
+                                    <button class="btn btn-outline-secondary" onclick="cashierApp.addCash(200000)">+200k</button>
+                                    <button class="btn btn-outline-secondary" onclick="cashierApp.addCash(500000)">+500k</button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-secondary d-flex justify-content-between align-items-center py-3">
+                                <span class="fs-5 fw-bold text-dark">Tiền thừa trả khách:</span>
+                                <span class="fs-4 fw-bold text-success font-monospace" id="cash-change-display">0 ₫</span>
+                            </div>
+
+                            <button class="btn btn-success btn-lg w-100 fw-bold py-3 mt-4" onclick="cashierApp.settleBill('@invoice.InvoiceId', 1, '@cashierId', @Model.TotalAmount)">
+                                <i class="bi bi-check2-circle me-1"></i> XÁC NHẬN THU TIỀN MẶT
+                            </button>
+                        </div>
+
+                        <!-- Tab 2: VietQR 24/7 -->
+                        <div class="tab-pane fade text-center" id="vietqr-pane">
+                            <div class="mb-2">
+                                <span class="badge bg-primary px-3 py-1">Quét mã VietQR bằng app mọi Ngân hàng hoặc Ví Momo/ZaloPay</span>
+                            </div>
+                            <div class="p-3 bg-white border rounded shadow-sm d-inline-block mb-3">
+                                <img src="@vietQr.QuickLink" alt="VietQR" class="img-fluid" style="max-height: 250px;" />
+                            </div>
+                            <div class="font-monospace small text-muted mb-2">
+                                Ngân hàng: <strong>@vietQr.BankName</strong><br />
+                                Số tài khoản: <strong>@vietQr.AccountNumber</strong><br />
+                                Chủ tài khoản: <strong>@vietQr.AccountName</strong><br />
+                                Nội dung chuyển: <strong class="text-danger">@vietQr.OrderCode</strong>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <!-- Simulator webhook for testing -->
+                                <button class="btn btn-outline-primary" onclick="cashierApp.simulateVietQrWebhook('@vietQr.OrderCode', @Model.TotalAmount)">
+                                    <i class="bi bi-lightning-charge-fill me-1"></i> Giả lập Ngân Hàng Báo Tiền Đã Về (Webhook)
+                                </button>
+                                <button class="btn btn-success btn-lg fw-bold py-3" onclick="cashierApp.settleBill('@invoice.InvoiceId', 3, '@cashierId', @Model.TotalAmount, '@vietQr.OrderCode')">
+                                    <i class="bi bi-check2-circle me-1"></i> ĐÃ THẤY TIỀN VÀO TÀI KHOẢN (BUMP)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Thẻ POS -->
+                        <div class="tab-pane fade" id="card-pane">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Mã chuẩn chi / Số tham chiếu quẹt thẻ (tùy chọn):</label>
+                                <input type="text" class="form-control font-monospace" id="card-ref-input" placeholder="VD: REF-889912..." />
+                            </div>
+                            <div class="alert alert-info small">
+                                <i class="bi bi-info-circle me-1"></i> Vui lòng thực hiện quẹt thẻ trên máy POS ngân hàng trước, sau đó bấm xác nhận bên dưới.
+                            </div>
+                            <button class="btn btn-success btn-lg w-100 fw-bold py-3 mt-4" onclick="cashierApp.settleCardBill('@invoice.InvoiceId', '@cashierId', @Model.TotalAmount)">
+                                <i class="bi bi-credit-card me-1"></i> XÁC NHẬN QUẸT THẺ THÀNH CÔNG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

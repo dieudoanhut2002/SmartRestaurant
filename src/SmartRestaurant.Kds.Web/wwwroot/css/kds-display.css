@@ -1,0 +1,145 @@
+/* SmartRestaurant - KDS Display Stylesheet */
+:root {
+    --kds-bg: #10141a;
+    --kds-card-bg: #18202a;
+    --kds-header-bg: #1c2633;
+    --sla-green: #2ecc71;
+    --sla-yellow: #f1c40f;
+    --sla-red: #e74c3c;
+    --sla-priority: #9b59b6;
+}
+
+body.kds-body {
+    background-color: var(--kds-bg);
+    color: #e0e6ed;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow-x: hidden;
+}
+
+.kds-header {
+    background-color: var(--kds-header-bg);
+    border-bottom: 2px solid #2b394a;
+}
+
+.kds-clock {
+    letter-spacing: 1px;
+}
+
+.kds-main-container {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.kds-tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+/* Ticket Cards */
+.kds-ticket-card {
+    background-color: var(--kds-card-bg);
+    border-radius: 8px;
+    border: 3px solid #334458;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, border-color 0.2s ease;
+}
+
+.kds-ticket-card:hover {
+    transform: translateY(-2px);
+}
+
+/* SLA Status Borders */
+.kds-ticket-card.sla-green {
+    border-color: var(--sla-green);
+}
+.kds-ticket-card.sla-yellow {
+    border-color: var(--sla-yellow);
+}
+.kds-ticket-card.sla-red {
+    border-color: var(--sla-red);
+    animation: border-pulse 2s infinite;
+}
+
+.sla-green-text { color: var(--sla-green); }
+.sla-yellow-text { color: var(--sla-yellow); }
+.sla-red-text { color: var(--sla-red); }
+
+/* High Priority / Remake styling */
+.kds-ticket-card.kds-ticket-priority {
+    border-color: var(--sla-priority) !important;
+    box-shadow: 0 0 15px rgba(155, 89, 182, 0.6);
+}
+
+@keyframes border-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.6); }
+    70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+.table-badge {
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.ticket-timer {
+    font-size: 1.3rem;
+    line-height: 1.1;
+}
+
+.ticket-code {
+    font-size: 0.75rem;
+}
+
+/* Item Rows */
+.kds-item-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.kds-item-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.item-qty {
+    min-width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-ready .item-name {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.item-ready .item-qty {
+    background-color: var(--sla-green) !important;
+}
+
+.item-remake-flag {
+    background-color: rgba(231, 76, 60, 0.15) !important;
+    border-left: 4px solid var(--sla-red);
+}
+
+/* Bump Bar Action Buttons */
+.btn-bump {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.kds-empty-state {
+    min-height: 400px;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 8px;
+}

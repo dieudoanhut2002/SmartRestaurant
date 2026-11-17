@@ -1,8 +1,11 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/SmartRestaurant.Cashier.Web/SmartRestaurant.Cashier.Web.csproj" />
     <Project Path="src/SmartRestaurant.Domain/SmartRestaurant.Domain.csproj" />
     <Project Path="src/SmartRestaurant.Application/SmartRestaurant.Application.csproj" />
     <Project Path="src/SmartRestaurant.Infrastructure/SmartRestaurant.Infrastructure.csproj" />
+    <Project Path="src/SmartRestaurant.Kds.Web/SmartRestaurant.Kds.Web.csproj" />
+    <Project Path="src/SmartRestaurant.Pos.Web/SmartRestaurant.Pos.Web.csproj" />
     <Project Path="src/SmartRestaurant.Web/SmartRestaurant.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">

@@ -1,0 +1,107 @@
+@inject SmartRestaurant.Application.Common.Interfaces.IAppDbContext DbContext
+@{
+    var activeStaffList = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(
+        DbContext.StaffMembers.Where(s => !s.IsDeleted).OrderBy(s => s.Role));
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewData["Title"] — POS Gọi Món Tablet SmartRestaurant</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <!-- Custom Touch POS Styles -->
+    <link rel="stylesheet" href="~/css/pos-touch.css" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="pos-app-body">
+    <!-- Top Sticky Header -->
+    <header class="pos-header d-flex justify-content-between align-items-center px-3 shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+            <a href="/Floor" class="brand-link d-flex align-items-center text-decoration-none">
+                <div class="pos-logo-badge me-2">
+                    <i class="bi bi-tablet-landscape-fill text-white fs-4"></i>
+                </div>
+                <div>
+                    <span class="fs-5 fw-bold text-white tracking-wide">POS TABLET</span>
+                    <span class="badge bg-danger ms-1">FOH</span>
+                </div>
+            </a>
+            <a href="/Floor" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+                <i class="bi bi-grid-3x3-gap-fill me-1"></i> Sơ Đồ Bàn
+            </a>
+        </div>
+
+        <!-- Center: SignalR & Sync Status -->
+        <div class="d-flex align-items-center gap-2">
+            <div id="signalr-badge" class="badge rounded-pill bg-success px-3 py-2 d-flex align-items-center gap-2">
+                <span class="status-pulse-dot"></span>
+                <span id="signalr-text">Trực Tuyến</span>
+            </div>
+            <button id="btn-force-resync" class="btn btn-dark btn-sm rounded-circle text-secondary" title="Đồng bộ lại từ máy chủ" onclick="window.posSync && window.posSync.manualResync()">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+
+        <!-- Right: Staff & Clock -->
+        <div class="d-flex align-items-center gap-3">
+            <div class="staff-picker d-flex align-items-center gap-2 bg-dark px-3 py-1 rounded-pill border border-secondary">
+                <i class="bi bi-person-badge-fill text-warning"></i>
+                <select id="active-staff-select" class="form-select form-select-sm bg-dark text-white border-0 py-0 shadow-none" style="width: auto;">
+                    @if (activeStaffList != null && activeStaffList.Count > 0)
+                    {
+                        foreach (var s in activeStaffList)
+                        {
+                            <option value="@s.Id" selected="@(s.Role == SmartRestaurant.Domain.Enums.StaffRole.Waiter ? "selected" : null)">
+                                @(s.Role switch {
+                                    SmartRestaurant.Domain.Enums.StaffRole.Waiter => "Bồi bàn",
+                                    SmartRestaurant.Domain.Enums.StaffRole.Cashier => "Thu ngân",
+                                    SmartRestaurant.Domain.Enums.StaffRole.RestaurantManager => "Quản lý",
+                                    SmartRestaurant.Domain.Enums.StaffRole.Chef => "Bếp trưởng",
+                                    SmartRestaurant.Domain.Enums.StaffRole.SystemAdmin => "Quản trị",
+                                    _ => "Nhân viên"
+                                }): @s.FullName
+                            </option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="55555555-5555-5555-5555-555555555555" selected>Bồi bàn: Nguyễn Văn Phục Vụ</option>
+                    }
+                </select>
+            </div>
+            <div class="clock-display text-white-50 fw-bold font-monospace fs-6" id="digital-clock">
+                --:--:--
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pos-main-container">
+        @RenderBody()
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/pos-signalr.js"></script>
+    <script>
+        // Clock updater
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
+            const clockEl = document.getElementById('digital-clock');
+            if (clockEl) clockEl.textContent = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

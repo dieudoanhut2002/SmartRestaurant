@@ -1,0 +1,83 @@
+================================================================================
+SMARTRESTAURANT — HƯỚNG DẪN KHỞI CHẠY VÀ VẬN HÀNH HỆ THỐNG
+================================================================================
+
+1. CẤU TRÚC PHÂN HỆ VẬN HÀNH (MODULAR MONOLITH)
+SmartRestaurant gồm 4 ứng dụng Web chuyên biệt dùng chung Domain, Application, 
+Infrastructure và Database SQL Server:
+
+[1] Quản Lý Nhà Hàng (Manager Portal):
+    - Thư mục: src/SmartRestaurant.Web
+    - Cổng mặc định: https://localhost:7189 hoặc http://localhost:5000
+    - Chức năng: Sơ đồ bàn 2D Konva.js, Thực đơn & Món, Trạm chế biến, Kho hàng,
+                 Cấu hình nhà hàng, Quản lý bản quyền Offline, Báo cáo & Doanh thu.
+
+[2] Máy Tính Bảng Bồi Bàn (Waiter Tablet POS):
+    - Thư mục: src/SmartRestaurant.Pos.Web
+    - Cổng mặc định: https://localhost:58328 hoặc http://localhost:58329
+    - Chức năng: Sơ đồ bàn theo tầng, mở bàn, tìm món siêu tốc (<100ms), tùy biến
+                 topping/mức cay/đá đường, Báo Bếp (FireOrder) với Idempotency, 
+                 yêu cầu tính tiền, đồng bộ SignalR thời gian thực.
+
+[3] Màn Hình Bếp & Quầy Bar (KDS & Expediter Pass):
+    - Thư mục: src/SmartRestaurant.Kds.Web
+    - Cổng mặc định: https://localhost:58428 hoặc http://localhost:5098
+    - Chức năng: Hàng đợi phiếu bếp theo trạm (Bếp Nóng, Bếp Nguội, Bar, Bánh),
+                 cảnh báo SLA đổi màu (<10m xanh, 10-20m vàng, >20m đỏ nhấp nháy),
+                 chuông báo âm thanh Web Audio, gom món nấu đồng loạt (Batch Aggregation),
+                 trạm điều phối bưng món (Expediter Pass), báo làm lại món (0đ per OD-09),
+                 báo hết món nhanh (86 Items per BR-KIT-006).
+
+[4] Trạm Thu Ngân & Quyết Toán (Cashier Terminal):
+    - Thư mục: src/SmartRestaurant.Cashier.Web
+    - Cổng mặc định: https://localhost:58528 hoặc http://localhost:5099
+    - Chức năng: Danh sách bàn chờ thanh toán, tính tiền (phụ thu phòng VIP + 8% VAT),
+                 tách hóa đơn (chia đều đầu người hoặc tách theo món ăn per D4/PDR-009),
+                 thanh toán đa kênh (Tiền mặt thối lại, Thẻ ngân hàng, Dynamic VietQR Napas),
+                 giả lập webhook ngân hàng, in phiếu thanh toán nhiệt 80mm, sổ tiền treo
+                 (Suspense Ledger per PDR-008), đóng ca kiểm kê tiền mặt két (Blind Shift Close).
+
+--------------------------------------------------------------------------------
+2. YÊU CẦU MÔI TRƯỜNG
+- .NET 8.0 SDK (hoặc .NET 9.0)
+- Microsoft SQL Server LocalDB: (localdb)\mssqllocaldb
+- Trình duyệt Web hiện đại (Chrome, Edge, Safari, Firefox)
+
+--------------------------------------------------------------------------------
+3. HƯỚNG DẪN KHỞI CHẠY (DEVELOPMENT)
+
+Bước 1: Kiểm tra biên dịch Solution
+    dotnet build SmartRestaurant.slnx
+
+Bước 2: Chạy kiểm thử tự động (103 bài test PASS 100%)
+    dotnet test SmartRestaurant.slnx
+
+Bước 3: Khởi chạy các phân hệ (mở từng cửa sổ PowerShell / Terminal):
+
+    # Cửa sổ 1: Manager Web
+    dotnet run --project src/SmartRestaurant.Web/SmartRestaurant.Web.csproj
+
+    # Cửa sổ 2: Waiter Tablet POS
+    dotnet run --project src/SmartRestaurant.Pos.Web/SmartRestaurant.Pos.Web.csproj
+
+    # Cửa sổ 3: Kitchen Display KDS
+    dotnet run --project src/SmartRestaurant.Kds.Web/SmartRestaurant.Kds.Web.csproj --urls http://localhost:5098
+
+    # Cửa sổ 4: Cashier Terminal
+    dotnet run --project src/SmartRestaurant.Cashier.Web/SmartRestaurant.Cashier.Web.csproj --urls http://localhost:5099
+
+Hệ thống sẽ tự động tạo cơ sở dữ liệu `SmartRestaurantDb_v6` trên LocalDB và nạp
+đầy đủ dữ liệu hạt giống (Seed Data) chuẩn doanh nghiệp khi khởi động lần đầu.
+
+--------------------------------------------------------------------------------
+4. TÀI KHOẢN & MÃ PIN ĐĂNG NHẬP MẪU
+- Quản trị viên (Admin):    admin@smartrestaurant.vn    | PIN: 9999
+- Quản lý (Manager):        manager@smartrestaurant.vn  | PIN: 1234
+- Thu ngân (Cashier):       cashier@smartrestaurant.vn  | PIN: 1111
+- Bồi bàn (Waiter):         waiter@smartrestaurant.vn   | PIN: 2222
+- Bếp trưởng (Chef):        chef@smartrestaurant.vn     | PIN: 3333
+- Thủ kho (Inventory):      inventory@smartrestaurant.vn| PIN: 4444
+
+================================================================================
+SmartRestaurant Enterprise Digital Operations — Ready for Pilot Deployment!
+================================================================================

@@ -1,0 +1,160 @@
+@model IReadOnlyList<KdsTicketDto>
+@{
+    ViewData["Title"] = "Màn Hình Trạm Bếp";
+    var stations = (List<KitchenStation>)ViewBag.Stations;
+    var currentStationId = (Guid?)ViewBag.SelectedStationId;
+    var summaries = (List<KdsStationSummaryDto>)ViewBag.Summaries;
+}
+
+<div class="kds-station-tabs-bar px-3 py-2 d-flex gap-2 overflow-x-auto border-bottom border-secondary">
+    @foreach (var st in stations)
+    {
+        var summary = summaries?.FirstOrDefault(s => s.StationId == st.Id);
+        bool isActive = currentStationId == st.Id;
+        string activeClass = isActive ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light";
+
+        <a asp-action="Index" asp-route-stationId="@st.Id" class="btn btn-sm @activeClass d-flex align-items-center gap-2">
+            <span>@st.Name</span>
+            @if (summary != null && summary.TotalActiveCount > 0)
+            {
+                <span class="badge @(isActive ? "bg-dark text-warning" : "bg-warning text-dark") rounded-pill">
+                    @summary.TotalActiveCount
+                </span>
+            }
+        </a>
+    }
+</div>
+
+<!-- Tickets Canvas -->
+<div class="kds-tickets-canvas p-3" id="tickets-container">
+    @if (Model.Count == 0)
+    {
+        <div class="kds-empty-state d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+            <i class="bi bi-cup-hot fs-1 mb-2"></i>
+            <h4>Không có phiếu gọi món nào đang chờ chế biến</h4>
+            <p>Mọi món ăn đã được phục vụ hoặc chưa có khách đặt món mới.</p>
+        </div>
+    }
+    else
+    {
+        <div class="kds-tickets-grid">
+            @foreach (var ticket in Model)
+            {
+                string priorityClass = ticket.IsHighPriority ? "kds-ticket-priority" : "";
+                string borderSla = ticket.SlaColorClass;
+
+                <div class="kds-ticket-card @priorityClass @borderSla" id="ticket-@ticket.TicketId" data-ticket-id="@ticket.TicketId" data-created="@ticket.CreatedAt.ToString("o")">
+                    <!-- Ticket Header -->
+                    <div class="kds-ticket-header d-flex justify-content-between align-items-center px-3 py-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fs-4 fw-bold text-white table-badge">@ticket.TableCode</span>
+                            <span class="badge bg-dark border border-secondary text-secondary font-monospace">#@ticket.RoundNumber</span>
+                            @if (ticket.IsHighPriority)
+                            {
+                                <span class="badge bg-danger animate-pulse text-white">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> ƯU TIÊN GẤP
+                                </span>
+                            }
+                        </div>
+                        <div class="text-end">
+                            <div class="ticket-timer font-monospace fw-bold @borderSla-text" data-timer="@ticket.CreatedAt.ToString("o")">
+                                @ticket.ElapsedMinutes'
+                            </div>
+                            <small class="text-muted font-monospace ticket-code">@ticket.TicketNumber</small>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Items List -->
+                    <div class="kds-ticket-body p-3">
+                        @if (!string.IsNullOrWhiteSpace(ticket.Notes))
+                        {
+                            <div class="alert alert-secondary py-1 px-2 mb-2 small text-warning">
+                                <i class="bi bi-sticky-fill me-1"></i> @ticket.Notes
+                            </div>
+                        }
+
+                        <ul class="list-unstyled mb-0 kds-items-list">
+                            @foreach (var item in ticket.Items)
+                            {
+                                string itemStatusClass = item.Status == OrderItemStatus.ReadyToServe ? "item-ready" :
+                                                         item.Status == OrderItemStatus.Cooking ? "item-cooking" : "";
+                                string itemRemakeClass = item.IsRemake ? "item-remake-flag" : "";
+
+                                <li class="kds-item-row d-flex justify-content-between align-items-start py-2 border-bottom border-dark @itemStatusClass @itemRemakeClass"
+                                    id="order-item-@item.ItemId"
+                                    onclick="kdsApp.toggleItemCheck('@item.ItemId', '@item.Status')">
+                                    <div class="d-flex gap-2 align-items-start">
+                                        <span class="item-qty badge bg-primary fs-5 fw-bold">@item.Quantity</span>
+                                        <div>
+                                            <div class="item-name fw-bold text-light fs-5">
+                                                @item.ItemName
+                                                @if (item.IsRemake)
+                                                {
+                                                    <span class="badge bg-danger ms-1 small">LÀM LẠI</span>
+                                                }
+                                            </div>
+                                            @if (item.Modifiers.Any())
+                                            {
+                                                <div class="item-modifiers text-info small">
+                                                    + @string.Join(", ", item.Modifiers)
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(item.KitchenNote))
+                                            {
+                                                <div class="item-note text-warning small">
+                                                    <i class="bi bi-pencil-fill me-1"></i> @item.KitchenNote
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        @if (item.Status == OrderItemStatus.ReadyToServe)
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Xong</span>
+                                        }
+                                        else if (item.Status == OrderItemStatus.Cooking)
+                                        {
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-fire"></i> Đang nấu</span>
+                                        }
+                                        <!-- Remake button -->
+                                        <button class="btn btn-sm btn-outline-danger p-1" title="Báo món lỗi / làm lại" onclick="event.stopPropagation(); kdsApp.openRemakeModal('@item.ItemId', '@item.ItemName')">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Ticket Footer (Bump Bar Action) -->
+                    <div class="kds-ticket-footer p-2 bg-dark border-top border-secondary d-flex gap-2">
+                        @if (ticket.Status == KitchenTicketStatus.Pending)
+                        {
+                            <button class="btn btn-warning flex-grow-1 fw-bold py-2 btn-bump" onclick="kdsApp.startPreparation('@ticket.TicketId')">
+                                <i class="bi bi-play-circle-fill me-1"></i> NHẬN NẤU
+                            </button>
+                        }
+                        else if (ticket.Status == KitchenTicketStatus.InPreparation)
+                        {
+                            <button class="btn btn-success flex-grow-1 fw-bold py-2 btn-bump" onclick="kdsApp.completeTicket('@ticket.TicketId')">
+                                <i class="bi bi-check2-circle me-1"></i> XONG PHIẾU (BUMP)
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary flex-grow-1 fw-bold py-2" disabled>
+                                <i class="bi bi-check-all me-1"></i> ĐÃ HOÀN THÀNH
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        window.kdsCurrentStationId = '@currentStationId';
+    </script>
+}

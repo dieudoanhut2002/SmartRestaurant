@@ -1,0 +1,151 @@
+@model WorkShift
+@{
+    ViewData["Title"] = "Giao Ca & Kiểm Tiền";
+    var recentLogs = (List<ShiftClosingVarianceLog>)ViewBag.RecentLogs;
+    var branchId = (Guid)ViewBag.BranchId;
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">
+                <i class="bi bi-wallet2 text-warning me-2"></i> Quản Lý Ca Thu Ngân & Kiểm Tiền Giao Ca
+            </h3>
+            <span class="text-muted">Thực hiện mở ca, theo dõi doanh thu tiền mặt và đóng ca kiểm kê chênh lệch quỹ</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Current Shift Status -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title fw-bold mb-0">Trạng Thái Ca Hiện Tại</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Status == ShiftStatus.Open)
+                    {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                            <i class="bi bi-check-circle-fill fs-4"></i>
+                            <div>
+                                <strong>Ca làm việc đang MỞ</strong> (Mở lúc @Model.OpenedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded text-center border">
+                                    <small class="text-muted d-block">Tiền Quỹ Đầu Ca</small>
+                                    <span class="fs-4 fw-bold text-dark font-monospace">@Model.OpeningCashFloat.ToString("N0") ₫</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded text-center border">
+                                    <small class="text-muted d-block">Doanh Thu Tiền Mặt (Hệ Thống)</small>
+                                    <span class="fs-4 fw-bold text-primary font-monospace">@Model.SystemCashTotal.ToString("N0") ₫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded p-3 bg-white mb-4">
+                            <h6 class="fw-bold text-danger mb-2">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Đóng Ca Kiểm Kê Tiền Mặt (Blind Cash Drop)
+                            </h6>
+                            <p class="text-muted small">
+                                Theo chuẩn <strong>INV-12 / OD-14</strong>: Thu ngân nhập đúng số tiền mặt thực đếm trong két. Hệ thống tự động so khớp và tính toán chênh lệch (thừa/thiếu).
+                            </p>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tổng tiền mặt thực tế trong két (đếm được):</label>
+                                <div class="input-group input-group-lg">
+                                    <input type="number" class="form-control font-monospace fw-bold text-end" id="actual-cash-input" placeholder="Nhập số tiền thực đếm..." />
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Ghi chú bàn giao ca (nếu có chênh lệch):</label>
+                                <textarea class="form-control" id="shift-notes-input" rows="2" placeholder="VD: Thiếu 10k do thối nhầm..."></textarea>
+                            </div>
+                            <button class="btn btn-danger btn-lg w-100 fw-bold py-3" onclick="cashierApp.closeShiftBlind('@Model.Id')">
+                                <i class="bi bi-lock-fill me-1"></i> XÁC NHẬN ĐÓNG CA & BÀN GIAO QUỸ
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning py-3 mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> Chưa có ca làm việc nào đang mở. Vui lòng nhập số tiền quỹ đầu ca để bắt đầu phiên thu ngân.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tiền quỹ tiền lẻ đầu ca (Opening Float):</label>
+                            <div class="input-group input-group-lg">
+                                <input type="number" class="form-control font-monospace fw-bold text-end" id="opening-float-input" value="1000000" />
+                                <span class="input-group-text">₫</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Ghi chú mở ca:</label>
+                            <input type="text" class="form-control" id="open-notes-input" placeholder="VD: Nhận quỹ ca sáng từ quản lý..." />
+                        </div>
+                        <button class="btn btn-success btn-lg w-100 fw-bold py-3" onclick="cashierApp.openShift()">
+                            <i class="bi bi-unlock-fill me-1"></i> MỞ CA THU NGÂN MỚI
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- History of Shift Closings & Discrepancies -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title fw-bold mb-0">Lịch Sử Chênh Lệch Quỹ Giao Ca (Audit Log)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Thời Gian</th>
+                                    <th class="text-end">Tiền Sổ Sách</th>
+                                    <th class="text-end">Thực Đếm</th>
+                                    <th class="text-end">Chênh Lệch</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (recentLogs.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu đóng ca gần đây</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var log in recentLogs)
+                                    {
+                                        string varColor = log.VarianceAmount == 0 ? "text-success" :
+                                                          log.VarianceAmount > 0 ? "text-primary" : "text-danger";
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">@log.LoggedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                                                @if (!string.IsNullOrEmpty(log.CashierNotes))
+                                                {
+                                                    <small class="text-muted">@log.CashierNotes</small>
+                                                }
+                                            </td>
+                                            <td class="text-end font-monospace">@log.ExpectedAmount.ToString("N0") ₫</td>
+                                            <td class="text-end font-monospace fw-bold">@log.ActualCountedAmount.ToString("N0") ₫</td>
+                                            <td class="text-end font-monospace fw-bold @varColor">
+                                                @(log.VarianceAmount > 0 ? "+" : "")@log.VarianceAmount.ToString("N0") ₫
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

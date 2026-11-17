@@ -1,0 +1,114 @@
+@model IReadOnlyList<KdsTicketDto>
+@{
+    ViewData["Title"] = "Trạm Điều Phối & Bưng Món (Expediter Pass)";
+    var stations = (List<KitchenStation>)ViewBag.Stations;
+}
+
+<div class="p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="text-warning mb-0">
+                <i class="bi bi-bell-fill me-2"></i> Trạm Điều Phối Ra Món & Bưng Món (Expediter / Pass)
+            </h4>
+            <span class="text-muted">Theo dõi tổng hợp các trạm bếp, kiểm tra món đã hoàn thành và điều phối nhân viên bưng đến bàn</span>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge bg-success fs-6 p-2">
+                <i class="bi bi-check2-all me-1"></i> Sẵn sàng bưng: @Model.SelectMany(t => t.Items).Count(i => i.Status == OrderItemStatus.ReadyToServe) món
+            </span>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="kds-empty-state d-flex flex-column align-items-center justify-content-center p-5 text-muted">
+            <i class="bi bi-check-all fs-1 mb-2"></i>
+            <h4>Không có phiếu nào cần điều phối ra món</h4>
+        </div>
+    }
+    else
+    {
+        <div class="kds-tickets-grid">
+            @foreach (var ticket in Model)
+            {
+                string priorityClass = ticket.IsHighPriority ? "kds-ticket-priority" : "";
+                string borderSla = ticket.SlaColorClass;
+
+                <div class="kds-ticket-card @priorityClass @borderSla" id="ticket-@ticket.TicketId">
+                    <div class="kds-ticket-header d-flex justify-content-between align-items-center px-3 py-2">
+                        <div>
+                            <span class="fs-4 fw-bold text-white table-badge">@ticket.TableCode</span>
+                            <span class="badge bg-secondary ms-1">@ticket.StationName</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="ticket-timer font-monospace fw-bold @borderSla-text">@ticket.ElapsedMinutes'</span>
+                            <div class="small text-muted font-monospace">@ticket.TicketNumber</div>
+                        </div>
+                    </div>
+
+                    <div class="kds-ticket-body p-3">
+                        <ul class="list-unstyled mb-0 kds-items-list">
+                            @foreach (var item in ticket.Items)
+                            {
+                                bool isReady = item.Status == OrderItemStatus.ReadyToServe;
+                                string rowBg = isReady ? "bg-success bg-opacity-25 border-success" : "";
+
+                                <li class="kds-item-row d-flex justify-content-between align-items-center py-2 px-2 border-bottom border-dark rounded mb-1 @rowBg">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="item-qty badge @(isReady ? "bg-success" : "bg-secondary") fs-5 fw-bold">@item.Quantity</span>
+                                        <div>
+                                            <div class="item-name fw-bold text-light">
+                                                @item.ItemName
+                                                @if (item.IsRemake)
+                                                {
+                                                    <span class="badge bg-danger ms-1 small">LÀM LẠI</span>
+                                                }
+                                            </div>
+                                            @if (item.Modifiers.Any())
+                                            {
+                                                <div class="text-info small">+ @string.Join(", ", item.Modifiers)</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div>
+                                        @if (isReady)
+                                        {
+                                            <button class="btn btn-sm btn-success fw-bold px-3 py-1" onclick="kdsApp.markItemServed('@item.ItemId')">
+                                                <i class="bi bi-person-walking me-1"></i> BƯNG RA BÀN
+                                            </button>
+                                        }
+                                        else if (item.Status == OrderItemStatus.Cooking)
+                                        {
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-fire"></i> Đang nấu</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Chờ</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="kds-ticket-footer p-2 bg-dark border-top border-secondary">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-secondary">Trạng thái phiếu:</span>
+                            <span class="badge @(ticket.Status == KitchenTicketStatus.Completed ? "bg-success" : "bg-warning text-dark")">
+                                @ticket.Status
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('btn-view-tickets')?.classList.remove('active');
+        document.getElementById('btn-view-aggregated')?.classList.remove('active');
+        document.getElementById('btn-view-expediter')?.classList.add('active');
+    </script>
+}

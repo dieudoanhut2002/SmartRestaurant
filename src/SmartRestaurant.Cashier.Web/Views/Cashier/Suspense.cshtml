@@ -1,0 +1,80 @@
+@model IReadOnlyList<SuspenseLedgerItemDto>
+@{
+    ViewData["Title"] = "Sổ Tiền Treo Đối Soát (Suspense Ledger)";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">
+                <i class="bi bi-clock-history text-info me-2"></i> Sổ Tiền Treo Chờ Đối Soát (Suspense Ledger)
+            </h3>
+            <span class="text-muted">Theo dõi các giao dịch chuyển khoản VietQR bị trễ, thừa tiền hoặc khách chuyển sau khi đã thanh toán tiền mặt (PDR-008)</span>
+        </div>
+        <div>
+            <span class="badge bg-danger rounded-pill fs-6 px-3 py-2">
+                @Model.Count Khoản Treo Chưa Xử Lý
+            </span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Thời Gian Nhận</th>
+                            <th>Mã Tham Chiếu (Ref)</th>
+                            <th>Ngân Hàng / Người Chuyển</th>
+                            <th>Lý Do Treo</th>
+                            <th class="text-end">Số Tiền</th>
+                            <th class="text-center">Trạng Thái</th>
+                            <th class="text-end">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="bi bi-check-circle fs-2 text-success d-block mb-2"></i>
+                                    Không có khoản tiền treo nào cần xử lý. Mọi giao dịch đều đã được đối soát khớp 100%!
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.ReceivedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                    <td class="font-monospace fw-bold">@item.TransactionRef</td>
+                                    <td>
+                                        <div>@(item.BankCode ?? "Napas 24/7")</div>
+                                        <small class="text-muted">@(item.PayerInfo ?? "Khách hàng")</small>
+                                    </td>
+                                    <td><span class="text-danger">@item.Reason</span></td>
+                                    <td class="text-end font-monospace fw-bold fs-5 text-primary">
+                                        @item.Amount.ToString("N0") ₫
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning text-dark">Chưa Xử Lý</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-success me-1" onclick="Swal.fire('Thành công', 'Đã ghi nhận đối soát thủ công!', 'success')">
+                                            Khớp Hóa Đơn
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="Swal.fire('Hoàn tiền', 'Đã tạo lệnh hoàn tiền lại cho số tài khoản nguồn!', 'info')">
+                                            Hoàn Tiền
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

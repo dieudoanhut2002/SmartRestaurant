@@ -1,0 +1,89 @@
+@model IReadOnlyList<KdsAggregatedDishDto>
+@{
+    ViewData["Title"] = "Gom Món Nấu (Batch Cooking)";
+    var stations = (List<KitchenStation>)ViewBag.Stations;
+    var currentStationId = (Guid?)ViewBag.SelectedStationId;
+}
+
+<div class="kds-station-tabs-bar px-3 py-2 d-flex gap-2 overflow-x-auto border-bottom border-secondary">
+    @foreach (var st in stations)
+    {
+        bool isActive = currentStationId == st.Id;
+        string activeClass = isActive ? "btn-warning text-dark fw-bold" : "btn-outline-secondary text-light";
+
+        <a asp-action="Aggregated" asp-route-stationId="@st.Id" class="btn btn-sm @activeClass">
+            @st.Name
+        </a>
+    }
+</div>
+
+<div class="p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="text-warning mb-0">
+            <i class="bi bi-layers-half me-2"></i> Tổng Hợp Món Cần Nấu Đồng Thời
+        </h4>
+        <span class="text-muted">Tự động gom nhóm các món giống nhau từ các bàn để bếp nấu theo mẻ</span>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="kds-empty-state d-flex flex-column align-items-center justify-content-center p-5 text-muted">
+            <i class="bi bi-check-circle fs-1 mb-2"></i>
+            <h4>Không có món ăn nào đang chờ chế biến trong trạm này</h4>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            @foreach (var dish in Model)
+            {
+                <div class="col">
+                    <div class="card bg-dark border-secondary h-100 kds-aggregated-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title text-light fw-bold mb-0">@dish.ItemName</h5>
+                                <span class="badge bg-warning text-dark fs-5 fw-bold px-3 py-2">
+                                    @(dish.TotalPending + dish.TotalCooking)
+                                </span>
+                            </div>
+                            <div class="text-muted small mb-3">Trạm: <span class="text-info">@dish.StationName</span></div>
+
+                            <div class="d-flex gap-2 mb-3">
+                                <div class="p-2 rounded bg-black flex-grow-1 text-center border border-dark">
+                                    <small class="text-secondary d-block">Chờ Nấu</small>
+                                    <span class="fs-5 fw-bold text-danger">@dish.TotalPending</span>
+                                </div>
+                                <div class="p-2 rounded bg-black flex-grow-1 text-center border border-dark">
+                                    <small class="text-secondary d-block">Đang Nấu</small>
+                                    <span class="fs-5 fw-bold text-warning">@dish.TotalCooking</span>
+                                </div>
+                                <div class="p-2 rounded bg-black flex-grow-1 text-center border border-dark">
+                                    <small class="text-secondary d-block">Đã Xong</small>
+                                    <span class="fs-5 fw-bold text-success">@dish.TotalReady</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <small class="text-secondary fw-bold d-block mb-1">Danh sách bàn đặt:</small>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var tbl in dish.TablesSummary)
+                                    {
+                                        <span class="badge bg-secondary font-monospace">@tbl</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('btn-view-tickets')?.classList.remove('active');
+        document.getElementById('btn-view-aggregated')?.classList.add('active');
+        document.getElementById('btn-view-expediter')?.classList.remove('active');
+    </script>
+}

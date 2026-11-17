@@ -17,6 +17,10 @@ public static class DependencyInjection
         services.AddScoped<IKitchenStationService, KitchenStationService>();
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<ISettingService, SettingService>();
+        services.AddScoped<IPosOrderService, PosOrderService>();
+        services.AddScoped<IKitchenService, KitchenService>();
+        services.AddScoped<IVietQrService, VietQrService>();
+        services.AddScoped<ICashierService, CashierService>();
 
         return services;
     }

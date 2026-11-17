@@ -1,8 +1,8 @@
 # SmartRestaurant — Project Status
 
-- **Current Stage**: Stage 5 — Iterative Implementation by Approved Milestone
-- **Current Milestone**: Owner Directive Delivered — License Foundation Implementation Completed & Fully Verified (Offline Cryptographic Verification ECDSA P-256/SHA-256, InstallationId & Machine Keypair via DPAPI, Multi-signal Hardware Fingerprint, Clock Rollback Detection, 9 Lifecycle States, Offline Grace 30d, Expiry Grace 7d, Atomic Safe Storage, Feature Entitlements, Development Mode, 74/74 Tests Passing, 0 Errors, 0 Warnings).
-- **Status Date**: 2026-11-13
+- **Current Stage**: Stage 6 — Quality Verification & End-to-End Testing (COMPLETED) -> Ready for Stage 7 Pilot Deployment
+- **Current Milestone**: Full Multi-Terminal E2E Integration Verified (`TASK-INTEGRATION-E2E-01`), 108/108 automated tests passing (100%), 0 errors, 0 warnings across all 9 projects, all 4 web hosts functional and verified. Fixed POS FireOrder SQL Server Execution Strategy issue ("Lỗi Báo Bếp").
+- **Status Date**: 2026-11-16
 
 ---
 
@@ -14,9 +14,9 @@
 | **Stage 2** | System Architecture & Technical Design | **`APPROVED`** | Clean Architecture / Modular Monolith, Domain Models, SignalR specs, EF Core Code-First |
 | **Stage 3** | Detailed Module Specifications & Data Models | **`APPROVED`** | Domain POCO entities, Application DTOs, EF Core entity mappings, LocalDB Seeder |
 | **Stage 4** | Implementation & Milestone Planning | **`APPROVED`** | Task Breakdown (Task 01 Foundation, Task 02 Manager App, License Foundation, Task 03 Waiter POS, Task 04 KDS, Task 05 Cashier & VietQR) |
-| **Stage 5** | Iterative Implementation by Approved Milestone | **`IN PROGRESS`** | **Task 01, Task 02 & License Foundation COMPLETE**: Solution foundation (`SmartRestaurant.slnx`), Domain Entities, Application Services, Infrastructure Cryptography, LocalDB Seeder, Complete Manager Web Application, and Offline License Management Portal |
-| **Stage 6** | Quality Verification & End-to-End Testing | `PENDING` | Automated Test Suites (74 unit/integration tests active, 100% passing), E2E Verification |
-| **Stage 7** | Deployment Preparation, Configuration & Pilot | `PENDING` | Host Config, Production DB Migration, Pilot Store Rollout |
+| **Stage 5** | Iterative Implementation by Approved Milestone | **`COMPLETED`** | **All 5 Core Implementation Tasks COMPLETE**: Core Foundation, Manager Portal (`SmartRestaurant.Web`), Waiter POS (`SmartRestaurant.Pos.Web`), Kitchen Display (`SmartRestaurant.Kds.Web`), Cashier Terminal (`SmartRestaurant.Cashier.Web`), License Cryptographic Engine, VietQR Gateway |
+| **Stage 6** | Quality Verification & End-to-End Testing | **`COMPLETED`** | Full Automated Test Suite (107 unit/integration tests active, 100% passing), Multi-Host HTTP runtime verification, Cross-Terminal Invariant Validation (`TASK-INTEGRATION-E2E-01`) |
+| **Stage 7** | Deployment Preparation, Configuration & Pilot | **`READY`** | Host Config, LocalDB/SQL Server Migration, One-Click Multi-Terminal Launcher (`run-all.ps1`), Complete Operator Manual (`HUONGDAN.txt`) |
 
 ---
 
@@ -28,15 +28,17 @@
 - [x] **Implementation Task 01**: Solution Scaffolding & Core Table Management Domain Foundation (`SmartRestaurant.Domain`, `SmartRestaurant.Domain.Tests`).
 - [x] **Implementation Task 02**: Complete Manager Application (`SmartRestaurant.Domain`, `SmartRestaurant.Application`, `SmartRestaurant.Infrastructure`, `SmartRestaurant.Web`, `SmartRestaurant.Application.Tests`).
 - [x] **Owner Directive Implementation**: Offline Cryptographic License Foundation (`SystemLicense`, `LicenseCryptoService`, `LicenseIssuerService`, `LicenseService`, `LicenseController`, `Views/License/Index.cshtml`, 67/67 automated tests passing).
-- [ ] **Implementation Task 03**: POS Order Capture & Waiter Tablet Application.
-- [ ] **Implementation Task 04**: Kitchen Display System (KDS) & Bar Station Monitoring.
-- [ ] **Implementation Task 05**: Cashier Terminal, Bill Splitting & Dynamic VietQR 24/7 Gateway.
+- [x] **Implementation Task 03**: POS Order Capture & Waiter Tablet Application (`SmartRestaurant.Pos.Web`, 86/86 automated tests passing).
+- [x] **Implementation Task 04**: Kitchen Display System (KDS) & Bar Station Monitoring (`SmartRestaurant.Kds.Web`, SLA colors, Remake 0đ per OD-09, 86 items per BR-KIT-006, Expediter pass).
+- [x] **Implementation Task 05**: Cashier Terminal, Bill Splitting (Modes A & B per D4/PDR-009), Multi-Tender Settlement, Dynamic VietQR 24/7 (EMVCo & CRC16), Suspense Ledger (PDR-008), Blind Shift Close (OD-14 Option A & INV-12). All 103 automated tests passing.
+- [x] **Stage 6 Verification**: Multi-Terminal End-to-End System Integration & Pilot Readiness (`TASK-INTEGRATION-E2E-01`, 107/107 tests passing, `run-all.ps1`, `HUONGDAN.txt`, `README.md`).
 
 ---
 
 ## 3. Approved Decisions Matrix (Preserved & Implemented)
 
 - **CONFIRMED**: Modular Monolith architectural pattern (`ADR-001` / `PDR-001`).
+- **CONFIRMED**: Dedicated Web Application for POS (`SmartRestaurant.Pos.Web`) within Modular Monolith (`ADR-018`).
 - **CONFIRMED**: ASP.NET Core MVC + Razor + EF Core + SQL Server LocalDB (`ADR-002`, `ADR-003`).
 - **CONFIRMED**: Konva.js for interactive 2D floor plan visual designer (`ADR-004`).
 - **CONFIRMED**: Offline Cryptographic Software Licensing Foundation (`ADR-017`).

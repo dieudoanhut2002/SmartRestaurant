@@ -256,3 +256,140 @@ public class SystemLicenseConfiguration : IEntityTypeConfiguration<SystemLicense
         builder.HasQueryFilter(l => !l.IsDeleted);
     }
 }
+
+public class OrderConfiguration : IEntityTypeConfiguration<Order>
+{
+    public void Configure(EntityTypeBuilder<Order> builder)
+    {
+        builder.HasKey(o => o.Id);
+        builder.Property(o => o.OrderCode).HasMaxLength(50).IsRequired();
+        builder.Property(o => o.Subtotal).HasPrecision(18, 2);
+        builder.Property(o => o.Surcharges).HasPrecision(18, 2);
+        builder.Property(o => o.DiscountAmount).HasPrecision(18, 2);
+        builder.Property(o => o.TotalAmount).HasPrecision(18, 2);
+        builder.HasMany(o => o.Rounds).WithOne().HasForeignKey(r => r.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasQueryFilter(o => !o.IsDeleted);
+    }
+}
+
+public class OrderRoundConfiguration : IEntityTypeConfiguration<OrderRound>
+{
+    public void Configure(EntityTypeBuilder<OrderRound> builder)
+    {
+        builder.HasKey(r => r.Id);
+        builder.Property(r => r.IdempotencyKey).HasMaxLength(100).IsRequired();
+        builder.Property(r => r.Note).HasMaxLength(500);
+        builder.HasIndex(r => r.IdempotencyKey).IsUnique();
+        builder.HasMany(r => r.Items).WithOne().HasForeignKey(i => i.OrderRoundId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasQueryFilter(r => !r.IsDeleted);
+    }
+}
+
+public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
+{
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
+    {
+        builder.HasKey(i => i.Id);
+        builder.Property(i => i.ItemName).HasMaxLength(200).IsRequired();
+        builder.Property(i => i.UnitPrice).HasPrecision(18, 2);
+        builder.Property(i => i.KitchenNote).HasMaxLength(500);
+        builder.HasMany(i => i.Modifiers).WithOne().HasForeignKey(m => m.OrderItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasQueryFilter(i => !i.IsDeleted);
+    }
+}
+
+public class OrderItemModifierConfiguration : IEntityTypeConfiguration<OrderItemModifier>
+{
+    public void Configure(EntityTypeBuilder<OrderItemModifier> builder)
+    {
+        builder.HasKey(m => m.Id);
+        builder.Property(m => m.OptionName).HasMaxLength(100).IsRequired();
+        builder.Property(m => m.PriceAdjustment).HasPrecision(18, 2);
+        builder.HasQueryFilter(m => !m.IsDeleted);
+    }
+}
+
+public class KitchenTicketConfiguration : IEntityTypeConfiguration<KitchenTicket>
+{
+    public void Configure(EntityTypeBuilder<KitchenTicket> builder)
+    {
+        builder.HasKey(t => t.Id);
+        builder.Property(t => t.TicketNumber).HasMaxLength(50).IsRequired();
+        builder.Property(t => t.Notes).HasMaxLength(500);
+        builder.Property(t => t.ItemsJson).IsRequired();
+        builder.HasQueryFilter(t => !t.IsDeleted);
+    }
+}
+
+public class OrderAuditHistoryConfiguration : IEntityTypeConfiguration<OrderAuditHistory>
+{
+    public void Configure(EntityTypeBuilder<OrderAuditHistory> builder)
+    {
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Action).HasMaxLength(100).IsRequired();
+        builder.Property(a => a.Details).HasMaxLength(1000);
+        builder.HasQueryFilter(a => !a.IsDeleted);
+    }
+}
+
+public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
+{
+    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
+    {
+        builder.HasKey(m => m.Id);
+        builder.Property(m => m.EventType).HasMaxLength(100).IsRequired();
+        builder.Property(m => m.PayloadJson).IsRequired();
+        builder.HasIndex(m => m.ProcessedAt);
+        builder.HasQueryFilter(m => !m.IsDeleted);
+    }
+}
+
+public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
+{
+    public void Configure(EntityTypeBuilder<Invoice> builder)
+    {
+        builder.HasKey(i => i.Id);
+        builder.Property(i => i.InvoiceNumber).HasMaxLength(100).IsRequired();
+        builder.Property(i => i.CustomerName).HasMaxLength(150);
+        builder.Property(i => i.CustomerPhone).HasMaxLength(50);
+        builder.Property(i => i.Subtotal).HasPrecision(18, 2);
+        builder.Property(i => i.SurchargeAmount).HasPrecision(18, 2);
+        builder.Property(i => i.DiscountAmount).HasPrecision(18, 2);
+        builder.Property(i => i.TaxableAmount).HasPrecision(18, 2);
+        builder.Property(i => i.VatRate).HasPrecision(5, 2);
+        builder.Property(i => i.VatAmount).HasPrecision(18, 2);
+        builder.Property(i => i.TotalAmount).HasPrecision(18, 2);
+        builder.Property(i => i.PaidAmount).HasPrecision(18, 2);
+        builder.Property(i => i.ChangeAmount).HasPrecision(18, 2);
+        builder.Property(i => i.Notes).HasMaxLength(500);
+        builder.Property(i => i.ItemsJson).IsRequired();
+        builder.HasMany(i => i.Transactions).WithOne().HasForeignKey(t => t.InvoiceId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasQueryFilter(i => !i.IsDeleted);
+    }
+}
+
+public class PaymentTransactionConfiguration : IEntityTypeConfiguration<PaymentTransaction>
+{
+    public void Configure(EntityTypeBuilder<PaymentTransaction> builder)
+    {
+        builder.HasKey(t => t.Id);
+        builder.Property(t => t.Amount).HasPrecision(18, 2);
+        builder.Property(t => t.TransactionRef).HasMaxLength(100);
+        builder.HasQueryFilter(t => !t.IsDeleted);
+    }
+}
+
+public class SuspenseLedgerConfiguration : IEntityTypeConfiguration<SuspenseLedger>
+{
+    public void Configure(EntityTypeBuilder<SuspenseLedger> builder)
+    {
+        builder.HasKey(s => s.Id);
+        builder.Property(s => s.Amount).HasPrecision(18, 2);
+        builder.Property(s => s.TransactionRef).HasMaxLength(100).IsRequired();
+        builder.Property(s => s.BankCode).HasMaxLength(50);
+        builder.Property(s => s.PayerInfo).HasMaxLength(200);
+        builder.Property(s => s.Reason).HasMaxLength(300).IsRequired();
+        builder.Property(s => s.ResolutionNotes).HasMaxLength(500);
+        builder.HasQueryFilter(s => !s.IsDeleted);
+    }
+}

@@ -1,0 +1,110 @@
+@model CashierBillSummaryDto
+@{
+    ViewData["Title"] = $"Tách Hóa Đơn Bàn {Model.TableCode}";
+    var cashierId = (Guid)ViewBag.CashierId;
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-1">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách bàn
+            </a>
+            <h3 class="mb-0 fw-bold">
+                Tách Hóa Đơn: <span class="text-primary">@Model.TableCode</span>
+            </h3>
+        </div>
+        <div>
+            <span class="fs-5 text-muted">Tổng tiền hóa đơn gốc: <strong class="text-danger font-monospace">@Model.TotalAmount.ToString("N0") ₫</strong></span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <ul class="nav nav-pills" id="splitModeTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold" id="split-equal-tab" data-bs-toggle="tab" data-bs-target="#split-equal-pane" type="button">
+                        <i class="bi bi-people-fill me-1"></i> Phương Án 1: Chia Đều Số Tiền Theo Đầu Người
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" id="split-items-tab" data-bs-toggle="tab" data-bs-target="#split-items-pane" type="button">
+                        <i class="bi bi-list-check me-1"></i> Phương Án 2: Tách Theo Từng Món Ăn Của Khách
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="splitModeTabContent">
+                <!-- Mode B: Equal Split -->
+                <div class="tab-pane fade show active" id="split-equal-pane">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số phần muốn chia đều (người):</label>
+                            <div class="input-group input-group-lg mb-3">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="number" class="form-control font-monospace fw-bold" id="equal-parts-input" min="2" max="20" value="2" oninput="cashierApp.calculateEqualSplit(@Model.TotalAmount)" />
+                                <span class="input-group-text">người</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <small class="text-muted d-block">Mỗi người sẽ thanh toán (bao gồm VAT):</small>
+                                <span class="fs-3 fw-bold text-primary font-monospace" id="equal-part-amount">
+                                    @((Model.TotalAmount / 2).ToString("N0")) ₫
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3 small">
+                        <i class="bi bi-info-circle me-1"></i> Theo quy định <strong>D4 / PDR-009 §4</strong>: Bàn chỉ được giải phóng (Available) khi 100% các hóa đơn con được thanh toán hoàn tất.
+                    </div>
+
+                    <button class="btn btn-primary btn-lg fw-bold px-4 py-3 mt-2" onclick="cashierApp.executeEqualSplit('@Model.OrderId', '@cashierId')">
+                        <i class="bi bi-scissors me-1"></i> Tạo @("Các Hóa Đơn Tách Đều") & Tiếp Tục Thanh Toán
+                    </button>
+                </div>
+
+                <!-- Mode A: By Items -->
+                <div class="tab-pane fade" id="split-items-pane">
+                    <div class="alert alert-secondary small mb-3">
+                        Chọn các món ăn muốn đưa vào <strong>Hóa đơn 1</strong>. Những món còn lại sẽ tự động thuộc về <strong>Hóa đơn 2</strong>.
+                    </div>
+
+                    <div class="table-responsive mb-3">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50px;">Chọn</th>
+                                    <th>Tên Món Ăn</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var it in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="form-check-input split-item-checkbox" data-item-id="@it.ItemId" data-qty="@it.Quantity" checked />
+                                        </td>
+                                        <td class="fw-bold">@it.ItemName</td>
+                                        <td class="text-center font-monospace">@it.Quantity</td>
+                                        <td class="text-end font-monospace">@it.UnitPrice.ToString("N0") ₫</td>
+                                        <td class="text-end font-monospace fw-bold">@it.TotalPrice.ToString("N0") ₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg fw-bold px-4 py-3" onclick="cashierApp.executeItemSplit('@Model.OrderId', '@cashierId')">
+                        <i class="bi bi-scissors me-1"></i> Tạo 2 Hóa Đơn Tách Món & Tiếp Tục Thanh Toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

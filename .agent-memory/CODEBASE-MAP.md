@@ -29,10 +29,13 @@ SmartRestaurant/
 │   ├── SmartRestaurant.Domain/         # Clean POCO domain entities, enums, domain exceptions
 │   ├── SmartRestaurant.Application/    # Use cases, DTOs, service interfaces & implementations
 │   ├── SmartRestaurant.Infrastructure/ # EF Core DbContext, entity configs, LocalDB seeder
-│   └── SmartRestaurant.Web/            # ASP.NET Core MVC Manager Application, Razor views, Konva.js
+│   ├── SmartRestaurant.Web/            # ASP.NET Core MVC Manager Application, Razor views, Konva.js
+│   ├── SmartRestaurant.Pos.Web/        # ASP.NET Core POS Waiter Tablet Application, Touch UI, SignalR
+│   ├── SmartRestaurant.Kds.Web/        # ASP.NET Core Kitchen Display System Application, Bump Bar, SLA timers
+│   └── SmartRestaurant.Cashier.Web/    # ASP.NET Core Cashier Terminal, Split Bill, VietQR 24/7, Shift Close
 ├── tests/                      # Automated Unit & Integration Test Suites
 │   ├── SmartRestaurant.Domain.Tests/   # Domain invariant & state transition unit tests
-│   └── SmartRestaurant.Application.Tests/ # Service contracts, PIN authorization & shift tests
+│   └── SmartRestaurant.Application.Tests/ # Service contracts, PIN authorization, KDS, Cashier & VietQr tests
 ├── SmartRestaurant.slnx        # Solution file
 ├── .gitignore                  # .NET & IDE exclusion rules
 ├── AGENTS.md                   # Engineering standards & permanent instructions
@@ -49,29 +52,50 @@ SmartRestaurant.slnx
 ├── src/
 │   ├── SmartRestaurant.Domain/
 │   │   ├── Common/ (BaseEntity, IAggregateRoot)
-│   │   ├── Entities/ (Branch, DiningArea, DiningRoom, RestaurantTable, KitchenStation, MenuItem, MenuItemVariant, ModifierGroup, ModifierOption, InventoryItem, InventoryTransaction, StaffMember, WorkShift, ShiftClosingVarianceLog, ManagerPinAuditLog, KitchenWasteLog, DiningSession, SystemLicense)
-│   │   ├── Enums/ (AreaType, TableShape, TableStatus, PrepStation, StaffRole, ShiftStatus, DiningSessionStatus, InventoryTransactionType, LicenseState, LicenseType, LicenseStatus)
+│   │   ├── Entities/ (Branch, DiningArea, DiningRoom, RestaurantTable, KitchenStation, MenuItem, MenuItemVariant, ModifierGroup, ModifierOption, InventoryItem, InventoryTransaction, StaffMember, WorkShift, ShiftClosingVarianceLog, ManagerPinAuditLog, KitchenWasteLog, DiningSession, SystemLicense, Order, OrderRound, OrderItem, OrderItemModifier, KitchenTicket, OrderAuditHistory, OutboxMessage, Invoice, PaymentTransaction, SuspenseLedger)
+│   │   ├── Enums/ (AreaType, TableShape, TableStatus, PrepStation, StaffRole, ShiftStatus, DiningSessionStatus, InventoryTransactionType, LicenseState, LicenseType, LicenseStatus, OrderStatus, OrderItemStatus, KitchenTicketStatus, PaymentMethod, InvoiceStatus, SuspenseLedgerStatus)
 │   │   ├── ValueObjects/ (GracePolicy)
 │   │   └── Exceptions/ (DomainException, DomainValidationException, DomainNotFoundException, InvalidTableStateTransitionException, LicenseValidationException, LicenseTamperedException, LicenseLimitExceededException)
 │   ├── SmartRestaurant.Application/
 │   │   ├── Common/Interfaces/ (IAppDbContext)
-│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos, LicenseDtos)
-│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService, ILicenseService, ILicenseSignatureValidator, IInstallationIdentityService, ILicenseStorageService, ILicenseClockService)
-│   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService)
+│   │   ├── DTOs/ (FloorPlanDtos, MenuDtos, StationDtos, InventoryDtos, SettingDtos, StaffAndShiftDtos, DashboardAndReportDtos, LicenseDtos, PosDtos, KdsDtos, CashierDtos)
+│   │   ├── Interfaces/ (IFloorPlanService, IMenuService, IKitchenStationService, IInventoryService, ISettingService, IStaffService, IShiftService, IDashboardService, IReportService, ILicenseService, ILicenseSignatureValidator, IInstallationIdentityService, ILicenseStorageService, ILicenseClockService, IPosOrderService, IKitchenService, ICashierService, IVietQrService)
+│   │   ├── Services/ (FloorPlanService, MenuService, KitchenStationService, InventoryService, SettingService, StaffService, ShiftService, DashboardService, ReportService, PosOrderService, KitchenService, CashierService, VietQrService)
 │   │   └── DependencyInjection.cs
 │   ├── SmartRestaurant.Infrastructure/
 │   │   ├── Data/ (AppDbContext, DatabaseSeeder)
 │   │   ├── Data/Configurations/ (EntityConfigurations)
 │   │   ├── Licensing/ (LicenseClockService, LicenseSignatureValidator, InstallationIdentityService, LicenseStorageService, LicenseService)
 │   │   └── DependencyInjection.cs
-│   └── SmartRestaurant.Web/ (Manager Application Portal)
-│       ├── Controllers/ (DashboardController, FloorPlanController, MenuController, StationController, InventoryController, SettingController, StaffController, ShiftController, ReportController, LicenseController)
-│       ├── Views/ (Dashboard, FloorPlan, Menu, Station, Inventory, Setting, Staff, Shift, Report, License, Shared)
-│       ├── wwwroot/ (css/admin.css, js/floorplan-designer.js, js/admin.js)
+│   ├── SmartRestaurant.Web/ (Manager Application Portal)
+│   │   ├── Controllers/ (DashboardController, FloorPlanController, MenuController, StationController, InventoryController, SettingController, StaffController, ShiftController, ReportController, LicenseController)
+│   │   ├── Views/ (Dashboard, FloorPlan, Menu, Station, Inventory, Setting, Staff, Shift, Report, License, Shared)
+│   │   ├── wwwroot/ (css/admin.css, js/floorplan-designer.js, js/admin.js)
+│   │   └── Program.cs
+│   ├── SmartRestaurant.Pos.Web/ (Waiter Tablet POS Application)
+│   │   ├── Controllers/ (FloorController, OrderController, PosCatalogController)
+│   │   ├── Hubs/ (TableHub, KitchenHub, PosOrderHub)
+│   │   ├── Services/ (OutboxProcessorHostedService)
+│   │   ├── Views/ (Floor, Order, Shared/_PosLayout)
+│   │   ├── wwwroot/ (css/pos-touch.css, js/pos-ordering.js, js/pos-signalr.js)
+│   │   └── Program.cs
+│   ├── SmartRestaurant.Kds.Web/ (Kitchen Display System Application)
+│   │   ├── Controllers/ (KdsController, KdsApiController)
+│   │   ├── Hubs/ (KitchenHub)
+│   │   ├── Services/ (KdsOutboxProcessorHostedService)
+│   │   ├── Views/ (Kds/Index, Kds/Aggregated, Kds/Expediter, Shared/_KdsLayout)
+│   │   ├── wwwroot/ (css/kds-display.css, js/kds-app.js, js/kds-signalr.js)
+│   │   └── Program.cs
+│   └── SmartRestaurant.Cashier.Web/ (Cashier Terminal Application)
+│       ├── Controllers/ (CashierController, PaymentApiController)
+│       ├── Hubs/ (CashierHub)
+│       ├── Services/ (CashierOutboxProcessorHostedService)
+│       ├── Views/ (Cashier/Index, Cashier/Bill, Cashier/Split, Cashier/Receipt, Cashier/Shift, Cashier/Suspense, Shared/_CashierLayout)
+│       ├── wwwroot/ (css/cashier.css, js/cashier-app.js, js/cashier-signalr.js)
 │       └── Program.cs
 └── tests/
-    ├── SmartRestaurant.Domain.Tests/ (DiningAreaTests, RestaurantTableTests, SystemLicenseTests)
-    └── SmartRestaurant.Application.Tests/ (FloorPlanServiceTests, MenuServiceTests, KitchenStationServiceTests, InventoryServiceTests, SettingServiceTests, StaffAndShiftServiceTests, LicenseFoundationTests, TestLicenseSigner)
+    ├── SmartRestaurant.Domain.Tests/ (DiningAreaTests, RestaurantTableTests, SystemLicenseTests, OrderDomainTests)
+    └── SmartRestaurant.Application.Tests/ (FloorPlanServiceTests, MenuServiceTests, KitchenStationServiceTests, InventoryServiceTests, SettingServiceTests, StaffAndShiftServiceTests, LicenseFoundationTests, TestLicenseSigner, PosOrderServiceTests, KitchenServiceTests, CashierServiceTests, VietQrServiceTests)
 ```
 
 ---

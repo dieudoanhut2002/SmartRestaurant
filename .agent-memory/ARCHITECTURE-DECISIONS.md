@@ -181,3 +181,15 @@ This file tracks the formal architectural and technical decisions made for **Sma
   - Fully offline operational capability (up to 30 days configurable offline allowance + 7 days expiry grace).
   - High tamper resistance: any tampering with payload or signature invalidates verification.
   - Safe, unblocked developer and Antigravity workflow via Development Mode (`LicenseOptions:Mode = Development`).
+
+---
+
+### ADR-018: Dedicated Web Application for POS (`SmartRestaurant.Pos.Web`) within Modular Monolith
+- **Status**: `CONFIRMED` (Owner Decision 2026-11-16)
+- **Date**: 2026-11-16
+- **Context**: Waiter POS and Restaurant Manager have vastly different UI paradigms (Touch-first tablet vs desktop administration portal), distinct assets, viewports, and navigation lifecycles. Co-locating them in one web project risks UI asset bloat and mixed presentation concerns.
+- **Decision**: Create a dedicated ASP.NET Core Web project `SmartRestaurant.Pos.Web` inside the same Modular Monolith solution. Both web hosts (`SmartRestaurant.Web` for Manager and `SmartRestaurant.Pos.Web` for Waiter POS) share `SmartRestaurant.Domain`, `SmartRestaurant.Application`, `SmartRestaurant.Infrastructure`, and the same SQL Server database. No separate microservices, no separate backend, and no separate database.
+- **Consequences**:
+  - Clean separation of UI assets, touch-optimized layouts, and viewport dependencies.
+  - Preserves Modular Monolith simplicity and transactional data integrity without microservice overhead.
+  - SignalR Hubs are hosted in the Presentation layer. An Outbox Pattern guarantees atomic consistency across Orders, Kitchen Tickets, Inventory Reservations, and Real-time broadcasts.

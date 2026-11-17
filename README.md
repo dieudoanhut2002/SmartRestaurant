@@ -23,11 +23,27 @@ Dự án áp dụng mô hình **Clean Architecture / Modular Monolith**:
 - `SmartRestaurant.Domain`: Định nghĩa Entities, Value Objects, Enums, Domain Exceptions. Không phụ thuộc thư viện ngoài.
 - `SmartRestaurant.Application`: Nghiệp vụ ứng dụng, CQRS/Services, DTOs, FluentValidation.
 - `SmartRestaurant.Infrastructure`: EF Core DbContext, Migrations, Fluent API Mapping, SignalR Hubs, VietQR Service, Background Workers.
-- `SmartRestaurant.Web`: Giao diện ASP.NET Core MVC / Web API, Controllers, Razor Views, SignalR Endpoints.
+- `SmartRestaurant.Web`: Cổng quản lý nhà hàng (Manager Portal, Konva.js 2D, Báo cáo, Bản quyền).
+- `SmartRestaurant.Pos.Web`: Ứng dụng bồi bàn Touch Tablet POS (gọi món, báo bếp, SignalR).
+- `SmartRestaurant.Kds.Web`: Màn hình điều phối chế biến Bếp & Quầy Bar (KDS, SLA timers, Expediter pass).
+- `SmartRestaurant.Cashier.Web`: Trạm thu ngân, quyết toán hóa đơn, tách bill, Dynamic VietQR 24/7, đóng ca kiểm két.
 
 ---
 
-## 3. Quy Chuẩn Dự Án Cho AI & Kỹ Sư
+## 3. Khởi Chạy Nhanh & Hướng Dẫn Vận Hành
+
+Xem chi tiết hướng dẫn chạy và cấu hình các trạm tại [HUONGDAN.txt](./HUONGDAN.txt):
+```powershell
+# Biên dịch toàn bộ Solution
+dotnet build SmartRestaurant.slnx
+
+# Chạy toàn bộ 103 bài kiểm thử tự động
+dotnet test SmartRestaurant.slnx
+```
+
+---
+
+## 4. Quy Chuẩn Dự Án Cho AI & Kỹ Sư
 
 Mọi trợ lý AI và lập trình viên tham gia dự án phải tuân thủ nghiêm ngặt các hướng dẫn tại:
 - [AGENTS.md](./AGENTS.md): Quy tắc kỹ thuật, tiêu chuẩn mã nguồn, bảo mật và chỉ thị triển khai chi tiết.

@@ -1,0 +1,310 @@
+@model PosDiningSessionDetailDto
+@{
+    ViewData["Title"] = $"Bàn {Model.TableCode}";
+    var catalog = ViewBag.Catalog as PosMenuCatalogDto ?? new PosMenuCatalogDto(new(), new());
+    var tableId = ViewBag.TableId as Guid? ?? Model.TableId;
+}
+
+<div class="order-workspace">
+    <!-- LEFT PANEL: Menu Catalog -->
+    <section class="menu-panel">
+        <!-- Search & Quick Filters -->
+        <div class="menu-toolbar">
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                <input type="text" id="dish-search-input" class="form-control bg-dark text-white border-secondary" placeholder="Tìm tên món hoặc mã món nhanh (<100ms)..." onkeyup="filterDishes()" />
+                <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
+
+        <!-- Category Horizontal Scroll -->
+        <div class="menu-category-scroll" id="category-bar">
+            <button class="cat-pill active" onclick="selectCategory('all', this)">Tất Cả</button>
+            @foreach (var c in catalog.Categories)
+            {
+                <button class="cat-pill" onclick="selectCategory('@c.Id', this)">@c.Name</button>
+            }
+        </div>
+
+        <!-- Dish Grid -->
+        <div class="dish-grid" id="dish-grid-container">
+            @foreach (var item in catalog.Items)
+            {
+                var isOutOfStock = !item.IsAvailable || (item.HasInventoryTracking && item.AvailableStock <= 0);
+                <div class="dish-card @(isOutOfStock ? "out-of-stock" : "")"
+                     data-id="@item.Id"
+                     data-name="@item.Name"
+                     data-code="@item.Code"
+                     data-price="@item.BasePrice"
+                     data-category="@item.CategoryId"
+                     data-foh="@item.DirectFOHPick.ToString().ToLower()"
+                     onclick="onDishClicked('@item.Id')">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <span class="dish-name">@item.Name</span>
+                            @if (item.DirectFOHPick)
+                            {
+                                <span class="badge bg-info text-dark" style="font-size: 0.65rem;" title="Phục vụ trực tiếp sảnh (bỏ qua KDS)"><i class="bi bi-cup-straw"></i> Sảnh</span>
+                            }
+                        </div>
+                        <span class="text-secondary small">@item.Code</span>
+                        @if (item.HasInventoryTracking)
+                        {
+                            <span class="badge bg-secondary opacity-75 d-inline-block mt-1" style="font-size: 0.65rem;">Kho: @item.AvailableStock</span>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-baseline mt-2">
+                        <span class="dish-price">@item.BasePrice.ToString("#,##0") ₫</span>
+                        @if (isOutOfStock)
+                        {
+                            <span class="badge bg-danger">Hết Hàng (86)</span>
+                        }
+                        else
+                        {
+                            <span class="text-primary fs-5"><i class="bi bi-plus-circle-fill"></i></span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- RIGHT PANEL: Order Ticket & Cart -->
+    <section class="cart-panel">
+        <!-- Table & Session Info Header -->
+        <div class="cart-header d-flex justify-content-between align-items-center">
+            <div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4 fw-bold text-white">Bàn @Model.TableCode</span>
+                    <span class="badge rounded-pill @(Model.IsBillingRequested ? "bg-primary" : "bg-danger")">
+                        @(Model.IsBillingRequested ? "Tạm Tính" : "Có Khách")
+                    </span>
+                    @if (Model.VipSurchargePercent > 0 || Model.VipSurchargeFixed > 0)
+                    {
+                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>VIP</span>
+                    }
+                </div>
+                <div class="small text-secondary mt-1">
+                    <span><i class="bi bi-people-fill me-1"></i>@Model.GuestCount khách</span> &bull;
+                    <span><i class="bi bi-geo-alt-fill me-1"></i>@Model.AreaName @(string.IsNullOrEmpty(Model.RoomName) ? "" : $"• {Model.RoomName}")</span>
+                </div>
+            </div>
+
+            <!-- Table Actions Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" style="width: 36px; height: 36px;">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openTransferModal()"><i class="bi bi-arrow-left-right me-2 text-info"></i>Chuyển Bàn</a></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openMergeModal()"><i class="bi bi-intersect me-2 text-warning"></i>Gộp Bàn</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="requestBill()"><i class="bi bi-receipt me-2 text-primary"></i>Yêu Cầu Tạm Tính / In Phiếu</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cart Tabs: Draft Items vs Fired Rounds -->
+        <ul class="nav nav-pills nav-fill bg-dark p-1 border-bottom border-secondary" id="cart-tabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active py-2 fw-bold text-uppercase" id="tab-draft-btn" data-bs-toggle="pill" data-bs-target="#tab-draft" type="button">
+                    <i class="bi bi-cart3 me-1"></i> Giỏ Món Mới (<span id="draft-count-badge">0</span>)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link py-2 fw-bold text-uppercase" id="tab-fired-btn" data-bs-toggle="pill" data-bs-target="#tab-fired" type="button">
+                    <i class="bi bi-fire me-1"></i> Đã Báo Bếp (@Model.Rounds.Count)
+                </button>
+            </li>
+        </ul>
+
+        <!-- Cart Tabs Content -->
+        <div class="tab-content flex-grow-1 overflow-hidden d-flex flex-column" id="cartTabContent">
+            <!-- TAB 1: DRAFT ITEMS (NOT YET FIRED) -->
+            <div class="tab-pane fade show active flex-grow-1 overflow-y-auto p-2" id="tab-draft" role="tabpanel">
+                <div id="draft-items-list" class="d-flex flex-column gap-2">
+                    <!-- Dynamic draft items rendered by JS -->
+                    <div id="empty-draft-notice" class="text-center text-secondary py-5">
+                        <i class="bi bi-cart-x fs-1 opacity-50 mb-2"></i>
+                        <div>Chưa chọn món mới nào.</div>
+                        <small>Chạm vào món ăn ở danh mục bên trái để thêm vào giỏ.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FIRED ROUNDS (KITCHEN & BILLING HISTORY) -->
+            <div class="tab-pane fade flex-grow-1 overflow-y-auto p-2" id="tab-fired" role="tabpanel">
+                @if (Model.Rounds.Count == 0)
+                {
+                    <div class="text-center text-secondary py-5">
+                        <i class="bi bi-hourglass fs-1 opacity-50 mb-2"></i>
+                        <div>Bàn chưa có đợt báo bếp nào.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var round in Model.Rounds.OrderByDescending(r => r.RoundNumber))
+                        {
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header border-secondary py-2 d-flex justify-content-between align-items-center bg-black bg-opacity-25">
+                                    <span class="fw-bold text-warning"><i class="bi bi-fire me-1"></i>ĐỢT @round.RoundNumber</span>
+                                    <span class="small text-secondary"><i class="bi bi-clock me-1"></i>@round.FiredAt.ToString("HH:mm:ss") • @round.StaffName</span>
+                                </div>
+                                <div class="card-body p-2">
+                                    @foreach (var item in round.Items)
+                                    {
+                                        string statusBadge = item.Status switch
+                                        {
+                                            OrderItemStatus.Pending => "badge bg-secondary",
+                                            OrderItemStatus.Cooking => "badge bg-warning text-dark",
+                                            OrderItemStatus.ReadyToServe => "badge bg-success",
+                                            OrderItemStatus.Served => "badge bg-info text-dark",
+                                            OrderItemStatus.Cancelled => "badge bg-danger",
+                                            _ => "badge bg-dark"
+                                        };
+                                        string statusName = item.Status switch
+                                        {
+                                            OrderItemStatus.Pending => "Chờ nấu",
+                                            OrderItemStatus.Cooking => "Đang nấu",
+                                            OrderItemStatus.ReadyToServe => item.DirectFOHPick ? "Lấy tại sảnh" : "Chờ bưng",
+                                            OrderItemStatus.Served => "Đã phục vụ",
+                                            OrderItemStatus.Cancelled => "Đã hủy",
+                                            _ => "Khác"
+                                        };
+
+                                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary border-opacity-25">
+                                            <div>
+                                                <div class="fw-bold text-white">@item.Quantity &times; @item.ItemName</div>
+                                                @if (!string.IsNullOrEmpty(item.KitchenNote))
+                                                {
+                                                    <small class="text-warning fst-italic"><i class="bi bi-chat-dots me-1"></i>@item.KitchenNote</small>
+                                                }
+                                                @if (item.Modifiers.Count > 0)
+                                                {
+                                                    <small class="text-info d-block">+ @string.Join(", ", item.Modifiers.Select(m => m.OptionName))</small>
+                                                }
+                                            </div>
+                                            <div class="text-end">
+                                                <span class="@statusBadge mb-1">@statusName</span>
+                                                <div class="small text-secondary">@item.LineTotal.ToString("#,##0") ₫</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Cart Summary & Fire Order Action Bar -->
+        <div class="cart-footer">
+            <div class="d-flex justify-content-between text-secondary mb-1">
+                <span>Tiền món (Tạm tính):</span>
+                <span id="summary-subtotal" class="fw-bold text-white">@Model.Subtotal.ToString("#,##0") ₫</span>
+            </div>
+            @if (Model.Surcharges > 0)
+            {
+                <div class="d-flex justify-content-between text-secondary mb-1">
+                    <span>Phụ thu phòng VIP:</span>
+                    <span class="fw-bold text-warning">+@Model.Surcharges.ToString("#,##0") ₫</span>
+                </div>
+            }
+            <div class="d-flex justify-content-between align-items-baseline border-top border-secondary pt-2 mb-3">
+                <span class="fs-5 fw-bold text-white">TỔNG CỘNG:</span>
+                <span id="summary-total" class="fs-4 fw-bold text-info">@Model.TotalAmount.ToString("#,##0") ₫</span>
+            </div>
+
+            <!-- Big Green Button: BÁO BẾP -->
+            <button id="btn-fire-order" class="btn btn-fire-order w-100 d-flex justify-content-center align-items-center gap-2" onclick="fireOrder()">
+                <i class="bi bi-fire fs-3"></i>
+                <span>BÁO BẾP (<span id="draft-btn-count">0</span> MÓN MỚI)</span>
+            </button>
+        </div>
+    </section>
+</div>
+
+<!-- Modal: Tùy Biến Món (Variants, Modifiers, Kitchen Note) -->
+<div class="modal fade" id="modalDishCustomizer" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="customizer-dish-name">Tùy Biến Món Ăn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="customizer-dish-id" />
+                <input type="hidden" id="customizer-base-price" />
+
+                <!-- Variants selection if available -->
+                <div id="variants-container" class="mb-3 d-none">
+                    <label class="form-label text-warning small fw-bold text-uppercase">Chọn Biến Thể / Kích Cỡ:</label>
+                    <div class="d-flex flex-wrap gap-2" id="variants-list"></div>
+                </div>
+
+                <!-- Modifier Groups -->
+                <div id="modifiers-container" class="mb-3 d-none">
+                    <label class="form-label text-warning small fw-bold text-uppercase">Tùy Chọn Kèm Theo:</label>
+                    <div id="modifiers-groups-list"></div>
+                </div>
+
+                <!-- Kitchen Note -->
+                <div class="mb-3">
+                    <label class="form-label text-secondary small fw-bold text-uppercase">Ghi Chú Cho Đầu Bếp:</label>
+                    <textarea id="customizer-note" class="form-control bg-black text-white border-secondary" rows="2" placeholder="Ví dụ: Không cay, ít đá, làm nóng..."></textarea>
+                    <!-- Quick note badges -->
+                    <div class="d-flex flex-wrap gap-1 mt-2">
+                        <span class="badge bg-secondary cursor-pointer py-1 px-2" onclick="appendNote('Không cay')">Không cay</span>
+                        <span class="badge bg-secondary cursor-pointer py-1 px-2" onclick="appendNote('Ít cay')">Ít cay</span>
+                        <span class="badge bg-secondary cursor-pointer py-1 px-2" onclick="appendNote('Không hành')">Không hành</span>
+                        <span class="badge bg-secondary cursor-pointer py-1 px-2" onclick="appendNote('Ít đá')">Ít đá</span>
+                        <span class="badge bg-secondary cursor-pointer py-1 px-2" onclick="appendNote('Không đường')">Không đường</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmAddCustomizedDish()">
+                    <i class="bi bi-cart-plus me-1"></i> THÊM VÀO GIỎ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Chuyển Bàn -->
+<div class="modal fade" id="modalTransfer" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold">Chuyển Bàn Ăn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <p class="text-secondary">Chuyển toàn bộ món và phiên dùng bữa của bàn <strong>@Model.TableCode</strong> sang bàn trống khác.</p>
+                <div class="mb-3">
+                    <label class="form-label text-warning small fw-bold">Chọn bàn đích (chỉ bàn Trống):</label>
+                    <select id="transfer-target-table" class="form-select bg-black text-white border-secondary"></select>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-info px-4 fw-bold text-dark" onclick="submitTransferTable()">
+                    <i class="bi bi-arrow-left-right me-1"></i> XÁC NHẬN CHUYỂN
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    window.posTableId = '@Model.TableId';
+    window.posCatalog = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(catalog));
+    window.posSession = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+</script>
+<script src="~/js/pos-ordering.js"></script>
+}

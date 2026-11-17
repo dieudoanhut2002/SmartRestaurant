@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SmartRestaurant.Cashier.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58528;http://localhost:58529"
+    }
+  }
+}

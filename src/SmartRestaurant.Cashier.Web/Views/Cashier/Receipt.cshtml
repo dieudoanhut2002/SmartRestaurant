@@ -1,0 +1,164 @@
+@model InvoiceDto
+@{
+    Layout = null;
+    var branch = (Branch?)ViewBag.Branch;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>In Hóa Đơn - @Model.InvoiceNumber</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #000;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .receipt-container {
+            width: 80mm;
+            max-width: 100%;
+            background: #fff;
+            margin: 0 auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-center { text-align: center; }
+        .text-end { text-align: right; }
+        .fw-bold { font-weight: bold; }
+        .divider { border-top: 1px dashed #000; margin: 8px 0; }
+        .divider-double { border-top: 2px dashed #000; margin: 10px 0; }
+
+        table { width: 100%; border-collapse: collapse; margin: 5px 0; }
+        th, td { padding: 4px 0; }
+        th { border-bottom: 1px solid #000; text-align: left; }
+
+        .btn-print {
+            display: block;
+            width: 80mm;
+            margin: 10px auto;
+            padding: 10px;
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        @@media print {
+            body { background: #fff; padding: 0; }
+            .receipt-container { border: none; box-shadow: none; width: 100%; padding: 0; }
+            .btn-print, .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <button class="btn-print" onclick="window.print()">
+        🖨️ IN HÓA ĐƠN (PRINT)
+    </button>
+
+    <div class="receipt-container">
+        <div class="text-center">
+            <h2 style="margin: 0; font-size: 18px;">@(branch?.Name ?? "SMART RESTAURANT")</h2>
+            <div style="font-size: 11px;">@(branch?.Address ?? "123 Đường Nguyễn Huệ, Q.1, TP.HCM")</div>
+            <div style="font-size: 11px;">Hotline: @(branch?.PhoneNumber ?? "028 3822 9999")</div>
+            <div class="divider-double"></div>
+            <h3 style="margin: 5px 0; font-size: 16px;">PHIẾU THANH TOÁN</h3>
+            <div style="font-size: 11px;">Mã HĐ: @Model.InvoiceNumber</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div>
+            <div>Bàn: <strong>@Model.TableCode</strong></div>
+            <div>Thời gian: @(Model.SettledAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") ?? DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"))</div>
+            <div>Trạng thái: <strong>@(Model.IsSettled ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN")</strong></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Món</th>
+                    <th class="text-center">SL</th>
+                    <th class="text-end">Đ.Giá</th>
+                    <th class="text-end">T.Tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td colspan="4"><strong>@item.ItemName</strong></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td class="text-end">@item.UnitPrice.ToString("N0")</td>
+                        <td class="text-end">@item.TotalPrice.ToString("N0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Tiền hàng:</span>
+                <span>@Model.Subtotal.ToString("N0") ₫</span>
+            </div>
+            @if (Model.SurchargeAmount > 0)
+            {
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Phụ thu phòng:</span>
+                    <span>+@Model.SurchargeAmount.ToString("N0") ₫</span>
+                </div>
+            }
+            @if (Model.DiscountAmount > 0)
+            {
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Giảm giá:</span>
+                    <span>-@Model.DiscountAmount.ToString("N0") ₫</span>
+                </div>
+            }
+            <div style="display: flex; justify-content: space-between;">
+                <span>VAT (@Model.VatRate%):</span>
+                <span>+@Model.VatAmount.ToString("N0") ₫</span>
+            </div>
+            <div class="divider"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: bold;">
+                <span>TỔNG CỘNG:</span>
+                <span>@Model.TotalAmount.ToString("N0") ₫</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                <span>Hình thức:</span>
+                <span>@Model.PaymentMethod</span>
+            </div>
+            @if (Model.ChangeAmount > 0)
+            {
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Tiền thừa:</span>
+                    <span>@Model.ChangeAmount.ToString("N0") ₫</span>
+                </div>
+            }
+        </div>
+
+        <div class="divider-double"></div>
+
+        <div class="text-center" style="font-size: 11px;">
+            <div>Cảm ơn Quý khách! Hẹn gặp lại!</div>
+            <div>SmartRestaurant POS System</div>
+        </div>
+    </div>
+</body>
+</html>

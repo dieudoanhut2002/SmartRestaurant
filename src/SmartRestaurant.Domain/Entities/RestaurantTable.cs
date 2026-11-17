@@ -101,6 +101,12 @@ public class RestaurantTable : BaseEntity, IAggregateRoot
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void ResetToAvailable()
+    {
+        Status = TableStatus.Available;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void Reserve()
     {
         if (Status != TableStatus.Available)

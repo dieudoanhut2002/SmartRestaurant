@@ -256,6 +256,18 @@ public static class DatabaseSeeder
 
         context.DiningSessions.AddRange(session1, session2, session3);
 
+        var waiter = staffList.First(s => s.Role == StaffRole.Waiter);
+        var order1 = new Order(branchId, session1.Id, "ORD-20261111-001", DateTime.UtcNow.Date);
+        var round1 = new OrderRound(order1.Id, 1, waiter.Id, "IDEM-SEED-001", "Bàn gọi món đợt 1");
+        var item1_1 = new OrderItem(round1.Id, menuItems[0].Id, menuItems[0].Name, menuItems[0].BasePrice, 2, directFOHPick: menuItems[0].DirectFOHPick, kitchenStationId: menuItems[0].KitchenStationId);
+        var item1_2 = new OrderItem(round1.Id, menuItems[1].Id, menuItems[1].Name, menuItems[1].BasePrice, 1, directFOHPick: menuItems[1].DirectFOHPick, kitchenStationId: menuItems[1].KitchenStationId);
+        round1.AddItem(item1_1);
+        round1.AddItem(item1_2);
+        order1.AddRound(round1);
+        context.Orders.Add(order1);
+        context.OrderRounds.Add(round1);
+        context.OrderItems.AddRange(item1_1, item1_2);
+
         // 9. Seed Sample Audit Logs
         var audit = new ManagerPinAuditLog(
             branchId,

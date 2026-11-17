@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "DieuAll",
+    "Projects": [
+      {
+        "Path": "src\\SmartRestaurant.Cashier.Web\\SmartRestaurant.Cashier.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "SmartRestaurant.Cashier.Web"
+      },
+      {
+        "Path": "src\\SmartRestaurant.Kds.Web\\SmartRestaurant.Kds.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "SmartRestaurant.Kds.Web"
+      },
+      {
+        "Path": "src\\SmartRestaurant.Pos.Web\\SmartRestaurant.Pos.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "SmartRestaurant.Pos.Web"
+      },
+      {
+        "Path": "src\\SmartRestaurant.Web\\SmartRestaurant.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]
