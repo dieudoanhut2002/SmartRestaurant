@@ -7,6 +7,7 @@
     <Project Path="src/SmartRestaurant.Kds.Web/SmartRestaurant.Kds.Web.csproj" />
     <Project Path="src/SmartRestaurant.Pos.Web/SmartRestaurant.Pos.Web.csproj" />
     <Project Path="src/SmartRestaurant.Web/SmartRestaurant.Web.csproj" />
+    <Project Path="src/SmartRestaurant.LicenseCli/SmartRestaurant.LicenseCli.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SmartRestaurant.Domain.Tests/SmartRestaurant.Domain.Tests.csproj" />

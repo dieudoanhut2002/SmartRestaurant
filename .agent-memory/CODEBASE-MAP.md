@@ -32,7 +32,14 @@ SmartRestaurant/
 │   ├── SmartRestaurant.Web/            # ASP.NET Core MVC Manager Application, Razor views, Konva.js
 │   ├── SmartRestaurant.Pos.Web/        # ASP.NET Core POS Waiter Tablet Application, Touch UI, SignalR
 │   ├── SmartRestaurant.Kds.Web/        # ASP.NET Core Kitchen Display System Application, Bump Bar, SLA timers
-│   └── SmartRestaurant.Cashier.Web/    # ASP.NET Core Cashier Terminal, Split Bill, VietQR 24/7, Shift Close
+│   ├── SmartRestaurant.Cashier.Web/    # ASP.NET Core Cashier Terminal, Split Bill, VietQR 24/7, Shift Close
+│   └── SmartRestaurant.LicenseCli/     # Cryptographic CLI Tool for offline ECDSA P-256 license issuance & validation
+├── scripts/                        # Operational Automation & Deployment Scripts
+│   ├── publish-all.ps1             # Batch build & publish all 4 applications to ./dist
+│   ├── configure-firewall.ps1      # Windows Defender Firewall script for ports 5000, 58329, 5098, 5099
+│   ├── run-pilot.ps1               # Multi-workstation launcher with 0.0.0.0 binding & auto LAN IP detection
+│   ├── generate-license.ps1        # Pilot store cryptographic license generation wrapper
+│   └── database-migrate.ps1        # SQL Server connection & seed verification utility
 ├── tests/                      # Automated Unit & Integration Test Suites
 │   ├── SmartRestaurant.Domain.Tests/   # Domain invariant & state transition unit tests
 │   └── SmartRestaurant.Application.Tests/ # Service contracts, PIN authorization, KDS, Cashier & VietQr tests

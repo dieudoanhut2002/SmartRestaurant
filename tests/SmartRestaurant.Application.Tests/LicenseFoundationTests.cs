@@ -507,4 +507,40 @@ public class LicenseFoundationTests : IDisposable
 
         isFeatureActive.Should().BeTrue();
     }
+
+    // 15. Wildcard Pilot License activation and validation in Production Mode
+    [Fact]
+    public async Task ActivateAsync_WildcardPilotStoreLicense_ShouldValidateAsActiveInProductionMode()
+    {
+        // Arrange
+        var service = CreateService(_options);
+        var pilotModel = new LicenseModel
+        {
+            LicenseId = "LIC-PILOT-STORE-001",
+            CustomerId = "Nhà Hàng Thử Nghiệm Pilot 01",
+            InstallationId = "*", // Wildcard pilot license
+            ProductCode = "SmartRestaurant",
+            Edition = "Enterprise",
+            Features = ["FloorManagement", "MenuManagement", "WaiterPOS", "KitchenDisplay", "CashierBilling", "VietQR247"],
+            IssuedAt = DateTime.UtcNow,
+            ValidFrom = DateTime.UtcNow.AddHours(-1),
+            ExpiresAt = DateTime.UtcNow.AddDays(365),
+            LicenseVersion = 1
+        };
+
+        var signedDoc = TestLicenseSigner.CreateSignedLicenseDocument(pilotModel);
+
+        // Act
+        var activationResult = await service.InstallLicenseAsync(signedDoc);
+        var validationResult = await service.ValidateAsync();
+
+        // Assert
+        activationResult.Success.Should().BeTrue();
+        activationResult.State.Should().Be(LicenseState.Active);
+
+        validationResult.IsValid.Should().BeTrue();
+        validationResult.State.Should().Be(LicenseState.Active);
+        validationResult.CanOperate.Should().BeTrue();
+        validationResult.DaysRemaining.Should().BeGreaterThan(360);
+    }
 }

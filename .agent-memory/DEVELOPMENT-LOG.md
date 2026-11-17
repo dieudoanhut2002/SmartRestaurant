@@ -738,6 +738,41 @@ This file maintains a chronological, tamper-evident audit trail of executed task
 
 ---
 
+### [2026-11-17] — Task 06 (Stage 7): On-Premise Pilot Store Deployment, Production Database Migration & Live Dry-Run (TASK-PILOT-ROLLOUT-01)
+- **Objective**: Prepare the final on-premise installation package, configure production SQL Server connection strings, establish Windows Defender Firewall automation, deliver 0.0.0.0 LAN multi-terminal binding for tablet/KDS devices, create cryptographic offline license issuance tooling, and verify full solution release publishing.
+- **Deliverables**:
+  - **Offline Cryptographic License Issuer CLI (`src/SmartRestaurant.LicenseCli`)**:
+    - Standalone console tool supporting `--customer`, `--installation`, `--edition`, `--days`, `--out`, and `--inspect`.
+    - Generates genuine ECDSA P-256 signed `.lic` license files complying with `ILicenseService` / `LicenseStorageService`.
+    - Produced pilot store license: `pilot-store-license.lic` (Enterprise edition, 365 days, wildcard host support, all 10 modules enabled).
+    - Added automated test `ActivateAsync_WildcardPilotStoreLicense_ShouldValidateAsActiveInProductionMode` in `LicenseFoundationTests.cs`.
+  - **Batch Production Packaging Script (`scripts/publish-all.ps1`)**:
+    - Publishes all 4 Web hosts (`SmartRestaurant.Web`, `SmartRestaurant.Pos.Web`, `SmartRestaurant.Kds.Web`, `SmartRestaurant.Cashier.Web`) in `Release` configuration into `dist/`.
+    - Generates ready-to-run binary launcher `dist/run-dist.ps1`.
+  - **Windows Defender Firewall Automation Script (`scripts/configure-firewall.ps1`)**:
+    - Configures inbound TCP firewall rules for ports `5000` (Manager), `58329` (POS), `5098` (KDS), and `5099` (Cashier).
+  - **Pilot Multi-Terminal LAN Launcher (`scripts/run-pilot.ps1`)**:
+    - Auto-detects server IPv4 address on active Wi-Fi / Ethernet adapter.
+    - Launches all 4 operational hosts bound to `http://0.0.0.0:<port>`.
+    - Displays exact tablet URLs (`http://<LAN-IP>:58329/Floor`) and KDS URLs (`http://<LAN-IP>:5098/Kds`).
+  - **Database Migration & Verification Script (`scripts/database-migrate.ps1`)**:
+    - Validates SQL Server connectivity and seeds tables, staff accounts, rich menu, and BOM stock.
+  - **Production Configuration Files**:
+    - Added `appsettings.Production.json` to all 4 web hosts with SQL Server templates and Production licensing mode.
+  - **Documentation & Operator Manuals**:
+    - Enhanced `HUONGDAN.txt` with Step-by-Step Pilot Store Rollout & Wi-Fi LAN setup guide.
+    - Updated `README.md` with build, test, and pilot deployment commands.
+    - Updated `SmartRestaurant.slnx` with `SmartRestaurant.LicenseCli`.
+- **Verification Results**:
+  - Automated test suite: **109/109 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Batch publish: **All 4 projects published successfully to `dist/`**.
+  - License validation: `SmartRestaurant.LicenseCli --inspect pilot-store-license.lic` verified valid ECDSA P-256 signature and license payload.
+- **Status**: Completed & Fully Verified. Pilot Store Operations Ready.
+
+
+---
+
 ### [2026-11-17] — Bug Fix: Resolution of CS0136 Variable Scope Collision in KitchenService.cs
 - **Objective**: Fix compilation error `CS0136: A local or parameter named 't' cannot be declared in this scope because that name is used in an enclosing local scope to define a local or parameter` in `KitchenService.cs` (row 94).
 - **Root Cause Analysis**:
@@ -749,4 +784,39 @@ This file maintains a chronological, tamper-evident audit trail of executed task
   - Solution build: **0 Warnings, 0 Errors** across all 9 projects in `SmartRestaurant.slnx`.
   - Automated test suite: **108/108 Tests Passing (100% pass rate, 0 failed, 0 skipped)** across `SmartRestaurant.Domain.Tests` (41/41) and `SmartRestaurant.Application.Tests` (67/67).
 - **Status**: Completed, Fully Fixed & Verified.
+
+---
+
+### [2026-11-17] — Task 06 (Stage 7): On-Premise Pilot Store Deployment, Production Database Migration & Live Dry-Run (TASK-PILOT-ROLLOUT-01)
+- **Objective**: Prepare the final on-premise installation package, configure production SQL Server connection strings, establish Windows Defender Firewall automation, deliver 0.0.0.0 LAN multi-terminal binding for tablet/KDS devices, create cryptographic offline license issuance tooling, and verify full solution release publishing.
+- **Deliverables**:
+  - **Offline Cryptographic License Issuer CLI (`src/SmartRestaurant.LicenseCli`)**:
+    - Standalone console tool supporting `--customer`, `--installation`, `--edition`, `--days`, `--out`, and `--inspect`.
+    - Generates genuine ECDSA P-256 signed `.lic` license files complying with `ILicenseService` / `LicenseStorageService`.
+    - Produced pilot store license: `pilot-store-license.lic` (Enterprise edition, 365 days, wildcard host support, all 10 modules enabled).
+    - Added automated test `ActivateAsync_WildcardPilotStoreLicense_ShouldValidateAsActiveInProductionMode` in `LicenseFoundationTests.cs`.
+  - **Batch Production Packaging Script (`scripts/publish-all.ps1`)**:
+    - Publishes all 4 Web hosts (`SmartRestaurant.Web`, `SmartRestaurant.Pos.Web`, `SmartRestaurant.Kds.Web`, `SmartRestaurant.Cashier.Web`) in `Release` configuration into `dist/`.
+    - Generates ready-to-run binary launcher `dist/run-dist.ps1`.
+  - **Windows Defender Firewall Automation Script (`scripts/configure-firewall.ps1`)**:
+    - Configures inbound TCP firewall rules for ports `5000` (Manager), `58329` (POS), `5098` (KDS), and `5099` (Cashier).
+  - **Pilot Multi-Terminal LAN Launcher (`scripts/run-pilot.ps1`)**:
+    - Auto-detects server IPv4 address on active Wi-Fi / Ethernet adapter.
+    - Launches all 4 operational hosts bound to `http://0.0.0.0:<port>`.
+    - Displays exact tablet URLs (`http://<LAN-IP>:58329/Floor`) and KDS URLs (`http://<LAN-IP>:5098/Kds`).
+  - **Database Migration & Verification Script (`scripts/database-migrate.ps1`)**:
+    - Validates SQL Server connectivity and seeds tables, staff accounts, rich menu, and BOM stock.
+  - **Production Configuration Files**:
+    - Added `appsettings.Production.json` to all 4 web hosts with SQL Server templates and Production licensing mode.
+  - **Documentation & Operator Manuals**:
+    - Enhanced `HUONGDAN.txt` with Step-by-Step Pilot Store Rollout & Wi-Fi LAN setup guide.
+    - Updated `README.md` with build, test, and pilot deployment commands.
+    - Updated `SmartRestaurant.slnx` with `SmartRestaurant.LicenseCli`.
+- **Verification Results**:
+  - Automated test suite: **109/109 Tests Passing (100% pass rate, 0 failed, 0 skipped)**.
+  - Solution build: **0 Warnings, 0 Errors** across all 10 projects.
+  - Batch publish: **All 4 projects published successfully to `dist/`**.
+  - License validation: `SmartRestaurant.LicenseCli --inspect pilot-store-license.lic` verified valid ECDSA P-256 signature and license payload.
+- **Status**: Completed & Fully Verified. Pilot Store Operations Ready.
+
 

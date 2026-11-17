@@ -78,6 +78,49 @@ Hệ thống sẽ tự động tạo cơ sở dữ liệu `SmartRestaurantDb_v6`
 - Bếp trưởng (Chef):        chef@smartrestaurant.vn     | PIN: 3333
 - Thủ kho (Inventory):      inventory@smartrestaurant.vn| PIN: 4444
 
+--------------------------------------------------------------------------------
+5. HƯỚNG DẪN TRIỂN KHAI PILOT STORE & KẾT NỐI TOÀN MẠNG LAN / WI-FI
+
+Hệ thống cung cấp bộ công cụ tự động hóa đầy đủ trong thư mục `scripts/`:
+
+[Bước 1] Mở cổng Windows Firewall (Yêu cầu quyền Administrator):
+    Mở PowerShell bằng "Run as Administrator" và chạy:
+    powershell -ExecutionPolicy Bypass -File scripts/configure-firewall.ps1
+    -> Tự động mở các cổng TCP Inbound 5000, 58329, 5098, 5099.
+
+[Bước 2] Tạo Giấy Phép Bản Quyền Offline (Pilot License):
+    powershell -ExecutionPolicy Bypass -File scripts/generate-license.ps1
+    -> Sinh tệp `pilot-store-license.lic` được ký số bằng thuật toán ECDSA P-256
+       với thời hạn 365 ngày và kích hoạt toàn bộ 10 phân hệ Enterprise.
+
+[Bước 3] Đóng gói phát hành Release (Tùy chọn nếu muốn chạy độc lập từ nhị phân):
+    powershell -ExecutionPolicy Bypass -File scripts/publish-all.ps1
+    -> Toàn bộ 4 phân hệ được xuất ra thư mục `dist/` cùng script `run-dist.ps1`.
+
+[Bước 4] Khởi chạy hệ thống Pilot Store (Hỗ trợ truy cập mạng nội bộ):
+    powershell -ExecutionPolicy Bypass -File scripts/run-pilot.ps1
+    -> Tự động phát hiện địa chỉ IPv4 LAN của máy chủ (ví dụ: 192.168.1.9)
+    -> Kích hoạt Kestrel binding 0.0.0.0 cho cả 4 phân hệ.
+
+[Bước 5] Kết nối thiết bị thực tế trong nhà hàng:
+    - 📱 Máy tính bảng Bồi bàn (iPad / Android Tablet kết nối Wi-Fi nhà hàng):
+      Truy cập trình duyệt: http://<IP_MÁY_CHỦ>:58329/Floor
+    - 🍳 Màn hình Bếp & Bar (Smart TV / KDS Tablet treo tường):
+      Truy cập trình duyệt: http://<IP_MÁY_CHỦ>:5098/Kds
+    - 💵 Máy tính Thu ngân (POS Terminal quầy bar/thu ngân):
+      Truy cập trình duyệt: http://localhost:5099/Cashier
+    - 💻 Cổng Quản lý & Bản quyền:
+      Truy cập trình duyệt: http://localhost:5000
+
+[Bước 6] Kích hoạt bản quyền:
+    Truy cập http://localhost:5000/License -> Nhấn "Kích Hoạt Giấy Phép"
+    -> Tải lên tệp `pilot-store-license.lic` vừa sinh ở Bước 2.
+
+[Bước 7] In hóa đơn nhiệt 80mm & Mở két tiền mặt:
+    - Tại màn hình Thu Ngân (`/Cashier`), sau khi thanh toán, nhấn "In Hóa Đơn".
+    - Giao diện in được thiết kế chuẩn khổ giấy 80mm ESC/POS (`Receipt.cshtml`).
+    - Chọn máy in nhiệt 80mm mặc định của quầy thu ngân trong hộp thoại in.
+
 ================================================================================
 SmartRestaurant Enterprise Digital Operations — Ready for Pilot Deployment!
 ================================================================================

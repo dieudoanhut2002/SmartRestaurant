@@ -27,18 +27,31 @@ Dự án áp dụng mô hình **Clean Architecture / Modular Monolith**:
 - `SmartRestaurant.Pos.Web`: Ứng dụng bồi bàn Touch Tablet POS (gọi món, báo bếp, SignalR).
 - `SmartRestaurant.Kds.Web`: Màn hình điều phối chế biến Bếp & Quầy Bar (KDS, SLA timers, Expediter pass).
 - `SmartRestaurant.Cashier.Web`: Trạm thu ngân, quyết toán hóa đơn, tách bill, Dynamic VietQR 24/7, đóng ca kiểm két.
+- `SmartRestaurant.LicenseCli`: Công cụ CLI ký số ECDSA P-256 và sinh giấy phép bản quyền offline (.lic).
 
 ---
 
-## 3. Khởi Chạy Nhanh & Hướng Dẫn Vận Hành
+## 3. Khởi Chạy Nhanh & Triển Khai Pilot Store
 
 Xem chi tiết hướng dẫn chạy và cấu hình các trạm tại [HUONGDAN.txt](./HUONGDAN.txt):
 ```powershell
-# Biên dịch toàn bộ Solution
+# 1. Biên dịch toàn bộ Solution (10 projects)
 dotnet build SmartRestaurant.slnx
 
-# Chạy toàn bộ 103 bài kiểm thử tự động
+# 2. Chạy toàn bộ 109 bài kiểm thử tự động (100% PASS)
 dotnet test SmartRestaurant.slnx
+
+# 3. Tạo bản quyền Pilot Store 365 ngày (Offline License)
+powershell -ExecutionPolicy Bypass -File scripts/generate-license.ps1
+
+# 4. Mở cổng Firewall Windows Defender (yêu cầu Admin)
+powershell -ExecutionPolicy Bypass -File scripts/configure-firewall.ps1
+
+# 5. Khởi chạy toàn bộ 4 trạm trên mạng LAN (0.0.0.0)
+powershell -ExecutionPolicy Bypass -File scripts/run-pilot.ps1
+
+# 6. (Tùy chọn) Đóng gói bản phát hành độc lập Release vào thư mục dist/
+powershell -ExecutionPolicy Bypass -File scripts/publish-all.ps1
 ```
 
 ---
